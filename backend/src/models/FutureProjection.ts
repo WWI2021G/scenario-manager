@@ -2,7 +2,6 @@ import { KeyFactor } from "./KeyFactor";
 import { Probability } from "./Probability";
 import { ProjectionType } from "./ProjectionType";
 
-// TEST: Add tests <2024-05-30> - Max
 export class FutureProjection {
   private name: string;
   private description: string;

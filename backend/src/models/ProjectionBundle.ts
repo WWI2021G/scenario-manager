@@ -1,6 +1,5 @@
 import { FutureProjection } from "./FutureProjection";
 
-// TEST: Add tests <2024-05-30> - Max
 export class ProjectionBundle {
   private name: string;
   private description: string;

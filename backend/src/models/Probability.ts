@@ -1,5 +1,5 @@
 export enum Probability {
-  klein,
-  mittel,
-  hoch,
+  small,
+  average,
+  high,
 }

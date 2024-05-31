@@ -1,12 +1,13 @@
-// TEST: Add tests <2024-05-30> - Max
+import { RawScenario } from "./RawScenario";
+
 export class RawScenarioCatalog {
   name: string;
-  bundleDescription: string;
-  projectionDistribution: number[];
+  Description: string;
+  projectionDistribution: RawScenario[];
 
   constructor(name: string, bundleDescription: string) {
     this.name = name;
-    this.bundleDescription = bundleDescription;
+    this.Description = bundleDescription;
     this.projectionDistribution = [];
   }
 
@@ -18,23 +19,23 @@ export class RawScenarioCatalog {
     this.name = name;
   }
 
-  getBundleDescription(): string {
-    return this.bundleDescription;
+  getDescription(): string {
+    return this.Description;
   }
 
-  updateBundleDescription(description: string) {
-    this.bundleDescription = description;
+  updateDescription(description: string) {
+    this.Description = description;
   }
 
-  getProjectionDistibution(): number[] {
+  getProjectionDistibution(): RawScenario[] {
     return this.projectionDistribution;
   }
 
-  addProjectionDistibution(projectionDistribution: number) {
+  addProjectionDistibution(projectionDistribution: RawScenario) {
     this.projectionDistribution.push(projectionDistribution);
   }
 
-  removeProjectionDistibution(projectionDistribution: number) {
-    this.projectionDistribution = this.projectionDistribution.filter((element: number) => element !== projectionDistribution);
+  removeProjectionDistibution(projectionDistribution: RawScenario) {
+    this.projectionDistribution = this.projectionDistribution.filter((element: RawScenario) => element !== projectionDistribution);
   }
 }

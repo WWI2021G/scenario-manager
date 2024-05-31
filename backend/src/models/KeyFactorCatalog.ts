@@ -1,6 +1,5 @@
 import { KeyFactor } from "./KeyFactor";
 
-// TEST: Add tests <2024-05-30> - Max
 export class KeyFactorCatalog {
   private maxAmountOfKeyFactors: number;
   private keyFactors: KeyFactor[];

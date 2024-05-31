@@ -1,13 +1,16 @@
+import { FutureProjection } from "./FutureProjection";
 import { InfluencingFactor } from "./InfluencingFactor";
+import { KeyFactor } from "./KeyFactor";
+import { ProjectionBundle } from "./ProjectionBundle";
 import { ScenarioType } from "./ScenarioType";
 
 export class ScenarioProject {
   private name: string;
   private description: string;
   private influencingFactors: InfluencingFactor[];
-  //private keyFactors: KeyFactor[];
-  //private futureProjections: FutureProjection[];
-  //private projectionBundles: ProjectionBundle[];
+  private keyFactors: KeyFactor[];
+  private futureProjections: FutureProjection[];
+  private projectionBundles: ProjectionBundle[];
   private scenarioType: ScenarioType;
 
   constructor(name: string, description: string, scenarioType: ScenarioType) {
@@ -15,9 +18,9 @@ export class ScenarioProject {
     this.description = description;
     this.scenarioType = scenarioType;
     this.influencingFactors = [];
-    //this.keyFactors = [];
-    //this.futureProjections = [];
-    //this.projectionBundles = [];
+    this.keyFactors = [];
+    this.futureProjections = [];
+    this.projectionBundles = [];
   }
 
   getName(): string {
@@ -56,48 +59,39 @@ export class ScenarioProject {
     return this.influencingFactors;
   }
 
-  // TEST: Test missing <2024-05-27> - Max
-  //addKeyFactor(factor: KeyFactor): void {
-  //  this.keyFactors.push(factor);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //removeKeyFactor(factor: KeyFactor): void {
-  //  this.keyFactors.filter((element: KeyFactor) => element !== factor);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //getKeyFactors(): KeyFactor[] {
-  //  return this.keyFactors;
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //addFutureProjection(projection: FutureProjection): void {
-  //  this.futureProjections.push(projection);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //removeFutureProjection(projection: FutureProjection): void {
-  //  this.futureProjections.filter((element: FutureProjection) => element !== projection);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //getFutureProjections(): FutureProjection[] {
-  //  return this.futureProjections;
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //addProjectBundle(projection: ProjectBundle): void {
-  //  this.projectionBundles.push(projection);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //removeProjectBundle(bundle: ProjectionBundle): void {
-  //  this.projectionBundles.filter((element: ProjectionBundle) => element !== bundle);
-  //}
-  //
-  //// TEST: Test missing <2024-05-27> - Max
-  //getProjectBundles(): ProjectBundle[] {
-  //  return this.projectionBundles;
-  //}
+  addKeyFactor(factor: KeyFactor): void {
+    this.keyFactors.push(factor);
+  }
+
+  removeKeyFactor(factor: KeyFactor): void {
+    this.keyFactors = this.keyFactors.filter((element: KeyFactor) => element !== factor);
+  }
+
+  getKeyFactors(): KeyFactor[] {
+    return this.keyFactors;
+  }
+
+  addFutureProjection(projection: FutureProjection): void {
+    this.futureProjections.push(projection);
+  }
+
+  removeFutureProjection(projection: FutureProjection): void {
+    this.futureProjections = this.futureProjections.filter((element: FutureProjection) => element !== projection);
+  }
+
+  getFutureProjections(): FutureProjection[] {
+    return this.futureProjections;
+  }
+
+  addProjectionBundle(projection: ProjectionBundle): void {
+    this.projectionBundles.push(projection);
+  }
+
+  removeProjectionBundle(bundle: ProjectionBundle): void {
+    this.projectionBundles = this.projectionBundles.filter((element: ProjectionBundle) => element !== bundle);
+  }
+
+  getProjectionBundles(): ProjectionBundle[] {
+    return this.projectionBundles;
+  }
 }
