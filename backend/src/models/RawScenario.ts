@@ -1,6 +1,5 @@
 import { ProjectionBundle } from "./ProjectionBundle";
 
-// TEST: Add tests <2024-05-30> - Max
 export class RawScenario {
   private name: string;
   private description: string;
@@ -47,6 +46,8 @@ export class RawScenario {
   }
 
   removeProjectionBundle(projection: ProjectionBundle) {
-    this.projectionBundles = this.projectionBundles.filter((element: ProjectionBundle) => element !== projection);
+    this.projectionBundles = this.projectionBundles.filter(
+      (element: ProjectionBundle) => element !== projection,
+    );
   }
 }

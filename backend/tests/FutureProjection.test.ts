@@ -5,7 +5,14 @@ import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 
 let keyFactor = new KeyFactor("Bar");
-let futureProjection = new FutureProjection("Fuu", "Fuu projects Bar", keyFactor, Probability.high, new Date(new Date().getMonth() + 3), ProjectionType.Trend);
+let futureProjection = new FutureProjection(
+  "Fuu",
+  "Fuu projects Bar",
+  keyFactor,
+  Probability.high,
+  new Date(new Date().getMonth() + 3),
+  ProjectionType.Trend,
+);
 
 describe("Testing FutureProjection class", () => {
   test("Test constructor", () => {
@@ -13,7 +20,9 @@ describe("Testing FutureProjection class", () => {
     expect(futureProjection.getDescription()).toBe("Fuu projects Bar");
     expect(futureProjection.getKeyFactor()).toBe(keyFactor);
     expect(futureProjection.getProbability()).toBe(Probability.high);
-    expect(futureProjection.getTimeFrame()).toStrictEqual(new Date(new Date().getMonth() + 3));
+    expect(futureProjection.getTimeFrame()).toStrictEqual(
+      new Date(new Date().getMonth() + 3),
+    );
     expect(futureProjection.getType()).toBe(ProjectionType.Trend);
   });
 
@@ -29,7 +38,9 @@ describe("Testing FutureProjection class", () => {
 
   test("Test updateKeyFactor", () => {
     futureProjection.updateKeyFactor(new KeyFactor("Key2"));
-    expect(futureProjection.getKeyFactor()).toStrictEqual(new KeyFactor("Key2"));
+    expect(futureProjection.getKeyFactor()).toStrictEqual(
+      new KeyFactor("Key2"),
+    );
   });
 
   test("Test updateProbability", () => {
@@ -41,7 +52,9 @@ describe("Testing FutureProjection class", () => {
 
   test("Test updateTimeFrame", () => {
     futureProjection.updateTimeFrame(new Date(new Date().getDay() + 120));
-    expect(futureProjection.getTimeFrame()).toStrictEqual(new Date(new Date().getDay() + 120));
+    expect(futureProjection.getTimeFrame()).toStrictEqual(
+      new Date(new Date().getDay() + 120),
+    );
   });
 
   test("Test updateType", () => {

@@ -36,6 +36,8 @@ export class ProjectionBundle {
   }
 
   removeProjection(projection: FutureProjection) {
-    this.projections = this.projections.filter((element: FutureProjection) => element !== projection);
+    this.projections = this.projections.filter(
+      (element: FutureProjection) => element !== projection,
+    );
   }
 }

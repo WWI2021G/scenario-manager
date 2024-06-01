@@ -36,6 +36,8 @@ export class RawScenarioCatalog {
   }
 
   removeProjectionDistibution(projectionDistribution: RawScenario) {
-    this.projectionDistribution = this.projectionDistribution.filter((element: RawScenario) => element !== projectionDistribution);
+    this.projectionDistribution = this.projectionDistribution.filter(
+      (element: RawScenario) => element !== projectionDistribution,
+    );
   }
 }

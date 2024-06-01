@@ -7,7 +7,14 @@ import { ProjectionType } from "../src/models/ProjectionType";
 
 let projectionBundle = new ProjectionBundle("Buz", "Buz bundles Projections");
 let keyFactor = new KeyFactor("Bar");
-let futureProjection = new FutureProjection("Fuu", "Fuu projects Bar", keyFactor, Probability.high, new Date(new Date().getMonth() + 3), ProjectionType.Trend);
+let futureProjection = new FutureProjection(
+  "Fuu",
+  "Fuu projects Bar",
+  keyFactor,
+  Probability.high,
+  new Date(new Date().getMonth() + 3),
+  ProjectionType.Trend,
+);
 
 describe("Testing ProjectionBundle class", () => {
   test("Test constructor", () => {

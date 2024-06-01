@@ -36,6 +36,8 @@ export class ProjectionBundleCatalog {
   }
 
   removeProjectionBundle(projection: ProjectionBundle) {
-    this.projectionBundles = this.projectionBundles.filter((element: ProjectionBundle) => element !== projection);
+    this.projectionBundles = this.projectionBundles.filter(
+      (element: ProjectionBundle) => element !== projection,
+    );
   }
 }

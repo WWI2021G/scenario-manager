@@ -3,12 +3,17 @@ import { RawScenario } from "../src/models/RawScenario";
 import { RawScenarioCatalog } from "../src/models/RawScenarioCatalog";
 
 let rawScenario = new RawScenario("Fii", "Fii is a scenario for baz", 23);
-let rawScenarioCatalog = new RawScenarioCatalog("Fuu", "Fuu catalogs scenarios for baz");
+let rawScenarioCatalog = new RawScenarioCatalog(
+  "Fuu",
+  "Fuu catalogs scenarios for baz",
+);
 
 describe("Testing ProjectionBundleCatalog class", () => {
   test("Test constructor", () => {
     expect(rawScenarioCatalog.getName()).toBe("Fuu");
-    expect(rawScenarioCatalog.getDescription()).toBe("Fuu catalogs scenarios for baz");
+    expect(rawScenarioCatalog.getDescription()).toBe(
+      "Fuu catalogs scenarios for baz",
+    );
     expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([]);
   });
 
@@ -24,11 +29,15 @@ describe("Testing ProjectionBundleCatalog class", () => {
 
   test("Test addProjection", () => {
     rawScenarioCatalog.addProjectionDistibution(rawScenario);
-    expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([rawScenario]);
+    expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([
+      rawScenario,
+    ]);
   });
 
   test("Test removeProjection", () => {
-    expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([rawScenario]);
+    expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([
+      rawScenario,
+    ]);
     rawScenarioCatalog.removeProjectionDistibution(rawScenario);
     expect(rawScenarioCatalog.getProjectionDistibution()).toStrictEqual([]);
   });

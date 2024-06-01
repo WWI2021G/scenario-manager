@@ -37,7 +37,7 @@ export class InfluenceMatrix {
       return undefined;
     }
     let sum = 0;
-    innerMap.forEach(value => {
+    innerMap.forEach((value) => {
       sum += value;
     });
     return sum;

@@ -26,6 +26,8 @@ export class KeyFactorCatalog {
   }
 
   removeKeyFactor(keyFactor: KeyFactor) {
-    this.keyFactors = this.keyFactors.filter((element: KeyFactor) => element !== keyFactor);
+    this.keyFactors = this.keyFactors.filter(
+      (element: KeyFactor) => element !== keyFactor,
+    );
   }
 }

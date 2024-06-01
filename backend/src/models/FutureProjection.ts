@@ -10,7 +10,14 @@ export class FutureProjection {
   private timeFrame: Date;
   private type: ProjectionType;
 
-  constructor(name: string, description: string, keyFactor: KeyFactor, probability: Probability, timeFrame: Date, type: ProjectionType) {
+  constructor(
+    name: string,
+    description: string,
+    keyFactor: KeyFactor,
+    probability: Probability,
+    timeFrame: Date,
+    type: ProjectionType,
+  ) {
     this.name = name;
     this.description = description;
     this.keyFactor = keyFactor;

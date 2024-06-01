@@ -52,7 +52,9 @@ export class ScenarioProject {
   }
 
   removeInfluencingFactor(factor: InfluencingFactor): void {
-    this.influencingFactors = this.influencingFactors.filter((element: InfluencingFactor) => element !== factor);
+    this.influencingFactors = this.influencingFactors.filter(
+      (element: InfluencingFactor) => element !== factor,
+    );
   }
 
   getInfluencingFactors(): InfluencingFactor[] {
@@ -64,7 +66,9 @@ export class ScenarioProject {
   }
 
   removeKeyFactor(factor: KeyFactor): void {
-    this.keyFactors = this.keyFactors.filter((element: KeyFactor) => element !== factor);
+    this.keyFactors = this.keyFactors.filter(
+      (element: KeyFactor) => element !== factor,
+    );
   }
 
   getKeyFactors(): KeyFactor[] {
@@ -76,7 +80,9 @@ export class ScenarioProject {
   }
 
   removeFutureProjection(projection: FutureProjection): void {
-    this.futureProjections = this.futureProjections.filter((element: FutureProjection) => element !== projection);
+    this.futureProjections = this.futureProjections.filter(
+      (element: FutureProjection) => element !== projection,
+    );
   }
 
   getFutureProjections(): FutureProjection[] {
@@ -88,7 +94,9 @@ export class ScenarioProject {
   }
 
   removeProjectionBundle(bundle: ProjectionBundle): void {
-    this.projectionBundles = this.projectionBundles.filter((element: ProjectionBundle) => element !== bundle);
+    this.projectionBundles = this.projectionBundles.filter(
+      (element: ProjectionBundle) => element !== bundle,
+    );
   }
 
   getProjectionBundles(): ProjectionBundle[] {

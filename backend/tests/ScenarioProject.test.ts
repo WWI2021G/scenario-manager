@@ -10,10 +10,26 @@ import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 import { ProjectionBundle } from "../src/models/ProjectionBundle";
 
-let scenarioProject = new ScenarioProject("Foo", "Foo describes bar", ScenarioType.Umfeldszenario);
-let influencingFactor = new InfluencingFactor("Baz", "Baz factors in bar", Variable.ControlVaraible, InfluencingArea.Gesellschaft);
+let scenarioProject = new ScenarioProject(
+  "Foo",
+  "Foo describes bar",
+  ScenarioType.Umfeldszenario,
+);
+let influencingFactor = new InfluencingFactor(
+  "Baz",
+  "Baz factors in bar",
+  Variable.ControlVaraible,
+  InfluencingArea.Gesellschaft,
+);
 let keyFactor = new KeyFactor("Bar");
-let futureProjection = new FutureProjection("Fuu", "Fuu projects Bar", keyFactor, Probability.high, new Date(new Date().getMonth() + 3), ProjectionType.Trend);
+let futureProjection = new FutureProjection(
+  "Fuu",
+  "Fuu projects Bar",
+  keyFactor,
+  Probability.high,
+  new Date(new Date().getMonth() + 3),
+  ProjectionType.Trend,
+);
 let projectionBundle = new ProjectionBundle("Biz", "Biz bundles Bar and Bir");
 
 describe("Testing ScenarioProject class", () => {
@@ -44,11 +60,15 @@ describe("Testing ScenarioProject class", () => {
 
   test("Test adding InfluencingFactor", () => {
     scenarioProject.addInfluencingFactor(influencingFactor);
-    expect(scenarioProject.getInfluencingFactors()).toStrictEqual([influencingFactor]);
+    expect(scenarioProject.getInfluencingFactors()).toStrictEqual([
+      influencingFactor,
+    ]);
   });
 
   test("Test removing InfluencingFactor", () => {
-    expect(scenarioProject.getInfluencingFactors()).toStrictEqual([influencingFactor]);
+    expect(scenarioProject.getInfluencingFactors()).toStrictEqual([
+      influencingFactor,
+    ]);
     scenarioProject.removeInfluencingFactor(influencingFactor);
     expect(scenarioProject.getInfluencingFactors()).toStrictEqual([]);
   });
@@ -66,22 +86,30 @@ describe("Testing ScenarioProject class", () => {
 
   test("Test adding FutureProjection", () => {
     scenarioProject.addFutureProjection(futureProjection);
-    expect(scenarioProject.getFutureProjections()).toStrictEqual([futureProjection]);
+    expect(scenarioProject.getFutureProjections()).toStrictEqual([
+      futureProjection,
+    ]);
   });
 
   test("Test removing FutureProjection", () => {
-    expect(scenarioProject.getFutureProjections()).toStrictEqual([futureProjection]);
+    expect(scenarioProject.getFutureProjections()).toStrictEqual([
+      futureProjection,
+    ]);
     scenarioProject.removeFutureProjection(futureProjection);
     expect(scenarioProject.getFutureProjections()).toStrictEqual([]);
   });
 
   test("Test adding ProjectionBundle", () => {
     scenarioProject.addProjectionBundle(projectionBundle);
-    expect(scenarioProject.getProjectionBundles()).toStrictEqual([projectionBundle]);
+    expect(scenarioProject.getProjectionBundles()).toStrictEqual([
+      projectionBundle,
+    ]);
   });
 
   test("Test removing ProjectionBundle", () => {
-    expect(scenarioProject.getProjectionBundles()).toStrictEqual([projectionBundle]);
+    expect(scenarioProject.getProjectionBundles()).toStrictEqual([
+      projectionBundle,
+    ]);
     scenarioProject.removeProjectionBundle(projectionBundle);
     expect(scenarioProject.getProjectionBundles()).toStrictEqual([]);
   });

@@ -30,11 +30,15 @@ describe("Testing ProjectionBundle class", () => {
 
   test("Test addProjectionBundle", () => {
     rawScenario.addProjectionBundle(projectionBundle);
-    expect(rawScenario.getProjectionBundles()).toStrictEqual([projectionBundle]);
+    expect(rawScenario.getProjectionBundles()).toStrictEqual([
+      projectionBundle,
+    ]);
   });
 
   test("Test removeProjectionBundle", () => {
-    expect(rawScenario.getProjectionBundles()).toStrictEqual([projectionBundle]);
+    expect(rawScenario.getProjectionBundles()).toStrictEqual([
+      projectionBundle,
+    ]);
     rawScenario.removeProjectionBundle(projectionBundle);
     expect(rawScenario.getProjectionBundles()).toStrictEqual([]);
   });

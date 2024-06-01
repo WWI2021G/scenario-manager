@@ -31,7 +31,10 @@ export class KeyFactor {
     return this.properties;
   }
 
-  setProperties(propertyA: Property | undefined, propertyB: Property | undefined) {
+  setProperties(
+    propertyA: Property | undefined,
+    propertyB: Property | undefined,
+  ) {
     this.properties = [propertyA, propertyB];
   }
 

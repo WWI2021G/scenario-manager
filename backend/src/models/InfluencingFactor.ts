@@ -8,7 +8,12 @@ export class InfluencingFactor {
   private variable: Variable;
   private influencingArea: InfluencingArea;
 
-  constructor(name: string, description: string, variable: Variable, influencingArea: InfluencingArea) {
+  constructor(
+    name: string,
+    description: string,
+    variable: Variable,
+    influencingArea: InfluencingArea,
+  ) {
     this.name = name;
     this.description = description;
     this.variable = variable;
