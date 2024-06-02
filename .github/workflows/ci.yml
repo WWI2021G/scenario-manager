@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - '**/feature/**'  # Include specific branches if needed
+  pull_request:
+    branches:
+      - main
+      - '**/feature/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Build and run Docker Compose services
+      run: docker-compose -f docker-compose.yml up --build -d
+
+    - name: Wait for services to be healthy
+      run: docker-compose -f docker-compose.yml ps
+      continue-on-error: true
+
+    - name: Run backend tests
+      run: docker-compose -f docker-compose.yml run backend npm run test
+
+    - name: Run frontend tests
+      run: docker-compose -f docker-compose.yml run frontend npm run test
+
+    - name: Shut down Docker Compose services
+      if: always()
+      run: docker-compose -f docker-compose.yml down
+
+    - name: Ensure tests passed
+      if: failure()
+      run: exit 1
