@@ -52,3 +52,6 @@ Clone the repository to your local machine:
 ```sh
 git clone https://github.com/USERNAME/scenario-management-ts.git
 cd scenario-management-ts
+
+Stuff will follow here
+```
