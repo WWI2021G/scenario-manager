@@ -54,4 +54,5 @@ git clone https://github.com/USERNAME/scenario-management-ts.git
 cd scenario-management-ts
 
 Stuff will follow here
+More stuff
 ```
