@@ -9,7 +9,7 @@ const db: IDatabase<any> = pgp({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || '5432', 10),
+  port: parseInt(process.env.DB_PORT || "5432", 10),
 });
 
 class DBService {
@@ -21,8 +21,8 @@ class DBService {
       const result = await db.one<{ now: Date }>("SELECT NOW()");
       return result.now;
     } catch (error) {
-      console.error('Error executing query', error);
-      throw new Error('Error querying the database');
+      console.error("Error executing query", error);
+      throw new Error("Error querying the database");
     }
   }
 }
