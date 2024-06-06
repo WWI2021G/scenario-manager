@@ -16,12 +16,120 @@ class DBService {
   name: String = "DBService";
   db: IDatabase<any> = db;
 
+  async setupDB(): Promise<string> {
+    const tables: { table_name: string; query: string }[] = [
+      {
+        table_name: "InfluencingFactor",
+        query: `
+CREATE TABLE IF NOT EXISTS InfluencingFactor (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE,
+description VARCHAR(200),
+variable VARCHAR(50) CHECK (variable IN ('ControlVariable', 'EnvironmentVariable')),
+influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationstechnologie', 'Ökonomie', 'Gesellschaft', 'Sonstige')));`,
+      },
+      {
+        table_name: "ScenarioProject",
+        query: `
+CREATE TABLE IF NOT EXISTS ScenarioProject (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE,
+description VARCHAR(200));`,
+      },
+      {
+        table_name: "KeyFactor",
+        query: `
+CREATE TABLE IF NOT EXISTS KeyFactor (
+id INT PRIMARY KEY,
+critical BOOLEAN,
+sp_id INT,
+FOREIGN KEY (id) REFERENCES InfluencingFactor(id));`,
+      },
+      {
+        table_name: "properties",
+        query: `
+CREATE TABLE IF NOT EXISTS KeyFactor (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE,
+cur_state VARCHAR(200),
+kf_id INT,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(id));`,
+      },
+      {
+        table_name: "FutureProjection",
+        query: `
+CREATE TABLE IF NOT EXISTS FutureProjection (
+id SERIAL PRIMARY KEY,
+probability VARCHAR(6) CHECK (probability IN ('low', 'medium', 'high')),
+description VARCHAR(200),
+timeFrame TIMESTAMP,
+projectionType VARCHAR(6) CHECK (projectionType IN ('Trend', 'Extreme')),
+kf_id INT,
+sp_id INT,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(id),
+FOREIGN KEY (sp_id) REFERENCES ScenarioProject(id));`,
+      },
+      {
+        table_name: "ProjectionBundle",
+        query: `
+CREATE TABLE IF NOT EXISTS ProjectionBundle (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50),
+description VARCHAR(200));`,
+      },
+      {
+        table_name: "RawScenario",
+        query: `
+CREATE TABLE IF NOT EXISTS RawScenario (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50),
+quality INT CHECK (quality > 0 AND quality < 8));`,
+      },
+      {
+        table_name: "SP-IF",
+        query: `
+CREATE TABLE IF NOT EXISTS sp_if (
+sp_id INT,
+if_id INT,
+FOREIGN KEY (sp_id) REFERENCES ScenarioProject(id),
+FOREIGN KEY (if_id) REFERENCES InfluencingFactor(id));`,
+      },
+      {
+        table_name: "KF-RS",
+        query: `
+CREATE TABLE IF NOT EXISTS kf_rs (
+kf_id INT,
+rs_id INT,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(id),
+FOREIGN KEY (rs_id) REFERENCES InfluencingFactor(id));`,
+      },
+      {
+        table_name: "FP-PB",
+        query: `
+CREATE TABLE IF NOT EXISTS fp_pb (
+fp_id INT,
+pb_id INT,
+FOREIGN KEY (fp_id) REFERENCES FutureProjection(id),
+FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
+      },
+    ];
+    try {
+      for (const table of tables) {
+        await this.db.any(table.query);
+      }
+      return "All databases are setup";
+    } catch (error) {
+      console.error("Error setting up database", error);
+      throw new Error("Error setting up the database");
+    }
+  }
+
   async getCurTime(): Promise<Date> {
     try {
-      const result = await db.one<{ now: Date }>("SELECT NOW()");
+      const result = await this.db.one<{ now: Date }>("SELECT NOW()");
       return result.now;
     } catch (error) {
-      console.error("Error executing query", error);
+      console.error("Error querying database for current time", error);
       throw new Error("Error querying the database");
     }
   }

@@ -2,7 +2,14 @@ import { dbService } from "../services/dbService";
 import { Request, Response } from "express";
 
 class DBController {
-  setupDB(_req: Request, res: Response) {}
+  async setupDB(_req: Request, res: Response) {
+    try {
+      const message = await dbService.setupDB();
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
 
   async getCurTime(_req: Request, res: Response) {
     try {
