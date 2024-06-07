@@ -117,7 +117,9 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
       for (const table of tables) {
         await this.db.any(table.query);
       }
-      return "All databases are setup";
+      let message: string = "All databases are set up";
+      console.log("Success:", message);
+      return message;
     } catch (error) {
       console.error("Error setting up database", error);
       throw new Error("Error setting up the database");
@@ -127,6 +129,7 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
   async getCurTime(): Promise<Date> {
     try {
       const result = await this.db.one<{ now: Date }>("SELECT NOW()");
+      console.log("Success:", result.now);
       return result.now;
     } catch (error) {
       console.error("Error querying database for current time", error);
