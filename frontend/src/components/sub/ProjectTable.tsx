@@ -2,23 +2,23 @@ import * as React from 'react';
 import Table from '@mui/joy/Table';
 import { MoreHoriz } from "@mui/icons-material";
 import Link from 'next/link';
+import { ScenarioProject } from '@/types';
+
+interface ProjectTableProps {
+  projects: ScenarioProject[];
+}
 
 function createData(
   pid: number,
   name: string,
   date: string,
-
 ) {
   return { pid, name, date };
 }
 
-const rows = [
-  createData(1, "Projekt Shell", "12.12.2021"),
-  createData(2, "Projekt BMW", "14.07.2023"),
-  createData(2, "Projekt Festool", "03.04.2024"),
-];
+export default function TableHover({ projects }: ProjectTableProps) {
+  const rows = projects.map((project, index) => createData(index + 1, project.name, new Date().toLocaleDateString()));
 
-export default function TableHover() {
   return (
     <Table hoverRow stickyHeader>
       <thead>
@@ -35,7 +35,7 @@ export default function TableHover() {
           <td>{row.pid}</td>
           <td className="underline"><Link href="">{row.name}</Link></td>
           <td>{row.date}</td>
-          <td><MoreHoriz/></td>
+          <td><MoreHoriz /></td>
         </tr>
       ))}
       </tbody>
