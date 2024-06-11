@@ -19,6 +19,24 @@ class DBService {
   async setupDB(): Promise<string> {
     const tables: { table_name: string; query: string }[] = [
       {
+        table_name: "ScenarioUsers",
+        query: `
+CREATE TABLE IF NOT EXISTS scenarioUser (
+id SERIAL PRIMARY KEY,
+userName VARCHAR(50) UNIQUE NOT NULL,
+password VARCHAR(50) NOT NULL);`,
+      },
+      {
+        table_name: "ScenarioProject",
+        query: `
+CREATE TABLE IF NOT EXISTS ScenarioProject (
+id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE,
+description VARCHAR(200),
+userID INT,
+FOREIGN KEY (userID) REFERENCES scenarioUser(id));`,
+      },
+      {
         table_name: "InfluencingFactor",
         query: `
 CREATE TABLE IF NOT EXISTS InfluencingFactor (
@@ -27,14 +45,6 @@ name VARCHAR(50) UNIQUE,
 description VARCHAR(200),
 variable VARCHAR(50) CHECK (variable IN ('ControlVariable', 'EnvironmentVariable')),
 influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationstechnologie', 'Ökonomie', 'Gesellschaft', 'Sonstige')));`,
-      },
-      {
-        table_name: "ScenarioProject",
-        query: `
-CREATE TABLE IF NOT EXISTS ScenarioProject (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50) UNIQUE,
-description VARCHAR(200));`,
       },
       {
         table_name: "KeyFactor",
