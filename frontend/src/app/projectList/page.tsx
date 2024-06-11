@@ -5,6 +5,7 @@ import TableHover from "../../components/sub/ProjectTable";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { FilterList } from "@mui/icons-material";
+import { ScenarioProject } from "@/types";
 
 const Home: React.FC = () => {
   return (
@@ -18,7 +19,7 @@ const Home: React.FC = () => {
       </div>
 
   <Box className='flex'>
-    <TableHover />
+    <TableHover projects={[]} />
   </Box>
     </>
 )
