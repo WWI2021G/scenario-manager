@@ -1,7 +1,7 @@
 "use client";
 import * as React from 'react';
 import { useState } from 'react';
-import { InfluencingFactor } from '../../types';
+import { InfluencingFactor } from '@/types';
 import { Box, Button, TextField, Typography, List, ListItem, ListItemText } from '@mui/material';
 
 export default function InfluencingFactorForm() {
@@ -73,7 +73,7 @@ export default function InfluencingFactorForm() {
           margin="normal"
           variant="outlined"
         />
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+        <Button className="bg-primary hover:bg-primary-hover" type="submit" variant="contained" sx={{ mt: 2 }}>
           Add Influencing Factor
         </Button>
       </form>

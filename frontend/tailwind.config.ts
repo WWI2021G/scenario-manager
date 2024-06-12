@@ -17,6 +17,10 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        'primary': '#5046e5',
+        'primary-hover': '#4438ca',
+      }
     },
   },
   plugins: [],
