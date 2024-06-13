@@ -25,7 +25,7 @@ class DBService {
         table_name: "ScenarioUsers",
         query: `
 CREATE TABLE IF NOT EXISTS scenarioUser (
-id SERIAL PRIMARY KEY,
+su_id SERIAL PRIMARY KEY,
 userName VARCHAR(50) UNIQUE NOT NULL,
 password VARCHAR(50) NOT NULL);`,
       },
@@ -33,18 +33,19 @@ password VARCHAR(50) NOT NULL);`,
         table_name: "ScenarioProject",
         query: `
 CREATE TABLE IF NOT EXISTS ScenarioProject (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50) UNIQUE,
+sp_id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200),
-userID INT,
-FOREIGN KEY (userID) REFERENCES scenarioUser(id));`,
+scenarioType VARCHAR(50) NOT NULL CHECK (scenarioType IN ('Umfeldszenario', 'LangfristigesUmfeldszenario', 'KurzfristigesUmfeldszenario', 'Systemszenario', 'RisikomeidendesSystemszenario', 'RisikosuchendesSystemszenario')),
+su_id INT,
+FOREIGN KEY (su_id) REFERENCES scenarioUser(su_id));`,
       },
       {
         table_name: "InfluencingFactor",
         query: `
 CREATE TABLE IF NOT EXISTS InfluencingFactor (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50) UNIQUE,
+if_id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200),
 variable VARCHAR(50) CHECK (variable IN ('ControlVariable', 'EnvironmentVariable')),
 influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationstechnologie', 'Ökonomie', 'Gesellschaft', 'Sonstige')));`,
@@ -53,49 +54,50 @@ influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationste
         table_name: "KeyFactor",
         query: `
 CREATE TABLE IF NOT EXISTS KeyFactor (
-id INT PRIMARY KEY,
+kf_id INT PRIMARY KEY,
 critical BOOLEAN,
 sp_id INT,
-FOREIGN KEY (id) REFERENCES InfluencingFactor(id));`,
+FOREIGN KEY (kf_id) REFERENCES InfluencingFactor(if_id),
+FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id));`,
       },
       {
         table_name: "properties",
         query: `
 CREATE TABLE IF NOT EXISTS KeyFactor (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50) UNIQUE,
+prop_id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
 cur_state VARCHAR(200),
 kf_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(id));`,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id));`,
       },
       {
         table_name: "FutureProjection",
         query: `
 CREATE TABLE IF NOT EXISTS FutureProjection (
-id SERIAL PRIMARY KEY,
+fp_id SERIAL PRIMARY KEY,
 probability VARCHAR(6) CHECK (probability IN ('low', 'medium', 'high')),
 description VARCHAR(200),
 timeFrame TIMESTAMP,
 projectionType VARCHAR(6) CHECK (projectionType IN ('Trend', 'Extreme')),
 kf_id INT,
 sp_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(id),
-FOREIGN KEY (sp_id) REFERENCES ScenarioProject(id));`,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id),
+FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id));`,
       },
       {
         table_name: "ProjectionBundle",
         query: `
 CREATE TABLE IF NOT EXISTS ProjectionBundle (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50),
+pb_id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200));`,
       },
       {
         table_name: "RawScenario",
         query: `
 CREATE TABLE IF NOT EXISTS RawScenario (
-id SERIAL PRIMARY KEY,
-name VARCHAR(50),
+rs_id SERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
 quality INT CHECK (quality > 0 AND quality < 8));`,
       },
       {
@@ -104,8 +106,8 @@ quality INT CHECK (quality > 0 AND quality < 8));`,
 CREATE TABLE IF NOT EXISTS sp_if (
 sp_id INT,
 if_id INT,
-FOREIGN KEY (sp_id) REFERENCES ScenarioProject(id),
-FOREIGN KEY (if_id) REFERENCES InfluencingFactor(id));`,
+FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id),
+FOREIGN KEY (if_id) REFERENCES InfluencingFactor(if_id));`,
       },
       {
         table_name: "KF-RS",
@@ -113,8 +115,8 @@ FOREIGN KEY (if_id) REFERENCES InfluencingFactor(id));`,
 CREATE TABLE IF NOT EXISTS kf_rs (
 kf_id INT,
 rs_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(id),
-FOREIGN KEY (rs_id) REFERENCES InfluencingFactor(id));`,
+FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id),
+FOREIGN KEY (rs_id) REFERENCES RawScenario(rs_id));`,
       },
       {
         table_name: "FP-PB",
@@ -122,8 +124,8 @@ FOREIGN KEY (rs_id) REFERENCES InfluencingFactor(id));`,
 CREATE TABLE IF NOT EXISTS fp_pb (
 fp_id INT,
 pb_id INT,
-FOREIGN KEY (fp_id) REFERENCES FutureProjection(id),
-FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
+FOREIGN KEY (fp_id) REFERENCES FutureProjection(fp_id),
+FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
       },
     ];
     try {
