@@ -11,10 +11,7 @@ class DBController {
     }
   }
 
-  async getCurTime(_req: Request, res: Response) {
     try {
-      const currentTime = await dbService.getCurTime();
-      res.status(200).json({ currentTime: currentTime });
   async redoDB(_req: Request, res: Response) {
     try {
       const message = await dbService.redoDB();

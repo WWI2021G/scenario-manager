@@ -136,11 +136,7 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
     }
   }
 
-  async getCurTime(): Promise<Date> {
     try {
-      const result = await this.db.one<{ now: Date }>("SELECT NOW()");
-      console.log("Success:", result.now);
-      return result.now;
   async redoDB(): Promise<string> {
     try {
       await db.none(
