@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import pgPromise, { IDatabase, IMain } from "pg-promise";
+import { User } from "../models/User";
 
 dotenv.config();
 
@@ -136,7 +137,45 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
     }
   }
 
+  async getInsertUserID(user: User): Promise<number> {
     try {
+      const userID: number | null = await db.oneOrNone(
+        "SELECT su_id FROM scenariouser WHERE username = $1",
+        user.getUserName(),
+        (u) => u && u.su_id,
+      );
+      if (userID) {
+        console.log("Request for exisiting user: " + user.getUserName());
+        return userID;
+      }
+      const createdUserID: number =
+        (await db.one<number>(
+          "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING su_id",
+          [user.getUserName(), user.getPassword()],
+          (u) => u.su_id,
+        ))
+      console.log("Created user in database with ID: " + createdUserID);
+      return createdUserID;
+    } catch (error) {
+      console.error("Error getting id from user: " + user.getUserName(), error);
+      throw new Error("Error getting id from user: " + user.getUserName());
+    }
+  }
+
+  async getUser(userID: number): Promise<User> {
+    try {
+      const result = await db.one<{ username: string; password: string }>(
+        "SELECT username, password FROM scenariouser WHERE su_id = $1",
+        userID,
+      );
+      const user = new User(result.username, result.password);
+      console.log("Request for userID: " + userID);
+      return user;
+    } catch (error) {
+      console.error("Error getting user from id" + userID, error);
+      throw new Error("Error getting user from id" + userID);
+    }
+  }
   async redoDB(): Promise<string> {
     try {
       await db.none(
