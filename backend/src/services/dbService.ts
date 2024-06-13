@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import pgPromise, { IDatabase, IMain } from "pg-promise";
+import { ScenarioProject } from "../models/ScenarioProject";
 import { User } from "../models/User";
+import { ScenarioType } from "../models/ScenarioType";
 
 dotenv.config();
 
@@ -176,6 +178,57 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
       throw new Error("Error getting user from id" + userID);
     }
   }
+
+  async getInsertScenarioProject(
+    scenarioProject: ScenarioProject,
+  ): Promise<number> {
+    const userID = await this.getInsertUserID(scenarioProject.getUser());
+    try {
+      const scenarioProjectID: number | null = await db.oneOrNone(
+        "SELECT sp_id FROM scenarioproject WHERE name = $1",
+        scenarioProject.getName(),
+        (sp) => sp && sp.sp_id,
+      );
+      if (scenarioProjectID) {
+        console.log("Request for exisiting scenarioProject: " + scenarioProject.getName());
+        return scenarioProjectID;
+      }
+      const createdScenarioProjectID: number = (await db.one<number>(
+        "INSERT INTO scenarioproject (name, description, scenariotype, su_id) VALUES ($1, $2, $3, $4) RETURNING sp_id;",
+        [
+          scenarioProject.getName(),
+          scenarioProject.getDescription(),
+          scenarioProject.getScenarioType(),
+          userID,
+        ],
+        (sp) => sp.sp_id,
+      ))
+      console.log("Created scenarioProject in database with ID: " + createdScenarioProjectID);
+      return createdScenarioProjectID;
+    } catch (error) {
+      console.error("Error adding ScenarioProject", error);
+      throw new Error("Error adding ScenarioProject");
+    }
+  }
+
+  async getScenarioProject(sp_id: number): Promise<ScenarioProject> {
+    try {
+      const result = await db.one<{ name: string; description: string; scenarioType: string; su_id: number }>(
+        "SELECT name, description, scenarioType, su_id FROM scenarioproject WHERE sp_id = $1",
+        sp_id,
+      );
+      const user = await this.getUser(result.su_id);
+      const scenarioType: ScenarioType = (<any>ScenarioType)[result.scenarioType];
+      const scenarioProject = new ScenarioProject(result.name, result.description, scenarioType, user);
+      console.log(scenarioProject);
+      console.log("Request for sp_id: " + sp_id);
+      return scenarioProject;
+    } catch (error) {
+      console.error("Error getting user from id" + sp_id, error);
+      throw new Error("Error getting user from id" + sp_id);
+    }
+  }
+
   async redoDB(): Promise<string> {
     try {
       await db.none(
