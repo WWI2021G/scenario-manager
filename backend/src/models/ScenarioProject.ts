@@ -15,7 +15,12 @@ export class ScenarioProject {
   private projectionBundles: ProjectionBundle[];
   private scenarioType: ScenarioType;
 
-  constructor(name: string, description: string, scenarioType: ScenarioType, user: User) {
+  constructor(
+    name: string,
+    description: string,
+    scenarioType: ScenarioType,
+    user: User,
+  ) {
     this.name = name;
     this.description = description;
     this.scenarioType = scenarioType;
