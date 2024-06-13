@@ -31,7 +31,7 @@ This is a web application designed to manage and document scenarios using the Sc
 
 - **Frontend:** Next.js, React, Tailwind CSS
 - **Backend:** Node.js, Express, TypeScript
-- **Database:** (Specify your database here, e.g., PostgreSQL, MongoDB)
+- **Database:** PostgreSQL
 - **Tools:** Docker, Git, GitHub Actions
 
 ## Prerequisites
@@ -41,7 +41,7 @@ Before you begin, ensure you have met the following requirements:
 - Node.js (v14 or later)
 - npm (v6 or later)
 - Docker (optional, for containerization)
-- A running instance of your chosen database
+- A running PostgreSQL (v15 or later) instance
 
 ## Getting Started
 
@@ -52,7 +52,24 @@ Clone the repository to your local machine:
 ```sh
 git clone https://github.com/USERNAME/scenario-management-ts.git
 cd scenario-management-ts
+```
 
-Stuff will follow here
-More stuff
+### Backend Setup
+
+Setup PostgreSQL with the user and database you want to use. ([See documentation](https://www.postgresql.org/docs/))
+```sh
+cd backend/
+# Install dependencies
+npm i
+# Create and populate the `.env` file in the root of the backend directory.
+touch .env
+vim .env
+```
+The following information needs to be saved in the `.env` file to correctly use your PostgreSQL database:
+```sh
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=your_database
+DB_USER=your_user
+DB_PASSWORD=your_password
 ```
