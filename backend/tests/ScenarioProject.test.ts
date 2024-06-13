@@ -9,11 +9,13 @@ import { FutureProjection } from "../src/models/FutureProjection";
 import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 import { ProjectionBundle } from "../src/models/ProjectionBundle";
+import { User } from "../src/models/User";
 
 let scenarioProject = new ScenarioProject(
   "Foo",
   "Foo describes bar",
   ScenarioType.Umfeldszenario,
+  new User("Test", "testpw"),
 );
 let influencingFactor = new InfluencingFactor(
   "Baz",
@@ -37,6 +39,7 @@ describe("Testing ScenarioProject class", () => {
     expect(scenarioProject.getName()).toBe("Foo");
     expect(scenarioProject.getDescription()).toBe("Foo describes bar");
     expect(scenarioProject.getScenarioType()).toBe(ScenarioType.Umfeldszenario);
+    expect(scenarioProject.getUser()).toStrictEqual(new User("Test", "testpw"));
     expect(scenarioProject.getInfluencingFactors()).toStrictEqual([]);
     expect(scenarioProject.getKeyFactors()).toStrictEqual([]);
     expect(scenarioProject.getFutureProjections()).toStrictEqual([]);
