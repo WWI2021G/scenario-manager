@@ -141,9 +141,19 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(id));`,
       const result = await this.db.one<{ now: Date }>("SELECT NOW()");
       console.log("Success:", result.now);
       return result.now;
+  async redoDB(): Promise<string> {
+    try {
+      await db.none(
+        "DO $$ DECLARE r RECORD; BEGIN FOR r IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE') LOOP EXECUTE 'DROP TABLE IF EXISTS ' || r.table_name || ' CASCADE;'; END LOOP; END $$;",
+      );
+      console.log("Successfully dropped all databases");
+      await this.setupDB();
+      const message = "Successfully recreated the database";
+      console.log(message);
+      return message;
     } catch (error) {
-      console.error("Error querying database for current time", error);
-      throw new Error("Error querying the database");
+      console.error("Error droping all tables in the database", error);
+      throw new Error("Error droping all tables in the database");
     }
   }
 }

@@ -15,6 +15,10 @@ class DBController {
     try {
       const currentTime = await dbService.getCurTime();
       res.status(200).json({ currentTime: currentTime });
+  async redoDB(_req: Request, res: Response) {
+    try {
+      const message = await dbService.redoDB();
+      res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
