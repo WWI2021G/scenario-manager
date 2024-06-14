@@ -14,14 +14,28 @@ class DBController {
     }
   }
 
-  async getInsertUserID(req: Request, res: Response) {
+  async getUserID(req: Request, res: Response) {
     const {
       userName,
       userPasswordHash,
     }: { userName: string; userPasswordHash: string } = req.body;
     const user = new User(userName, userPasswordHash);
     try {
-      const userID = await dbService.getInsertUserID(user);
+      const userID = await dbService.selectUserID(user);
+      res.status(200).json({ userID: userID });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addUser(req: Request, res: Response) {
+    const {
+      userName,
+      userPasswordHash,
+    }: { userName: string; userPasswordHash: string } = req.body;
+    const user = new User(userName, userPasswordHash);
+    try {
+      const userID = await dbService.insertUser(user);
       res.status(200).json({ userID: userID });
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -30,14 +44,14 @@ class DBController {
 
   async getUser(req: Request, res: Response) {
     try {
-      const user: User = await dbService.getUser(parseFloat(req.params.id));
+      const user: User = await dbService.selectUser(parseFloat(req.params.id));
       res.status(200).json(user);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
   }
 
-  async getInsertScenarioProject(req: Request, res: Response) {
+  async getScenarioProjectID(req: Request, res: Response) {
     const {
       name,
       description,
@@ -58,7 +72,35 @@ class DBController {
     );
     try {
       const scenarioProjectID =
-        await dbService.getInsertScenarioProject(scenarioProject);
+        await dbService.selectScenarioProjectID(scenarioProject);
+      res.status(200).json({ scenarioProjectID: scenarioProjectID });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addScenarioProject(req: Request, res: Response) {
+    const {
+      name,
+      description,
+      scenarioType,
+      user: { userName, userPasswordHash },
+    }: {
+      name: string;
+      description: string;
+      scenarioType: ScenarioType;
+      user: { userName: string; userPasswordHash: string };
+    } = req.body;
+    const user = new User(userName, userPasswordHash);
+    const scenarioProject = new ScenarioProject(
+      name,
+      description,
+      scenarioType,
+      user,
+    );
+    try {
+      const scenarioProjectID =
+        await dbService.insertScenarioProject(scenarioProject);
       res.status(200).json({ scenarioProjectID: scenarioProjectID });
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -67,7 +109,7 @@ class DBController {
 
   async getScenarioProject(req: Request, res: Response) {
     try {
-      const scenarioProject: ScenarioProject = await dbService.getScenarioProject(parseFloat(req.params.id));
+      const scenarioProject: ScenarioProject = await dbService.selectScenarioProject(parseFloat(req.params.id));
       res.status(200).json(scenarioProject);
     } catch (error: any) {
       res.status(500).send(error.message);

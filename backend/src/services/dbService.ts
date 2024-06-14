@@ -141,17 +141,23 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
     }
   }
 
-  async getInsertUserID(user: User): Promise<number> {
+  async selectUserID(user: User): Promise<number> {
     try {
-      const userID: number | null = await db.oneOrNone(
+      const userID: number | null = await db.one<number>(
         "SELECT scenariouser_id FROM scenariouser WHERE username = $1;",
         user.getUserName(),
         (u) => u && u.scenariouser_id,
       );
-      if (userID) {
-        console.log("Request for exisiting user: " + user.getUserName());
-        return userID;
-      }
+      console.log("Request for exisiting user: " + user.getUserName());
+      return userID;
+    } catch (error) {
+      console.error("Error selecting id from user: " + user.getUserName(), error);
+      throw new Error("Error selecting id from user: " + user.getUserName());
+    }
+  }
+
+  async insertUser(user: User): Promise<number> {
+    try {
       const createdUserID: number =
         (await db.one<number>(
           "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;",
@@ -161,12 +167,12 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
       console.log("Created user in database with ID: " + createdUserID);
       return createdUserID;
     } catch (error) {
-      console.error("Error getting id from user: " + user.getUserName(), error);
-      throw new Error("Error getting id from user: " + user.getUserName());
+      console.error("Error inserting id from user: " + user.getUserName(), error);
+      throw new Error("Error inserting id from user: " + user.getUserName());
     }
   }
 
-  async getUser(userID: number): Promise<User> {
+  async selectUser(userID: number): Promise<User> {
     try {
       const result = await db.one<{ username: string; password: string }>(
         "SELECT username, password FROM scenariouser WHERE scenariouser_id = $1;",
@@ -176,25 +182,33 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
       console.log("Request for userID: " + userID);
       return user;
     } catch (error) {
-      console.error("Error getting user from id" + userID, error);
-      throw new Error("Error getting user from id" + userID);
+      console.error("Error getting user from id: " + userID, error);
+      throw new Error("Error getting user from id: " + userID);
     }
   }
 
-  async getInsertScenarioProject(
-    scenarioProject: ScenarioProject,
-  ): Promise<number> {
-    const userID = await this.getInsertUserID(scenarioProject.getUser());
+  async selectScenarioProjectID(scenarioProject: ScenarioProject): Promise<number> {
     try {
-      const scenarioProjectID: number | null = await db.oneOrNone(
+      const scenarioProjectID: number = await db.one<number>(
         "SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;",
         scenarioProject.getName(),
         (sp) => sp && sp.scenarioproject_id,
       );
-      if (scenarioProjectID) {
-        console.log("Request for exisiting scenarioProject: " + scenarioProject.getName());
-        return scenarioProjectID;
-      }
+      console.log("Request for exisiting scenarioProject: " + scenarioProject.getName());
+      return scenarioProjectID;
+    } catch (error) {
+      console.error("Error selecting scenarioproject_id for Scenario: " + scenarioProject.getName(), error);
+      throw new Error("Error selecting scenarioproject_id for Scenario: " + scenarioProject.getName());
+    }
+  }
+
+  async insertScenarioProject(
+    scenarioProject: ScenarioProject,
+  ): Promise<number> {
+    try {
+      console.log(scenarioProject.getUser());
+      const userID = await this.selectUserID(scenarioProject.getUser());
+      console.log(userID);
       const createdScenarioProjectID: number = (await db.one<number>(
         "INSERT INTO scenarioproject (name, description, scenariotype, scenariouser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;",
         [
@@ -205,29 +219,29 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         ],
         (sp) => sp.scenarioproject_id,
       ))
-      console.log("Created scenarioProject in database with ID: " + createdScenarioProjectID);
+      console.log("Created scenarioProject in database with id: " + createdScenarioProjectID);
       return createdScenarioProjectID;
     } catch (error) {
-      console.error("Error adding ScenarioProject", error);
-      throw new Error("Error adding ScenarioProject");
+      console.error("Error inserting ScenarioProject", error);
+      throw new Error("Error inserting ScenarioProject");
     }
   }
 
-  async getScenarioProject(scenarioproject_id: number): Promise<ScenarioProject> {
+  async selectScenarioProject(scenarioproject_id: number): Promise<ScenarioProject> {
     try {
       const result = await db.one<{ name: string; description: string; scenarioType: string; scenariouser_id: number }>(
         "SELECT name, description, scenarioType, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;",
         scenarioproject_id,
       );
-      const user = await this.getUser(result.scenariouser_id);
+      const user = await this.selectUser(result.scenariouser_id);
       const scenarioType: ScenarioType = (<any>ScenarioType)[result.scenarioType];
       const scenarioProject = new ScenarioProject(result.name, result.description, scenarioType, user);
       console.log(scenarioProject);
       console.log("Request for scenarioproject_id: " + scenarioproject_id);
       return scenarioProject;
     } catch (error) {
-      console.error("Error getting ScenarioProject from id" + scenarioproject_id, error);
-      throw new Error("Error getting ScenarioProject from id" + scenarioproject_id);
+      console.error("Error selecting ScenarioProject from id: " + scenarioproject_id, error);
+      throw new Error("Error selecting ScenarioProject from id: " + scenarioproject_id);
     }
   }
 
