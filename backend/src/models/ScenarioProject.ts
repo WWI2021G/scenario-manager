@@ -3,20 +3,28 @@ import { InfluencingFactor } from "./InfluencingFactor";
 import { KeyFactor } from "./KeyFactor";
 import { ProjectionBundle } from "./ProjectionBundle";
 import { ScenarioType } from "./ScenarioType";
+import { User } from "./User";
 
 export class ScenarioProject {
   private name: string;
   private description: string;
+  private user: User;
   private influencingFactors: InfluencingFactor[];
   private keyFactors: KeyFactor[];
   private futureProjections: FutureProjection[];
   private projectionBundles: ProjectionBundle[];
   private scenarioType: ScenarioType;
 
-  constructor(name: string, description: string, scenarioType: ScenarioType) {
+  constructor(
+    name: string,
+    description: string,
+    scenarioType: ScenarioType,
+    user: User,
+  ) {
     this.name = name;
     this.description = description;
     this.scenarioType = scenarioType;
+    this.user = user;
     this.influencingFactors = [];
     this.keyFactors = [];
     this.futureProjections = [];
@@ -37,6 +45,10 @@ export class ScenarioProject {
 
   updateDescription(description: string) {
     this.description = description;
+  }
+
+  getUser(): User {
+    return this.user;
   }
 
   getScenarioType(): ScenarioType {
