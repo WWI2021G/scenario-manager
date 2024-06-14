@@ -25,7 +25,7 @@ class DBService {
         table_name: "ScenarioUsers",
         query: `
 CREATE TABLE IF NOT EXISTS scenarioUser (
-su_id SERIAL PRIMARY KEY,
+scenariouser_id SERIAL PRIMARY KEY,
 userName VARCHAR(50) UNIQUE NOT NULL,
 password VARCHAR(50) NOT NULL);`,
       },
@@ -33,18 +33,18 @@ password VARCHAR(50) NOT NULL);`,
         table_name: "ScenarioProject",
         query: `
 CREATE TABLE IF NOT EXISTS ScenarioProject (
-sp_id SERIAL PRIMARY KEY,
+scenarioproject_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200),
 scenarioType VARCHAR(50) NOT NULL CHECK (scenarioType IN ('Umfeldszenario', 'LangfristigesUmfeldszenario', 'KurzfristigesUmfeldszenario', 'Systemszenario', 'RisikomeidendesSystemszenario', 'RisikosuchendesSystemszenario')),
-su_id INT,
-FOREIGN KEY (su_id) REFERENCES scenarioUser(su_id));`,
+scenariouser_id INT,
+FOREIGN KEY (scenariouser_id) REFERENCES scenarioUser(scenariouser_id));`,
       },
       {
         table_name: "InfluencingFactor",
         query: `
 CREATE TABLE IF NOT EXISTS InfluencingFactor (
-if_id SERIAL PRIMARY KEY,
+influencingfactor_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200),
 variable VARCHAR(50) CHECK (variable IN ('ControlVariable', 'EnvironmentVariable')),
@@ -54,11 +54,11 @@ influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationste
         table_name: "KeyFactor",
         query: `
 CREATE TABLE IF NOT EXISTS KeyFactor (
-kf_id INT PRIMARY KEY,
+keyfactor_id INT PRIMARY KEY,
 critical BOOLEAN,
-sp_id INT,
-FOREIGN KEY (kf_id) REFERENCES InfluencingFactor(if_id),
-FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id));`,
+scenarioproject_id INT,
+FOREIGN KEY (keyfactor_id) REFERENCES InfluencingFactor(influencingfactor_id),
+FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id));`,
       },
       {
         table_name: "properties",
@@ -67,28 +67,28 @@ CREATE TABLE IF NOT EXISTS KeyFactor (
 prop_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 cur_state VARCHAR(200),
-kf_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id));`,
+keyfactor_id INT,
+FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id));`,
       },
       {
         table_name: "FutureProjection",
         query: `
 CREATE TABLE IF NOT EXISTS FutureProjection (
-fp_id SERIAL PRIMARY KEY,
+futureprojection_id SERIAL PRIMARY KEY,
 probability VARCHAR(6) CHECK (probability IN ('low', 'medium', 'high')),
 description VARCHAR(200),
 timeFrame TIMESTAMP,
 projectionType VARCHAR(6) CHECK (projectionType IN ('Trend', 'Extreme')),
-kf_id INT,
-sp_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id),
-FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id));`,
+keyfactor_id INT,
+scenarioproject_id INT,
+FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id),
+FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id));`,
       },
       {
         table_name: "ProjectionBundle",
         query: `
 CREATE TABLE IF NOT EXISTS ProjectionBundle (
-pb_id SERIAL PRIMARY KEY,
+projectionbundle_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200));`,
       },
@@ -104,28 +104,28 @@ quality INT CHECK (quality > 0 AND quality < 8));`,
         table_name: "SP-IF",
         query: `
 CREATE TABLE IF NOT EXISTS sp_if (
-sp_id INT,
-if_id INT,
-FOREIGN KEY (sp_id) REFERENCES ScenarioProject(sp_id),
-FOREIGN KEY (if_id) REFERENCES InfluencingFactor(if_id));`,
+scenarioproject_id INT,
+influencingfactor_id INT,
+FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id),
+FOREIGN KEY (influencingfactor_id) REFERENCES InfluencingFactor(influencingfactor_id));`,
       },
       {
         table_name: "KF-RS",
         query: `
 CREATE TABLE IF NOT EXISTS kf_rs (
-kf_id INT,
+keyfactor_id INT,
 rs_id INT,
-FOREIGN KEY (kf_id) REFERENCES KeyFactor(kf_id),
+FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id),
 FOREIGN KEY (rs_id) REFERENCES RawScenario(rs_id));`,
       },
       {
         table_name: "FP-PB",
         query: `
 CREATE TABLE IF NOT EXISTS fp_pb (
-fp_id INT,
-pb_id INT,
-FOREIGN KEY (fp_id) REFERENCES FutureProjection(fp_id),
-FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
+futureprojection_id INT,
+projectionbundle_id INT,
+FOREIGN KEY (futureprojection_id) REFERENCES FutureProjection(futureprojection_id),
+FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_id));`,
       },
     ];
     try {
@@ -144,9 +144,9 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
   async getInsertUserID(user: User): Promise<number> {
     try {
       const userID: number | null = await db.oneOrNone(
-        "SELECT su_id FROM scenariouser WHERE username = $1",
+        "SELECT scenariouser_id FROM scenariouser WHERE username = $1;",
         user.getUserName(),
-        (u) => u && u.su_id,
+        (u) => u && u.scenariouser_id,
       );
       if (userID) {
         console.log("Request for exisiting user: " + user.getUserName());
@@ -154,9 +154,9 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
       }
       const createdUserID: number =
         (await db.one<number>(
-          "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING su_id",
+          "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;",
           [user.getUserName(), user.getPassword()],
-          (u) => u.su_id,
+          (u) => u.scenariouser_id,
         ))
       console.log("Created user in database with ID: " + createdUserID);
       return createdUserID;
@@ -169,7 +169,7 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
   async getUser(userID: number): Promise<User> {
     try {
       const result = await db.one<{ username: string; password: string }>(
-        "SELECT username, password FROM scenariouser WHERE su_id = $1",
+        "SELECT username, password FROM scenariouser WHERE scenariouser_id = $1;",
         userID,
       );
       const user = new User(result.username, result.password);
@@ -187,23 +187,23 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
     const userID = await this.getInsertUserID(scenarioProject.getUser());
     try {
       const scenarioProjectID: number | null = await db.oneOrNone(
-        "SELECT sp_id FROM scenarioproject WHERE name = $1",
+        "SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;",
         scenarioProject.getName(),
-        (sp) => sp && sp.sp_id,
+        (sp) => sp && sp.scenarioproject_id,
       );
       if (scenarioProjectID) {
         console.log("Request for exisiting scenarioProject: " + scenarioProject.getName());
         return scenarioProjectID;
       }
       const createdScenarioProjectID: number = (await db.one<number>(
-        "INSERT INTO scenarioproject (name, description, scenariotype, su_id) VALUES ($1, $2, $3, $4) RETURNING sp_id;",
+        "INSERT INTO scenarioproject (name, description, scenariotype, scenariouser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;",
         [
           scenarioProject.getName(),
           scenarioProject.getDescription(),
           scenarioProject.getScenarioType(),
           userID,
         ],
-        (sp) => sp.sp_id,
+        (sp) => sp.scenarioproject_id,
       ))
       console.log("Created scenarioProject in database with ID: " + createdScenarioProjectID);
       return createdScenarioProjectID;
@@ -213,21 +213,21 @@ FOREIGN KEY (pb_id) REFERENCES ProjectionBundle(pb_id));`,
     }
   }
 
-  async getScenarioProject(sp_id: number): Promise<ScenarioProject> {
+  async getScenarioProject(scenarioproject_id: number): Promise<ScenarioProject> {
     try {
-      const result = await db.one<{ name: string; description: string; scenarioType: string; su_id: number }>(
-        "SELECT name, description, scenarioType, su_id FROM scenarioproject WHERE sp_id = $1",
-        sp_id,
+      const result = await db.one<{ name: string; description: string; scenarioType: string; scenariouser_id: number }>(
+        "SELECT name, description, scenarioType, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;",
+        scenarioproject_id,
       );
-      const user = await this.getUser(result.su_id);
+      const user = await this.getUser(result.scenariouser_id);
       const scenarioType: ScenarioType = (<any>ScenarioType)[result.scenarioType];
       const scenarioProject = new ScenarioProject(result.name, result.description, scenarioType, user);
       console.log(scenarioProject);
-      console.log("Request for sp_id: " + sp_id);
+      console.log("Request for scenarioproject_id: " + scenarioproject_id);
       return scenarioProject;
     } catch (error) {
-      console.error("Error getting user from id" + sp_id, error);
-      throw new Error("Error getting user from id" + sp_id);
+      console.error("Error getting ScenarioProject from id" + scenarioproject_id, error);
+      throw new Error("Error getting ScenarioProject from id" + scenarioproject_id);
     }
   }
 
