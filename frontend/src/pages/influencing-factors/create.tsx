@@ -1,18 +1,28 @@
-"use client";
 import * as React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent
+} from "@mui/material";
 import { InfluencingFactor, InfluencingArea } from '@/types';
-import { Box, Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText, SelectChangeEvent } from '@mui/material';
 
-export default function InfluencingFactorForm() {
+export default function CreateInfluencingFactor() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
     id: 0,
     name: '',
     description: '',
     variable: '',
-    influencingArea: InfluencingArea.Handel, // Default value
+    influencingArea: InfluencingArea.Handel,
   });
-  const [influencingFactorsList, setInfluencingFactorsList] = useState<InfluencingFactor[]>([]);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
     const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
@@ -25,20 +35,17 @@ export default function InfluencingFactorForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setInfluencingFactorsList([...influencingFactorsList, { ...influencingFactor, id: influencingFactorsList.length + 1 }]);
-    setInfluencingFactor({
-      id: 0,
-      name: '',
-      description: '',
-      variable: '',
-      influencingArea: InfluencingArea.Handel, // Reset to default value
-    });
+    const storedFactors = localStorage.getItem('influencingFactors');
+    const factors = storedFactors ? JSON.parse(storedFactors) : [];
+    factors.push({ ...influencingFactor, id: factors.length + 1 });
+    localStorage.setItem('influencingFactors', JSON.stringify(factors));
+    router.push('/influencing-factors');
   };
 
   return (
     <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Add Influencing Factor
+        Create New Influencing Factor
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -85,24 +92,9 @@ export default function InfluencingFactorForm() {
           </Select>
         </FormControl>
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-          Add Influencing Factor
+          Save Influencing Factor
         </Button>
       </form>
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" component="h2">
-          Influencing Factors List
-        </Typography>
-        <List>
-          {influencingFactorsList.map((factor) => (
-            <ListItem key={factor.id}>
-              <ListItemText
-                primary={`${factor.name} - ${factor.description}`}
-                secondary={`Variable: ${factor.variable}, Influencing Areas: ${factor.influencingArea}`}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
     </Box>
   );
 }

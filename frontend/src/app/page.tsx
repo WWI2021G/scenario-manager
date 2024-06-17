@@ -8,6 +8,7 @@ import TableHover from "@/components/sub/ProjectTable";
 import ScenarioProjectForm from '../components/main/ScenarioProjectForm';
 import { ScenarioProject } from '@/types';
 
+
 export default function Home() {
   const [isProjectListEmpty, setIsProjectListEmpty] = React.useState(true);
   const [showForm, setShowForm] = React.useState(false);
@@ -28,7 +29,8 @@ export default function Home() {
       <div className="font-bold text-md">Vorhandene Projekte</div>
       <div className="flex flex-row">
         <TextField className="my-4 w-[400px]" label="Suche Projekt" variant="outlined" />
-        <Button className="text-black my-4 mx-2 w-40 justify-center border-gray-400" variant={"outlined"} startIcon={<FilterList />}>Filter</Button>
+        <Button className="text-black my-4 mx-2 w-40 justify-center border-gray-400" variant={"outlined"}
+                startIcon={<FilterList />}>Filter</Button>
       </div>
       {showForm ? (
         <ScenarioProjectForm onSave={handleSaveProject} />
