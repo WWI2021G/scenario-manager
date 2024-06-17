@@ -1,22 +1,10 @@
-export interface InfluencingFactor {
-  id: number;
-  name: string;
-  description: string;
-  variable: string;
-  influencingAreas: string;
-}
-
-export interface InfluencingFactor {
-  id: number;
-  name: string;
-  description: string;
-  variable: string;
-  influencingAreas: string;
-}
-
 export interface KeyFactor {
-  // Define the structure for KeyFactor
+  id: number;
+  name: string;
 }
+
+export type InfluencMatrix = Map<string, Map<string, number>>;
+
 
 export interface FutureProjections {
   // Define the structure for FutureProjections
@@ -34,4 +22,19 @@ export interface ScenarioProject {
   futureProjections: FutureProjections[];
   projectionBundles: ProjectionBundles[];
   scenarioType: string; // Assuming ScenarioType is a string for simplicity
+}
+
+export enum InfluencingArea {
+  Handel = "Handel",
+  Informationstechnologie = "Informationstechnologie",
+  Oekonomie = "Oekonomie",
+  Gesellschaft = "Gesellschaft",
+}
+
+export interface InfluencingFactor {
+  id: number;
+  name: string;
+  description: string;
+  variable: string;
+  influencingArea: InfluencingArea;
 }
