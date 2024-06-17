@@ -20,7 +20,7 @@ let scenarioProject = new ScenarioProject(
 let influencingFactor = new InfluencingFactor(
   "Baz",
   "Baz factors in bar",
-  Variable.ControlVaraible,
+  Variable.ControlVariable,
   InfluencingArea.Gesellschaft,
 );
 let keyFactor = new KeyFactor("Bar");

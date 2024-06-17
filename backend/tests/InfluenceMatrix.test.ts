@@ -15,13 +15,13 @@ describe("InfluenceMatrix", () => {
     factorA = new InfluencingFactor(
       "FactorA",
       "FactorA factors in A",
-      Variable.ControlVaraible,
+      Variable.ControlVariable,
       InfluencingArea.Handel,
     );
     factorB = new InfluencingFactor(
       "FactorB",
       "FactorB factors in B",
-      Variable.ControlVaraible,
+      Variable.ControlVariable,
       InfluencingArea.Ökonomie,
     );
     factorC = new InfluencingFactor(
@@ -67,7 +67,7 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVaraible,
+        Variable.ControlVariable,
         InfluencingArea.Gesellschaft,
       ),
     );
@@ -86,7 +86,7 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVaraible,
+        Variable.ControlVariable,
         InfluencingArea.Gesellschaft,
       ),
     );
@@ -107,7 +107,7 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVaraible,
+        Variable.ControlVariable,
         InfluencingArea.Gesellschaft,
       ),
     );
@@ -134,7 +134,7 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVaraible,
+        Variable.ControlVariable,
         InfluencingArea.Gesellschaft,
       ),
     );
