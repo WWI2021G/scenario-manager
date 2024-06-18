@@ -3,6 +3,9 @@ import pgPromise, { IDatabase, IMain } from "pg-promise";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { User } from "../models/User";
 import { ScenarioType } from "../models/ScenarioType";
+import { InfluencingFactor } from "../models/InfluencingFactor";
+import { Variable } from "../models/Variable";
+import { InfluencingArea } from "../models/InfluencingArea";
 
 dotenv.config();
 
@@ -25,7 +28,7 @@ class DBService {
         table_name: "ScenarioUsers",
         query: `
 CREATE TABLE IF NOT EXISTS scenarioUser (
-scenariouser_id SERIAL PRIMARY KEY,
+scenarioUser_id SERIAL PRIMARY KEY,
 userName VARCHAR(50) UNIQUE NOT NULL,
 password VARCHAR(50) NOT NULL);`,
       },
@@ -37,8 +40,8 @@ scenarioproject_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 description VARCHAR(200),
 scenarioType VARCHAR(50) NOT NULL CHECK (scenarioType IN ('Umfeldszenario', 'LangfristigesUmfeldszenario', 'KurzfristigesUmfeldszenario', 'Systemszenario', 'RisikomeidendesSystemszenario', 'RisikosuchendesSystemszenario')),
-scenariouser_id INT,
-FOREIGN KEY (scenariouser_id) REFERENCES scenarioUser(scenariouser_id));`,
+scenarioUser_id INT,
+FOREIGN KEY (scenarioUser_id) REFERENCES scenarioUser(scenarioUser_id));`,
       },
       {
         table_name: "InfluencingFactor",
@@ -137,68 +140,58 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
       return message;
     } catch (error) {
       console.error("Error setting up database", error);
-      throw new Error("Error setting up the database");
+      throw error;
     }
   }
 
-  async selectUserID(user: User): Promise<number> {
+  async insertUser(scenarioUser: User): Promise<number> {
     try {
-      const userID: number | null = await db.one<number>(
-        "SELECT scenariouser_id FROM scenariouser WHERE username = $1;",
-        user.getUserName(),
-        (u) => u && u.scenariouser_id,
+      const createdUser_id: number = await db.one<number>(
+        "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;",
+        [scenarioUser.getUserName(), scenarioUser.getPassword()],
+        (u) => u.scenariouser_id,
       );
-      console.log("Request for exisiting user: " + user.getUserName());
-      return userID;
+      console.log("Created user in database with ID: " + createdUser_id);
+      return createdUser_id;
     } catch (error) {
-      console.error("Error selecting id from user: " + user.getUserName(), error);
-      throw new Error("Error selecting id from user: " + user.getUserName());
+      console.error(
+        "Error inserting id from user: " + scenarioUser.getUserName(),
+        error,
+      );
+      throw error;
     }
   }
 
-  async insertUser(user: User): Promise<number> {
+  async selectUserID(scenarioUser: User): Promise<number> {
     try {
-      const createdUserID: number =
-        (await db.one<number>(
-          "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;",
-          [user.getUserName(), user.getPassword()],
-          (u) => u.scenariouser_id,
-        ))
-      console.log("Created user in database with ID: " + createdUserID);
-      return createdUserID;
+      const scenarioUser_id: number = await db.one<number>(
+        "SELECT scenariouser_id FROM scenariouser WHERE username = $1;",
+        scenarioUser.getUserName(),
+        (u) => u.scenariouser_id,
+      );
+      console.log("Request for existing user: " + scenarioUser.getUserName());
+      return scenarioUser_id;
     } catch (error) {
-      console.error("Error inserting id from user: " + user.getUserName(), error);
-      throw new Error("Error inserting id from user: " + user.getUserName());
+      console.error(
+        "Error selecting id from user: " + scenarioUser.getUserName(),
+        error,
+      );
+      throw error;
     }
   }
 
-  async selectUser(userID: number): Promise<User> {
+  async selectUser(scenarioUser_id: number): Promise<User> {
     try {
       const result = await db.one<{ username: string; password: string }>(
         "SELECT username, password FROM scenariouser WHERE scenariouser_id = $1;",
-        userID,
+        scenarioUser_id,
       );
       const user = new User(result.username, result.password);
-      console.log("Request for userID: " + userID);
+      console.log("Request for scenarioUser_id: " + scenarioUser_id);
       return user;
     } catch (error) {
-      console.error("Error getting user from id: " + userID, error);
-      throw new Error("Error getting user from id: " + userID);
-    }
-  }
-
-  async selectScenarioProjectID(scenarioProject: ScenarioProject): Promise<number> {
-    try {
-      const scenarioProjectID: number = await db.one<number>(
-        "SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;",
-        scenarioProject.getName(),
-        (sp) => sp && sp.scenarioproject_id,
-      );
-      console.log("Request for exisiting scenarioProject: " + scenarioProject.getName());
-      return scenarioProjectID;
-    } catch (error) {
-      console.error("Error selecting scenarioproject_id for Scenario: " + scenarioProject.getName(), error);
-      throw new Error("Error selecting scenarioproject_id for Scenario: " + scenarioProject.getName());
+      console.error("Error getting user from ID: " + scenarioUser_id, error);
+      throw error;
     }
   }
 
@@ -206,42 +199,366 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
     scenarioProject: ScenarioProject,
   ): Promise<number> {
     try {
-      console.log(scenarioProject.getUser());
-      const userID = await this.selectUserID(scenarioProject.getUser());
-      console.log(userID);
-      const createdScenarioProjectID: number = (await db.one<number>(
-        "INSERT INTO scenarioproject (name, description, scenariotype, scenariouser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;",
+      const scenarioUser_id = await this.selectUserID(
+        scenarioProject.getUser(),
+      );
+      const createdScenarioProject_id: number = await db.one<number>(
+        "INSERT INTO scenarioproject (name, description, scenariotype, scenarioUser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;",
         [
           scenarioProject.getName(),
           scenarioProject.getDescription(),
           scenarioProject.getScenarioType(),
-          userID,
+          scenarioUser_id,
         ],
         (sp) => sp.scenarioproject_id,
-      ))
-      console.log("Created scenarioProject in database with id: " + createdScenarioProjectID);
-      return createdScenarioProjectID;
+      );
+      console.log(
+        "Created scenarioProject in database with id: " +
+          createdScenarioProject_id,
+      );
+      return createdScenarioProject_id;
     } catch (error) {
       console.error("Error inserting ScenarioProject", error);
-      throw new Error("Error inserting ScenarioProject");
+      throw error;
     }
   }
 
-  async selectScenarioProject(scenarioproject_id: number): Promise<ScenarioProject> {
+  async selectScenarioProjectID(
+    scenarioProject: ScenarioProject,
+  ): Promise<number> {
     try {
-      const result = await db.one<{ name: string; description: string; scenarioType: string; scenariouser_id: number }>(
-        "SELECT name, description, scenarioType, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;",
-        scenarioproject_id,
+      const scenarioProject_id: number = await db.one<number>(
+        "SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;",
+        scenarioProject.getName(),
+        (sp) => sp.scenarioproject_id,
       );
-      const user = await this.selectUser(result.scenariouser_id);
-      const scenarioType: ScenarioType = (<any>ScenarioType)[result.scenarioType];
-      const scenarioProject = new ScenarioProject(result.name, result.description, scenarioType, user);
+      console.log(
+        "Request for exisiting scenarioProject: " + scenarioProject.getName(),
+      );
+      return scenarioProject_id;
+    } catch (error) {
+      console.error(
+        "Error selecting scenarioproject_id for Scenario: " +
+          scenarioProject.getName(),
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectScenarioProject(
+    scenarioProject_id: number,
+  ): Promise<ScenarioProject> {
+    try {
+      const result = await db.one<{
+        name: string;
+        description: string;
+        scenariotype: string;
+        scenariouser_id: number;
+      }>(
+        "SELECT name, description, scenariotype, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;",
+        scenarioProject_id,
+      );
+      const scenarioUser = await this.selectUser(result.scenariouser_id);
+      const scenarioType: ScenarioType = result.scenariotype as ScenarioType;
+      const scenarioProject = new ScenarioProject(
+        result.name,
+        result.description,
+        scenarioType,
+        scenarioUser,
+      );
       console.log(scenarioProject);
-      console.log("Request for scenarioproject_id: " + scenarioproject_id);
+      console.log(
+        "Request for existing scenarioProject_id: " + scenarioProject_id,
+      );
       return scenarioProject;
     } catch (error) {
-      console.error("Error selecting ScenarioProject from id: " + scenarioproject_id, error);
-      throw new Error("Error selecting ScenarioProject from id: " + scenarioproject_id);
+      console.error(
+        "Error selecting ScenarioProject from ID: " + scenarioProject_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectAllScenarioProjectsForUser(
+    scenarioUser_id: number,
+  ): Promise<ScenarioProject[]> {
+    try {
+      var results: ScenarioProject[] = [];
+      const query_results = await db.any<{
+        name: string;
+        description: string;
+        scenarioType: string;
+      }>(
+        "SELECT name, description, scenarioType FROM scenarioproject WHERE scenarioUser_id = $1;",
+        scenarioUser_id,
+      );
+      const user = await this.selectUser(scenarioUser_id);
+      query_results.forEach((project) => {
+        const scenarioType: ScenarioType = (<any>ScenarioType)[
+          project.scenarioType
+        ];
+        const scenarioProject = new ScenarioProject(
+          project.name,
+          project.description,
+          scenarioType,
+          user,
+        );
+        console.log(scenarioProject);
+        results.push(scenarioProject);
+      });
+      console.log(
+        "Request for all ScenarioProjects with scenarioUser_id: " +
+          scenarioUser_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting ScenarioProject for scenarioUser_id: " +
+          scenarioUser_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async insertInfluencingFactor(
+    scenarioProject_id: number,
+    influencingFactor: InfluencingFactor,
+  ): Promise<number> {
+    try {
+      const validate: number | null = await db.oneOrNone(
+        "SELECT scenarioproject_id FROM scenarioproject WHERE scenarioproject_id = $1",
+        scenarioProject_id,
+      );
+      if (validate == null) {
+        console.error(
+          "ScenarioProject must exist before inserting InfluencingFactor",
+        );
+        throw new Error(
+          "ScenarioProject must exist before inserting InfluencingFactor",
+        );
+      }
+      const createdInfluencingFactor_id: number = await db.one<number>(
+        "INSERT INTO influencingfactor (name, description, variable, influencingArea) VALUES ($1, $2, $3, $4) RETURNING influencingfactor_id;",
+        [
+          influencingFactor.getName(),
+          influencingFactor.getDescription(),
+          influencingFactor.getVariable(),
+          influencingFactor.getInfluencingArea(),
+        ],
+        (influencingFactor) => influencingFactor.influencingfactor_id,
+      );
+      await this.connectInfluencingFactorAndScenarioProject(
+        createdInfluencingFactor_id,
+        scenarioProject_id,
+      );
+      console.log(
+        "Created influencingFactor in database with id: " +
+          createdInfluencingFactor_id,
+      );
+      return createdInfluencingFactor_id;
+    } catch (error: any) {
+      console.error("Error inserting InfluencingFactor", error);
+      throw error;
+    }
+  }
+
+  async connectInfluencingFactorAndScenarioProject(
+    influencingFactor_id: number,
+    scenarioProject_id: number,
+  ): Promise<string> {
+    try {
+      await db.none(
+        "INSERT INTO sp_if (scenarioProject_id, influencingfactor_id) VALUES ($1, $2);",
+        [scenarioProject_id, influencingFactor_id],
+      );
+      return (
+        "Successfully connected influencingFactor_id: " +
+        influencingFactor_id +
+        " and scenarioProject_id: " +
+        scenarioProject_id
+      );
+    } catch (error) {
+      console.error(
+        "Error connecting InfluencingFactor and ScenarioProject",
+        error,
+      );
+      throw {
+        message: "Error connecting InfluencingFactor and ScenarioProject",
+        name: "ConnectionError",
+      };
+    }
+  }
+
+  async selectInfluencingFactorID(
+    influencingFactor: InfluencingFactor,
+  ): Promise<number> {
+    try {
+      const influencingFactor_id: number = await db.one<number>(
+        "SELECT influencingfactor_id FROM influencingfactor WHERE name = $1;",
+        influencingFactor.getName(),
+      );
+      console.log(
+        "Request for existing influencingFactor: " +
+          influencingFactor.getName(),
+      );
+      return influencingFactor_id;
+    } catch (error) {
+      console.error(
+        "Error selecting influencingFactor_id for InfluencingFactor: " +
+          influencingFactor.getName(),
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectInfluencingFactor(
+    influencingFactor_id: number,
+  ): Promise<InfluencingFactor> {
+    try {
+      const result = await db.one<{
+        name: string;
+        description: string;
+        variable: string;
+        influencingarea: string;
+      }>(
+        "SELECT name, description, variable, influencingarea FROM influencingfactor WHERE influencingfactor_id = $1;",
+        influencingFactor_id,
+      );
+      const variable: Variable = (<any>Variable)[result.variable];
+      const influencingArea: InfluencingArea = (<any>InfluencingArea)[
+        result.influencingarea
+      ];
+      const influencingFactor: InfluencingFactor = new InfluencingFactor(
+        result.name,
+        result.description,
+        variable,
+        influencingArea,
+      );
+      console.log(
+        "Request for existing influencingFactor_id: " + influencingFactor_id,
+      );
+      return influencingFactor;
+    } catch (error) {
+      console.error(
+        "Error selecting influencingFactor from ID: " + influencingFactor_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectInfluencingFactorByName(
+    influencingFactor_name: string,
+  ): Promise<InfluencingFactor> {
+    try {
+      const result = await db.one<{
+        name: string;
+        description: string;
+        variable: string;
+        influencingarea: string;
+      }>(
+        "SELECT name, description, variable, influencingarea FROM influencingfactor WHERE name = $1;",
+        influencingFactor_name,
+      );
+      const variable: Variable = result.variable as Variable;
+      const influencingArea: InfluencingArea =
+        result.influencingarea as InfluencingArea;
+      const influencingFactor: InfluencingFactor = new InfluencingFactor(
+        result.name,
+        result.description,
+        variable,
+        influencingArea,
+      );
+      console.log(
+        "Request for existing influencingFactor by name: " +
+          influencingFactor_name,
+      );
+      return influencingFactor;
+    } catch (error) {
+      console.error(
+        "Error selecting influencingFactor for InfluencingFactor: " +
+          influencingFactor_name,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectInfluencingFactorsForScenarioProject(
+    scenarioProject_id: number,
+  ): Promise<InfluencingFactor[]> {
+    try {
+      var results: InfluencingFactor[] = [];
+      const query_results = await db.any<{
+        name: string;
+        description: string;
+        variable: string;
+        influencingarea: string;
+      }>(
+        "SELECT i.* FROM influencingfactor i JOIN sp_if isp ON i.influencingfactor_id = isp.influencingfactor_id JOIN scenarioProject sp ON sp.scenarioproject_id = isp.scenarioproject_id WHERE sp.scenarioproject_id = $1;",
+        scenarioProject_id,
+      );
+      query_results.forEach((factor) => {
+        const variable: Variable = factor.variable as Variable;
+        const influencingArea: InfluencingArea =
+          factor.influencingarea as InfluencingArea;
+        const influencingFactor: InfluencingFactor = new InfluencingFactor(
+          factor.name,
+          factor.description,
+          variable,
+          influencingArea,
+        );
+        console.log(influencingFactor);
+        results.push(influencingFactor);
+      });
+      console.log(
+        "Request for all InfluencingFactors with scenarioProject_id: " +
+          scenarioProject_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting all InfluencingFactors for scenarioProject_id: " +
+          scenarioProject_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectAllInfluencingFactors(): Promise<InfluencingFactor[]> {
+    try {
+      var results: InfluencingFactor[] = [];
+      const query_results = await db.any<{
+        name: string;
+        description: string;
+        variable: string;
+        influencingarea: string;
+      }>(
+        "SELECT name, description, variable, influencingarea FROM influencingfactor;",
+      );
+      query_results.forEach((factor) => {
+        const variable: Variable = factor.variable as Variable;
+        const influencingArea: InfluencingArea =
+          factor.influencingarea as InfluencingArea;
+        const influencingFactor: InfluencingFactor = new InfluencingFactor(
+          factor.name,
+          factor.description,
+          variable,
+          influencingArea,
+        );
+        console.log(influencingFactor);
+        results.push(influencingFactor);
+      });
+      console.log("Request for all InfluencingFactors");
+      return results;
+    } catch (error) {
+      console.error("Error selecting all InfluencingFactors");
+      throw error;
     }
   }
 
@@ -257,7 +574,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
       return message;
     } catch (error) {
       console.error("Error droping all tables in the database", error);
-      throw new Error("Error droping all tables in the database");
+      throw error;
     }
   }
 }
