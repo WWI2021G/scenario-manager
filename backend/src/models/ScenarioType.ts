@@ -1,8 +1,8 @@
 export enum ScenarioType {
-  Umfeldszenario,
-  LangfristigesUmfeldszenario,
-  KurzfristigesUmfeldszenario,
-  Systemszenario,
-  RisikomeidendesSystemszenario,
-  RisikosuchendesSystemszenario,
+  Umfeldszenario = "Umfeldszenario",
+  LangfristigesUmfeldszenario = "LangfristigesUmfeldszenario",
+  KurzfristigesUmfeldszenario = "KurzfristigesUmfeldszenario",
+  Systemszenario = "Systemszenario",
+  RisikomeidendesSystemszenario = "RisikomeidendesSystemszenario",
+  RisikosuchendesSystemszenario = "RisikosuchendesSystemszenario",
 }
