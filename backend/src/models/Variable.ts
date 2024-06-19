@@ -1,4 +1,4 @@
 export enum Variable {
-  ControlVaraible,
-  EnvironmentVariable,
+  ControlVariable = "ControlVariable",
+  EnvironmentVariable = "EnvironmentVariable",
 }

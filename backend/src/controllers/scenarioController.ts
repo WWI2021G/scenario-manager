@@ -15,7 +15,7 @@ class ScenarioController {
     const influencingFactor = new InfluencingFactor(
       name,
       description,
-      Variable.ControlVaraible,
+      Variable.ControlVariable,
       influencingArea,
     );
     console.log(scenarioService.successMessage());
