@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Box, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { KeyFactor, InfluencMatrix, InfluencingArea } from '@/types';
+import { KeyFactor, InfluencMatrix } from '@/types';
 
 const keyFactors: KeyFactor[] = [
   { id: 1, name: 'Factor1' },
@@ -39,10 +39,10 @@ const InfluencMatrixComponent: React.FC = () => {
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Einflussmatrix
+        Influence Matrix
       </Typography>
       <TableContainer>
-        <Table>
+        <Table sx={{ borderCollapse: 'collapse' }}>
           <TableHead>
             <TableRow>
               <TableCell sx={{ padding: '4px' }}></TableCell>
@@ -56,11 +56,11 @@ const InfluencMatrixComponent: React.FC = () => {
           <TableBody>
             {keyFactors.map((rowFactor) => (
               <TableRow key={rowFactor.id}>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" sx={{ padding: '4px' }}>
                   {rowFactor.name}
                 </TableCell>
                 {keyFactors.map((colFactor) => (
-                  <TableCell key={colFactor.id} align="center">
+                  <TableCell key={colFactor.id} align="center" sx={{ padding: '4px' }}>
                     {rowFactor.name === colFactor.name ? (
                       '-'
                     ) : (
@@ -68,6 +68,7 @@ const InfluencMatrixComponent: React.FC = () => {
                         value={matrix.get(rowFactor.name)?.get(colFactor.name) || 0}
                         onChange={(e) => handleChange(rowFactor.name, colFactor.name, Number(e.target.value))}
                         displayEmpty
+                        sx={{ padding: '0', minWidth: '50px' }}
                       >
                         {[0, 1, 2, 3].map((val) => (
                           <MenuItem key={val} value={val}>
