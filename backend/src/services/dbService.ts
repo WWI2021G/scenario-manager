@@ -147,7 +147,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   async insertUser(scenarioUser: User): Promise<number> {
     try {
       const createdUser_id: number = await db.one<number>(
-        "INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;",
+        `INSERT INTO scenariouser(username, password) VALUES($1, $2) RETURNING scenariouser_id;`,
         [scenarioUser.getUserName(), scenarioUser.getPassword()],
         (u) => u.scenariouser_id,
       );
@@ -165,7 +165,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   async selectUserID(scenarioUser: User): Promise<number> {
     try {
       const scenarioUser_id: number = await db.one<number>(
-        "SELECT scenariouser_id FROM scenariouser WHERE username = $1;",
+        `SELECT scenariouser_id FROM scenariouser WHERE username = $1;`,
         scenarioUser.getUserName(),
         (u) => u.scenariouser_id,
       );
@@ -183,7 +183,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   async selectUser(scenarioUser_id: number): Promise<User> {
     try {
       const result = await db.one<{ username: string; password: string }>(
-        "SELECT username, password FROM scenariouser WHERE scenariouser_id = $1;",
+        `SELECT username, password FROM scenariouser WHERE scenariouser_id = $1;`,
         scenarioUser_id,
       );
       const user = new User(result.username, result.password);
@@ -203,7 +203,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         scenarioProject.getUser(),
       );
       const createdScenarioProject_id: number = await db.one<number>(
-        "INSERT INTO scenarioproject (name, description, scenariotype, scenarioUser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;",
+        `INSERT INTO scenarioproject (name, description, scenariotype, scenarioUser_id) VALUES ($1, $2, $3, $4) RETURNING scenarioproject_id;`,
         [
           scenarioProject.getName(),
           scenarioProject.getDescription(),
@@ -228,7 +228,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   ): Promise<number> {
     try {
       const scenarioProject_id: number = await db.one<number>(
-        "SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;",
+        `SELECT scenarioproject_id FROM scenarioproject WHERE name = $1;`,
         scenarioProject.getName(),
         (sp) => sp.scenarioproject_id,
       );
@@ -256,7 +256,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         scenariotype: string;
         scenariouser_id: number;
       }>(
-        "SELECT name, description, scenariotype, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;",
+        `SELECT name, description, scenariotype, scenariouser_id FROM scenarioproject WHERE scenarioproject_id = $1;`,
         scenarioProject_id,
       );
       const scenarioUser = await this.selectUser(result.scenariouser_id);
@@ -291,7 +291,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         description: string;
         scenarioType: string;
       }>(
-        "SELECT name, description, scenarioType FROM scenarioproject WHERE scenarioUser_id = $1;",
+        `SELECT name, description, scenarioType FROM scenarioproject WHERE scenarioUser_id = $1;`,
         scenarioUser_id,
       );
       const user = await this.selectUser(scenarioUser_id);
@@ -329,7 +329,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   ): Promise<number> {
     try {
       const validate: number | null = await db.oneOrNone(
-        "SELECT scenarioproject_id FROM scenarioproject WHERE scenarioproject_id = $1",
+        `SELECT scenarioproject_id FROM scenarioproject WHERE scenarioproject_id = $1`,
         scenarioProject_id,
       );
       if (validate == null) {
@@ -371,7 +371,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   ): Promise<string> {
     try {
       await db.none(
-        "INSERT INTO sp_if (scenarioProject_id, influencingfactor_id) VALUES ($1, $2);",
+        `INSERT INTO sp_if (scenarioProject_id, influencingfactor_id) VALUES ($1, $2);`,
         [scenarioProject_id, influencingFactor_id],
       );
       return (
@@ -397,7 +397,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   ): Promise<number> {
     try {
       const influencingFactor_id: number = await db.one<number>(
-        "SELECT influencingfactor_id FROM influencingfactor WHERE name = $1;",
+        `SELECT influencingfactor_id FROM influencingfactor WHERE name = $1;`,
         influencingFactor.getName(),
       );
       console.log(
@@ -425,7 +425,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         variable: string;
         influencingarea: string;
       }>(
-        "SELECT name, description, variable, influencingarea FROM influencingfactor WHERE influencingfactor_id = $1;",
+        `SELECT name, description, variable, influencingarea FROM influencingfactor WHERE influencingfactor_id = $1;`,
         influencingFactor_id,
       );
       const variable: Variable = (<any>Variable)[result.variable];
@@ -461,7 +461,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         variable: string;
         influencingarea: string;
       }>(
-        "SELECT name, description, variable, influencingarea FROM influencingfactor WHERE name = $1;",
+        `SELECT name, description, variable, influencingarea FROM influencingfactor WHERE name = $1;`,
         influencingFactor_name,
       );
       const variable: Variable = result.variable as Variable;
@@ -499,7 +499,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         variable: string;
         influencingarea: string;
       }>(
-        "SELECT i.* FROM influencingfactor i JOIN sp_if isp ON i.influencingfactor_id = isp.influencingfactor_id JOIN scenarioProject sp ON sp.scenarioproject_id = isp.scenarioproject_id WHERE sp.scenarioproject_id = $1;",
+        `SELECT i.* FROM influencingfactor i JOIN sp_if isp ON i.influencingfactor_id = isp.influencingfactor_id JOIN scenarioProject sp ON sp.scenarioproject_id = isp.scenarioproject_id WHERE sp.scenarioproject_id = $1;`,
         scenarioProject_id,
       );
       query_results.forEach((factor) => {
@@ -539,7 +539,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         variable: string;
         influencingarea: string;
       }>(
-        "SELECT name, description, variable, influencingarea FROM influencingfactor;",
+        `SELECT name, description, variable, influencingarea FROM influencingfactor;`,
       );
       query_results.forEach((factor) => {
         const variable: Variable = factor.variable as Variable;
@@ -565,7 +565,7 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
   async redoDB(): Promise<string> {
     try {
       await db.none(
-        "DO $$ DECLARE r RECORD; BEGIN FOR r IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE') LOOP EXECUTE 'DROP TABLE IF EXISTS ' || r.table_name || ' CASCADE;'; END LOOP; END $$;",
+        `DO $$ DECLARE r RECORD; BEGIN FOR r IN (SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE') LOOP EXECUTE 'DROP TABLE IF EXISTS ' || r.table_name || ' CASCADE;'; END LOOP; END $$;`,
       );
       console.log("Successfully dropped all databases");
       await this.setupDB();
