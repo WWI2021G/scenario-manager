@@ -1,6 +1,10 @@
 export interface KeyFactor {
   id: number;
-  name: string;
+  title: string;
+  description: string;
+  property: string;
+  currentStateDescription: string;
+  influencingArea: InfluencingArea;
 }
 
 export type InfluencMatrix = Map<string, Map<string, number>>;
