@@ -12,6 +12,7 @@ interface KeyFactorFormProps {
 
 const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => {
   const [keyFactor, setKeyFactor] = useState<KeyFactor>({
+    id: 0,
     title: '',
     description: '',
     property: '',
