@@ -1,4 +1,5 @@
 export interface KeyFactor {
+  id: number;
   title: string;
   description: string;
   property: string;
