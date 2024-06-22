@@ -64,9 +64,9 @@ FOREIGN KEY (keyfactor_id) REFERENCES InfluencingFactor(influencingfactor_id),
 FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id));`,
       },
       {
-        table_name: "properties",
+        table_name: "Properties",
         query: `
-CREATE TABLE IF NOT EXISTS KeyFactor (
+CREATE TABLE IF NOT EXISTS properties (
 prop_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
 cur_state VARCHAR(200),
