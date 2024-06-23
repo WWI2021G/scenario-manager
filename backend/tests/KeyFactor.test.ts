@@ -2,15 +2,16 @@ import { describe } from "node:test";
 import { KeyFactor } from "../src/models/KeyFactor";
 import { Property } from "../src/models/Property";
 
-let keyFactor = new KeyFactor("Foo");
-let propertyA = new Property("Bar", "Bar is currently looking up");
-let propertyB = new Property("Baz", "Baz is currently looking down");
-let propertyC = new Property("Faz", "Faz is currently looking steady");
+let keyFactor = new KeyFactor("Foo", "Foo is currently like this...");
+let propertyA = new Property("Bar");
+let propertyB = new Property("Baz");
+let propertyC = new Property("Faz");
 
 describe("Testing KeyFactor class", () => {
   test("Test constructor", () => {
     expect(keyFactor.getName()).toBe("Foo");
     expect(keyFactor.getCritical()).toBe(false);
+    expect(keyFactor.getCurState()).toBe("Foo is currently like this...");
     expect(keyFactor.getProperties()).toStrictEqual([undefined, undefined]);
   });
 
@@ -22,6 +23,11 @@ describe("Testing KeyFactor class", () => {
   test("Test updateCritical", () => {
     keyFactor.updateCritical(true);
     expect(keyFactor.getCritical()).toBe(true);
+  });
+
+  test("Test updateCurState", () => {
+    keyFactor.updateCurState("Bar is currently looking down");
+    expect(keyFactor.getCurState()).toBe("Bar is currently looking down");
   });
 
   test("Test addProperty", () => {

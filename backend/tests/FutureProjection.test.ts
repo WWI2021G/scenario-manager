@@ -4,7 +4,7 @@ import { KeyFactor } from "../src/models/KeyFactor";
 import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 
-let keyFactor = new KeyFactor("Bar");
+let keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",
@@ -37,9 +37,11 @@ describe("Testing FutureProjection class", () => {
   });
 
   test("Test updateKeyFactor", () => {
-    futureProjection.updateKeyFactor(new KeyFactor("Key2"));
+    futureProjection.updateKeyFactor(
+      new KeyFactor("Key2", "Key2 is actually this..."),
+    );
     expect(futureProjection.getKeyFactor()).toStrictEqual(
-      new KeyFactor("Key2"),
+      new KeyFactor("Key2", "Key2 is actually this..."),
     );
   });
 

@@ -23,7 +23,7 @@ let influencingFactor = new InfluencingFactor(
   Variable.ControlVariable,
   InfluencingArea.Gesellschaft,
 );
-let keyFactor = new KeyFactor("Bar");
+const keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",

@@ -6,7 +6,7 @@ import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 
 let projectionBundle = new ProjectionBundle("Buz", "Buz bundles Projections");
-let keyFactor = new KeyFactor("Bar");
+let keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",

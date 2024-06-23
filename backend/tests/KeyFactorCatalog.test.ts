@@ -2,7 +2,7 @@ import { describe } from "node:test";
 import { KeyFactorCatalog } from "../src/models/KeyFactorCatalog";
 import { KeyFactor } from "../src/models/KeyFactor";
 
-let keyFactor = new KeyFactor("Bar");
+let keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let keyFactorCatalog = new KeyFactorCatalog(7);
 
 describe("Testing KeyFactorCatalog class", () => {
