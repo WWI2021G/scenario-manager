@@ -60,18 +60,11 @@ CREATE TABLE IF NOT EXISTS KeyFactor (
 keyfactor_id INT PRIMARY KEY,
 critical BOOLEAN,
 cur_state VARCHAR(200),
+prop_one VARCHAR(50) UNIQUE,
+prop_two VARCHAR(50) UNIQUE,
 scenarioproject_id INT,
 FOREIGN KEY (keyfactor_id) REFERENCES InfluencingFactor(influencingfactor_id),
 FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id));`,
-      },
-      {
-        table_name: "Property",
-        query: `
-CREATE TABLE IF NOT EXISTS property (
-prop_id SERIAL PRIMARY KEY,
-name VARCHAR(50) UNIQUE NOT NULL,
-keyfactor_id INT,
-FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id));`,
       },
       {
         table_name: "FutureProjection",

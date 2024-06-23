@@ -3,9 +3,9 @@ import { KeyFactor } from "../src/models/KeyFactor";
 import { Property } from "../src/models/Property";
 
 let keyFactor = new KeyFactor("Foo", "Foo is currently like this...");
-let propertyA = new Property("Bar");
-let propertyB = new Property("Baz");
-let propertyC = new Property("Faz");
+let propertyA = "Bar";
+let propertyB = "Baz";
+let propertyC = "Faz";
 
 describe("Testing KeyFactor class", () => {
   test("Test constructor", () => {

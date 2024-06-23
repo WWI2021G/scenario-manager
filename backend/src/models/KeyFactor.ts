@@ -1,10 +1,8 @@
-import { Property } from "./Property";
-
 export class KeyFactor {
   private name: string;
   private critical: boolean;
   private curState: string;
-  private properties: [Property | undefined, Property | undefined];
+  private properties: [string | undefined, string | undefined];
 
   constructor(name: string, curState: string) {
     this.name = name;
@@ -37,18 +35,15 @@ export class KeyFactor {
     this.curState = curState;
   }
 
-  getProperties(): [Property | undefined, Property | undefined] {
+  getProperties(): [string | undefined, string | undefined] {
     return this.properties;
   }
 
-  setProperties(
-    propertyA: Property | undefined,
-    propertyB: Property | undefined,
-  ) {
+  setProperties(propertyA: string | undefined, propertyB: string | undefined) {
     this.properties = [propertyA, propertyB];
   }
 
-  updateProperty(propNum: number, property: Property | undefined) {
+  updateProperty(propNum: number, property: string | undefined) {
     this.properties[propNum] = property;
   }
 }
