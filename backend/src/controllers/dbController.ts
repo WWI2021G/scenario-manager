@@ -1,5 +1,6 @@
 import { InfluencingArea } from "../models/InfluencingArea";
 import { InfluencingFactor } from "../models/InfluencingFactor";
+import { KeyFactor } from "../models/KeyFactor";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { ScenarioType } from "../models/ScenarioType";
 import { User } from "../models/User";
@@ -244,6 +245,160 @@ class DBController {
       const influencingFactors: InfluencingFactor[] =
         await dbService.selectAllInfluencingFactors();
       res.status(200).json(influencingFactors);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addKeyFactor(req: Request, res: Response) {
+    const {
+      scenarioProject_id,
+      influencingFactor_id,
+    }: { scenarioProject_id: number; influencingFactor_id: number } = req.body;
+    try {
+      const keyFactor_id = await dbService.insertKeyFactor(
+        scenarioProject_id,
+        influencingFactor_id,
+      );
+      res.status(200).json({ keyFactor_id: keyFactor_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setCurState(req: Request, res: Response) {
+    const { name, cur_state }: { name: string; cur_state: string } = req.body;
+    try {
+      const message = await dbService.updateCurState(
+        new KeyFactor(name, cur_state),
+      );
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setCritical(req: Request, res: Response) {
+    const {
+      name,
+      critical,
+      cur_state,
+    }: { name: string; critical: boolean; cur_state: string } = req.body;
+    try {
+      const keyFactor = new KeyFactor(name, cur_state);
+      keyFactor.updateCritical(critical);
+      const message = await dbService.updateCritical(keyFactor);
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getCritical(req: Request, res: Response) {
+    const { name, cur_state }: { name: string; cur_state: string } = req.body;
+    try {
+      const critical = await dbService.selectCritical(
+        new KeyFactor(name, cur_state),
+      );
+      res.status(200).json({ critical: critical });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getKeyFactorID(req: Request, res: Response) {
+    const { name, cur_state }: { name: string; cur_state: string } = req.body;
+    try {
+      const keyFactor_id: number = await dbService.selectKeyFactorID(
+        new KeyFactor(name, cur_state),
+      );
+      res.status(200).json({ keyFactor_id: keyFactor_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getKeyFactor(req: Request, res: Response) {
+    try {
+      const keyFactor: KeyFactor = await dbService.selectKeyFactor(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json(keyFactor);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getKeyFactorByName(req: Request, res: Response) {
+    const { name }: { name: string } = req.body;
+    try {
+      const keyFactor: KeyFactor = await dbService.selectKeyFactorByName(name);
+      res.status(200).json(keyFactor);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getKeyFactorsForScenarioProject(req: Request, res: Response) {
+    try {
+      const result = await dbService.selectKeyFactorsForScenarioProject(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json(result);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getPropertyOne(req: Request, res: Response) {
+    try {
+      const result = await dbService.selectPropertyOne(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ propertyOne: result });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setPropertyOne(req: Request, res: Response) {
+    try {
+      const {
+        keyfactor_id,
+        prop_name,
+      }: { keyfactor_id: number; prop_name: string } = req.body;
+      const message = await dbService.insertPropertyOne(
+        keyfactor_id,
+        prop_name,
+      );
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getPropertyTwo(req: Request, res: Response) {
+    try {
+      const result = await dbService.selectPropertyTwo(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ propertyTwo: result });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setPropertyTwo(req: Request, res: Response) {
+    try {
+      const {
+        keyfactor_id,
+        prop_name,
+      }: { keyfactor_id: number; prop_name: string } = req.body;
+      const message = await dbService.insertPropertyTwo(
+        keyfactor_id,
+        prop_name,
+      );
+      res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
     }

@@ -18,6 +18,19 @@ router.post("/if/add", dbController.addInfluencingFactor);
 router.post("/if/link", dbController.linkInfluencingFactorAndScenarioProject);
 router.post("/ifid", dbController.getInfluencingFactorID);
 router.post("/ifname", dbController.getInfluencingFactorByName);
+router.get("/kf/:id", dbController.getKeyFactor);
+router.get("/kf/sp/:id", dbController.getKeyFactorsForScenarioProject);
+router.post("/kf/add", dbController.addKeyFactor);
+router.post("/kf/cstate", dbController.setCurState);
+router.post("/kf/critical", dbController.getCritical);
+router.post("/kf/critical/update", dbController.setCritical);
+router.post("/kfid", dbController.getKeyFactorID);
+router.post("/kfname", dbController.getKeyFactorByName);
+router.get("/kf/prop1/:id", dbController.getPropertyOne);
+router.get("/kf/prop2/:id", dbController.getPropertyTwo);
+router.post("/kf/prop1/update", dbController.setPropertyOne);
+router.post("/kf/prop2/update", dbController.setPropertyTwo);
+
 // WARN: Only for development purposes - will destroy everything in database <2024-06-13>
 router.get("/redoDB", dbController.redoDB);
 

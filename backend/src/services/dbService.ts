@@ -6,6 +6,7 @@ import { ScenarioType } from "../models/ScenarioType";
 import { InfluencingFactor } from "../models/InfluencingFactor";
 import { Variable } from "../models/Variable";
 import { InfluencingArea } from "../models/InfluencingArea";
+import { KeyFactor } from "../models/KeyFactor";
 
 dotenv.config();
 
@@ -551,6 +552,297 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
       return results;
     } catch (error) {
       console.error("Error selecting all InfluencingFactors");
+      throw error;
+    }
+  }
+
+  async insertKeyFactor(
+    scenarioProject_id: number,
+    influencingFactor_id: number,
+  ): Promise<number> {
+    try {
+      const keyFactor_id = await db.one<number>(
+        `INSERT INTO keyfactor(keyfactor_id, critical, scenarioproject_id) VALUES($1, $2, $3) RETURNING keyfactor_id;`,
+        [influencingFactor_id, false, scenarioProject_id],
+        (kf) => kf.keyfactor_id,
+      );
+      console.log("Created KeyFactor in database with ID: " + keyFactor_id);
+      return keyFactor_id;
+    } catch (error) {
+      console.error("Error inserting KeyFactor");
+      throw error;
+    }
+  }
+
+  async updateCurState(keyFactor: KeyFactor): Promise<string> {
+    try {
+      await db.none(
+        `
+UPDATE keyfactor k
+SET cur_state = $1
+FROM influencingfactor i
+WHERE k.keyfactor_id = i.influencingfactor_id AND i.name = $2;`,
+        [keyFactor.getCurState(), keyFactor.getName()],
+      );
+      const message =
+        "Successfully updated cur_state for KeyFactor: " + keyFactor.getName();
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error inserting cur_state for KeyFactor: " + keyFactor.getName(),
+      );
+      throw error;
+    }
+  }
+
+  async updateCritical(keyFactor: KeyFactor): Promise<string> {
+    try {
+      await db.none(
+        `
+UPDATE keyfactor k
+SET critical = $1
+FROM influencingfactor i
+WHERE k.keyfactor_id = i.influencingfactor_id AND i.name = $2;`,
+        [keyFactor.getCritical(), keyFactor.getName()],
+      );
+      const message =
+        "Successfully updated critical for KeyFactor: " + keyFactor.getName();
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error updating critical for KeyFactor: " + keyFactor.getName(),
+      );
+      throw error;
+    }
+  }
+
+  async selectCritical(keyFactor: KeyFactor): Promise<boolean> {
+    try {
+      const critical = await db.one<boolean>(
+        `
+SELECT critical FROM influencingfactor
+JOIN keyfactor ON influencingfactor_id = keyfactor_id
+WHERE name = $1;`,
+        keyFactor.getName(),
+        (crit) => crit.critical,
+      );
+      return critical;
+    } catch (error) {
+      console.error("Error selecting critical for KeyFactor: " + keyFactor);
+      throw error;
+    }
+  }
+
+  async selectKeyFactorID(keyFactor: KeyFactor): Promise<number> {
+    try {
+      const keyFactor_id: number = await db.one<number>(
+        `
+SELECT keyfactor_id FROM influencingfactor
+JOIN keyfactor ON influencingfactor_id = keyfactor_id
+WHERE name = $1;`,
+        keyFactor.getName(),
+        (kf) => kf.keyfactor_id,
+      );
+      console.log("Request for existing KeyFactor: " + keyFactor.getName());
+      return keyFactor_id;
+    } catch (error) {
+      console.error("Error selecting keyFactor_id for KeyFactor: " + keyFactor);
+      throw error;
+    }
+  }
+
+  async selectKeyFactor(keyFactor_id: number): Promise<KeyFactor> {
+    try {
+      const result = await db.one<{
+        name: string;
+        critical: boolean;
+        cur_state: string;
+        prop_one: string;
+        prop_two: string;
+      }>(
+        `
+SELECT i.name, k.critical, k.cur_state, prop_one, prop_two
+FROM influencingfactor i
+LEFT JOIN keyfactor k ON i.influencingfactor_id = k.keyfactor_id
+WHERE k.keyfactor_id = $1;`,
+        keyFactor_id,
+      );
+      const keyFactor: KeyFactor = new KeyFactor(result.name, result.cur_state);
+      keyFactor.updateCritical(result.critical);
+      keyFactor.setProperties(result.prop_one, result.prop_two);
+      console.log("Request for existing keyFactor_id: " + keyFactor_id);
+      return keyFactor;
+    } catch (error) {
+      console.error(
+        "Error selecting KeyFactor from ID: " + keyFactor_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectKeyFactorByName(keyFactor_name: string) {
+    try {
+      const result = await db.one<{
+        name: string;
+        critical: boolean;
+        cur_state: string;
+        prop_one: string;
+        prop_two: string;
+      }>(
+        `
+SELECT i.name, k.critical, k.cur_state, k.prop_one, k.prop_two
+FROM influencingfactor i
+LEFT JOIN keyfactor k ON i.influencingfactor_id = k.keyfactor_id
+WHERE i.name = $1;`,
+        keyFactor_name,
+      );
+      const keyFactor: KeyFactor = new KeyFactor(result.name, result.cur_state);
+      keyFactor.updateCritical(result.critical);
+      keyFactor.setProperties(result.prop_one, result.prop_two);
+      console.log("Request for existing keyFactor_name: " + keyFactor_name);
+      return keyFactor;
+    } catch (error) {
+      console.error(
+        "Error selecting KeyFactor from name: " + keyFactor_name,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectKeyFactorsForScenarioProject(
+    scenarioProject_id: number,
+  ): Promise<KeyFactor[]> {
+    try {
+      var results: KeyFactor[] = [];
+      const query_results = await db.any<{
+        name: string;
+        critical: boolean;
+        cur_state: string;
+        prop_one: string;
+        prop_two: string;
+      }>(
+        `
+SELECT i.name, k.critical, k.cur_state, k.prop_one, k.prop_two
+FROM influencingfactor i
+JOIN sp_if spif ON i.influencingfactor_id = spif.influencingfactor_id
+JOIN scenarioProject sp ON sp.scenarioproject_id = spif.scenarioproject_id
+JOIN keyfactor k ON i.influencingfactor_id = k.keyfactor_id
+WHERE sp.scenarioproject_id = $1;`,
+        scenarioProject_id,
+      );
+      query_results.forEach((factor) => {
+        const keyFactor: KeyFactor = new KeyFactor(
+          factor.name,
+          factor.cur_state,
+        );
+        keyFactor.updateCritical(factor.critical);
+        keyFactor.setProperties(factor.prop_one, factor.prop_two);
+        console.log(keyFactor);
+        results.push(keyFactor);
+      });
+      console.log(
+        "Request for all KeyFactors with scenarioProject_id: " +
+          scenarioProject_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting all KeyFactors for scenarioProject_id: " +
+          scenarioProject_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectPropertyOne(keyfactor_id: number): Promise<string> {
+    try {
+      const propertyOne = await db.one<string>(
+        `
+SELECT prop_one FROM keyfactor
+WHERE keyfactor_id = $1;`,
+        keyfactor_id,
+        (prop) => prop.prop_one,
+      );
+      console.log("Request for PropertyOne of keyfactor_id: " + keyfactor_id);
+      return propertyOne;
+    } catch (error) {
+      console.error(
+        "Error selecting PropertyOne for keyfactor_id: " + keyfactor_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async insertPropertyOne(
+    keyfactor_id: number,
+    property: string,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `
+UPDATE keyfactor
+SET prop_one = $1
+WHERE keyfactor_id = $2;`,
+        [property, keyfactor_id],
+      );
+      const message = "Updated PropertyOne to keyfactor_id: " + keyfactor_id;
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error inserting PropertyOne for keyfactor_id: " + keyfactor_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectPropertyTwo(keyfactor_id: number): Promise<string> {
+    try {
+      const propertyTwo = await db.one<string>(
+        `
+SELECT prop_two FROM keyfactor
+WHERE keyfactor_id = $1;`,
+        keyfactor_id,
+        (prop) => prop.prop_two,
+      );
+      console.log("Request for PropertyTwo of keyfactor_id: " + keyfactor_id);
+      return propertyTwo;
+    } catch (error) {
+      console.error(
+        "Error selecting PropertyTwo for keyfactor_id: " + keyfactor_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async insertPropertyTwo(
+    keyfactor_id: number,
+    property: string,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `
+UPDATE keyfactor
+SET prop_two = $1
+WHERE keyfactor_id = $2;`,
+        [property, keyfactor_id],
+      );
+      const message = "Updated PropertyTwo to keyfactor_id: " + keyfactor_id;
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error inserting PropertyTwo for keyfactor_id: " + keyfactor_id,
+        error,
+      );
       throw error;
     }
   }
