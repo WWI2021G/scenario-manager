@@ -10,8 +10,13 @@ export interface KeyFactor {
 export type InfluencMatrix = Map<string, Map<string, number>>;
 
 
-export interface FutureProjections {
-  // Define the structure for FutureProjections
+export interface FutureProjection {
+  id: number;
+  name: string;
+  mainProjection: string;
+  mainProjectionDescription: string;
+  alternativeProjection: string;
+  alternativeProjectionDescription: string;
 }
 
 export interface ProjectionBundles {
@@ -23,7 +28,7 @@ export interface ScenarioProject {
   description: string;
   influencingFactors: InfluencingFactor[];
   keyFactors: KeyFactor[];
-  futureProjections: FutureProjections[];
+  futureProjections: FutureProjection[];
   projectionBundles: ProjectionBundles[];
   scenarioType: string; // Assuming ScenarioType is a string for simplicity
 }
