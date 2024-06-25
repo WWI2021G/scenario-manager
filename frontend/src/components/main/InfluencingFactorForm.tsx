@@ -1,7 +1,7 @@
 "use client";
 import * as React from 'react';
 import { useState } from 'react';
-import { InfluencingFactor, InfluencingArea } from '@/types';
+import { InfluencingFactor } from '@/types';
 import { Box, Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText, SelectChangeEvent } from '@mui/material';
 
 export default function InfluencingFactorForm() {
@@ -9,18 +9,12 @@ export default function InfluencingFactorForm() {
     id: 0,
     name: '',
     description: '',
-    variable: '',
-    influencingArea: InfluencingArea.Handel, // Default value
   });
   const [influencingFactorsList, setInfluencingFactorsList] = useState<InfluencingFactor[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
     const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
     setInfluencingFactor({ ...influencingFactor, [name]: value });
-  };
-
-  const handleSelectChange = (event: SelectChangeEvent<InfluencingArea>) => {
-    setInfluencingFactor({ ...influencingFactor, influencingArea: event.target.value as InfluencingArea });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,8 +24,6 @@ export default function InfluencingFactorForm() {
       id: 0,
       name: '',
       description: '',
-      variable: '',
-      influencingArea: InfluencingArea.Handel, // Reset to default value
     });
   };
 
@@ -59,31 +51,6 @@ export default function InfluencingFactorForm() {
           margin="normal"
           variant="outlined"
         />
-        <TextField
-          label="Variable"
-          name="variable"
-          value={influencingFactor.variable}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        />
-        <FormControl fullWidth margin="normal" variant="outlined">
-          <InputLabel id="influencingAreas-label">Influencing Areas</InputLabel>
-          <Select
-            labelId="influencingAreas-label"
-            label="Influencing Areas"
-            name="influencingAreas"
-            value={influencingFactor.influencingArea}
-            onChange={handleSelectChange}
-          >
-            {Object.values(InfluencingArea).map((area) => (
-              <MenuItem key={area} value={area}>
-                {area}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
           Add Influencing Factor
         </Button>
@@ -97,7 +64,6 @@ export default function InfluencingFactorForm() {
             <ListItem key={factor.id}>
               <ListItemText
                 primary={`${factor.name} - ${factor.description}`}
-                secondary={`Variable: ${factor.variable}, Influencing Areas: ${factor.influencingArea}`}
               />
             </ListItem>
           ))}

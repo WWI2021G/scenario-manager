@@ -42,8 +42,6 @@ export default function InfluencingFactorsPage() {
           <th style={{ width: '5%' }}>ID</th>
           <th>Name</th>
           <th>Description</th>
-          <th>Variable</th>
-          <th>Influencing Areas</th>
         </tr>
         </thead>
         <tbody>
@@ -52,8 +50,6 @@ export default function InfluencingFactorsPage() {
             <td>{factor.id}</td>
             <td>{factor.name}</td>
             <td>{factor.description}</td>
-            <td>{factor.variable}</td>
-            <td>{factor.influencingArea}</td>
           </tr>
         ))}
         </tbody>

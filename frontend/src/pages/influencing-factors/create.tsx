@@ -6,31 +6,20 @@ import {
   Button,
   TextField,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent
 } from "@mui/material";
-import { InfluencingFactor, InfluencingArea } from '@/types';
+import { InfluencingFactor,  } from '@/types';
 
 export default function CreateInfluencingFactor() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
     id: 0,
     name: '',
     description: '',
-    variable: '',
-    influencingArea: InfluencingArea.Handel,
   });
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
     const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
     setInfluencingFactor({ ...influencingFactor, [name]: value });
-  };
-
-  const handleSelectChange = (event: SelectChangeEvent<InfluencingArea>) => {
-    setInfluencingFactor({ ...influencingFactor, influencingArea: event.target.value as InfluencingArea });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,31 +55,6 @@ export default function CreateInfluencingFactor() {
           margin="normal"
           variant="outlined"
         />
-        <TextField
-          label="Variable"
-          name="variable"
-          value={influencingFactor.variable}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        />
-        <FormControl fullWidth margin="normal" variant="outlined">
-          <InputLabel id="influencingAreas-label">Influencing Areas</InputLabel>
-          <Select
-            labelId="influencingAreas-label"
-            label="Influencing Areas"
-            name="influencingAreas"
-            value={influencingFactor.influencingArea}
-            onChange={handleSelectChange}
-          >
-            {Object.values(InfluencingArea).map((area) => (
-              <MenuItem key={area} value={area}>
-                {area}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
           Save Influencing Factor
         </Button>

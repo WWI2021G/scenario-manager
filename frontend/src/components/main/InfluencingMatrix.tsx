@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Box, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { KeyFactor, InfluencMatrix, InfluencingArea } from '@/types';
+import { KeyFactor, InfluencMatrix } from '@/types';
 
 const keyFactors: KeyFactor[] = [
-  { id: 1, title: 'Factor1', description: '', property: '', currentStateDescription: '', influencingArea: InfluencingArea.Handel },
-  { id: 2, title: 'Factor2', description: '', property: '', currentStateDescription: '', influencingArea: InfluencingArea.Informationstechnologie },
-  { id: 3, title: 'Factor3', description: '', property: '', currentStateDescription: '', influencingArea: InfluencingArea.Oekonomie },
-  { id: 4, title: 'Factor4', description: '', property: '', currentStateDescription: '', influencingArea: InfluencingArea.Gesellschaft },
-  { id: 5, title: 'Factor5', description: '', property: '', currentStateDescription: '', influencingArea: InfluencingArea.Handel },
+  { id: 1, title: 'Factor1', description: '', property: '', currentStateDescription: '' },
+  { id: 2, title: 'Factor2', description: '', property: '', currentStateDescription: ''},
+  { id: 3, title: 'Factor3', description: '', property: '', currentStateDescription: ''},
+  { id: 4, title: 'Factor4', description: '', property: '', currentStateDescription: ''},
+  { id: 5, title: 'Factor5', description: '', property: '', currentStateDescription: ''},
 ];
 
 const initializeMatrix = (factors: KeyFactor[]): InfluencMatrix => {
