@@ -1,7 +1,5 @@
 import { InfluenceMatrix } from "../src/models/InfluenceMatrix";
-import { InfluencingArea } from "../src/models/InfluencingArea";
 import { InfluencingFactor } from "../src/models/InfluencingFactor";
-import { Variable } from "../src/models/Variable";
 
 describe("InfluenceMatrix", () => {
   let influenceMatrix: InfluenceMatrix;
@@ -15,20 +13,14 @@ describe("InfluenceMatrix", () => {
     factorA = new InfluencingFactor(
       "FactorA",
       "FactorA factors in A",
-      Variable.ControlVariable,
-      InfluencingArea.Handel,
     );
     factorB = new InfluencingFactor(
       "FactorB",
       "FactorB factors in B",
-      Variable.ControlVariable,
-      InfluencingArea.Ökonomie,
     );
     factorC = new InfluencingFactor(
       "FactorC",
       "FactorC factors in C",
-      Variable.EnvironmentVariable,
-      InfluencingArea.Gesellschaft,
     );
   });
 
@@ -67,8 +59,6 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVariable,
-        InfluencingArea.Gesellschaft,
       ),
     );
     expect(activeSum).toBeUndefined();
@@ -86,8 +76,6 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVariable,
-        InfluencingArea.Gesellschaft,
       ),
     );
     expect(passiveSum).toBeUndefined();
@@ -107,8 +95,6 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVariable,
-        InfluencingArea.Gesellschaft,
       ),
     );
     expect(impulseIndex).toBeUndefined();
@@ -134,8 +120,6 @@ describe("InfluenceMatrix", () => {
       new InfluencingFactor(
         "NonExistingFactor",
         "NonExistingFactor factors nothing in",
-        Variable.ControlVariable,
-        InfluencingArea.Gesellschaft,
       ),
     );
     expect(dynamicIndex).toBeUndefined();

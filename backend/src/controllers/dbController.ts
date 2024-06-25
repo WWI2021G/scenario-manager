@@ -1,10 +1,8 @@
-import { InfluencingArea } from "../models/InfluencingArea";
 import { InfluencingFactor } from "../models/InfluencingFactor";
 import { KeyFactor } from "../models/KeyFactor";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { ScenarioType } from "../models/ScenarioType";
 import { User } from "../models/User";
-import { Variable } from "../models/Variable";
 import { dbService } from "../services/dbService";
 import { Request, Response } from "express";
 
@@ -136,21 +134,17 @@ class DBController {
   async addInfluencingFactor(req: Request, res: Response) {
     const {
       scenarioProject_id,
-      influencingFactor: { name, description, variable, influencingArea },
+      influencingFactor: { name, description, },
     }: {
       scenarioProject_id: number;
       influencingFactor: {
         name: string;
         description: string;
-        variable: Variable;
-        influencingArea: InfluencingArea;
       };
     } = req.body;
     const influencingFactor = new InfluencingFactor(
       name,
       description,
-      variable,
-      influencingArea,
     );
     try {
       const influencingFactor_id = await dbService.insertInfluencingFactor(
@@ -184,19 +178,13 @@ class DBController {
     const {
       name,
       description,
-      variable,
-      influencingArea,
     }: {
       name: string;
       description: string;
-      variable: Variable;
-      influencingArea: InfluencingArea;
     } = req.body;
     const influencingFactor = new InfluencingFactor(
       name,
       description,
-      variable,
-      influencingArea,
     );
     try {
       const influencingFactor_id =

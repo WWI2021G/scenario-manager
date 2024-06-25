@@ -4,8 +4,6 @@ import { ScenarioProject } from "../models/ScenarioProject";
 import { User } from "../models/User";
 import { ScenarioType } from "../models/ScenarioType";
 import { InfluencingFactor } from "../models/InfluencingFactor";
-import { Variable } from "../models/Variable";
-import { InfluencingArea } from "../models/InfluencingArea";
 import { KeyFactor } from "../models/KeyFactor";
 
 dotenv.config();
@@ -50,9 +48,7 @@ FOREIGN KEY (scenarioUser_id) REFERENCES scenarioUser(scenarioUser_id));`,
 CREATE TABLE IF NOT EXISTS InfluencingFactor (
 influencingfactor_id SERIAL PRIMARY KEY,
 name VARCHAR(50) UNIQUE NOT NULL,
-description VARCHAR(200),
-variable VARCHAR(50) CHECK (variable IN ('ControlVariable', 'EnvironmentVariable')),
-influencingArea VARCHAR(50) CHECK (influencingArea IN ('Handel', 'Informationstechnologie', 'Ökonomie', 'Gesellschaft', 'Sonstige')));`,
+description VARCHAR(200));`
       },
       {
         table_name: "KeyFactor",
@@ -339,8 +335,6 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         [
           influencingFactor.getName(),
           influencingFactor.getDescription(),
-          influencingFactor.getVariable(),
-          influencingFactor.getInfluencingArea(),
         ],
         (influencingFactor) => influencingFactor.influencingfactor_id,
       );
@@ -422,15 +416,9 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         `SELECT name, description, variable, influencingarea FROM influencingfactor WHERE influencingfactor_id = $1;`,
         influencingFactor_id,
       );
-      const variable: Variable = (<any>Variable)[result.variable];
-      const influencingArea: InfluencingArea = (<any>InfluencingArea)[
-        result.influencingarea
-      ];
       const influencingFactor: InfluencingFactor = new InfluencingFactor(
         result.name,
         result.description,
-        variable,
-        influencingArea,
       );
       console.log(
         "Request for existing influencingFactor_id: " + influencingFactor_id,
@@ -458,14 +446,9 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         `SELECT name, description, variable, influencingarea FROM influencingfactor WHERE name = $1;`,
         influencingFactor_name,
       );
-      const variable: Variable = result.variable as Variable;
-      const influencingArea: InfluencingArea =
-        result.influencingarea as InfluencingArea;
       const influencingFactor: InfluencingFactor = new InfluencingFactor(
         result.name,
         result.description,
-        variable,
-        influencingArea,
       );
       console.log(
         "Request for existing influencingFactor by name: " +
@@ -497,14 +480,9 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         scenarioProject_id,
       );
       query_results.forEach((factor) => {
-        const variable: Variable = factor.variable as Variable;
-        const influencingArea: InfluencingArea =
-          factor.influencingarea as InfluencingArea;
         const influencingFactor: InfluencingFactor = new InfluencingFactor(
           factor.name,
           factor.description,
-          variable,
-          influencingArea,
         );
         console.log(influencingFactor);
         results.push(influencingFactor);
@@ -536,14 +514,9 @@ FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_i
         `SELECT name, description, variable, influencingarea FROM influencingfactor;`,
       );
       query_results.forEach((factor) => {
-        const variable: Variable = factor.variable as Variable;
-        const influencingArea: InfluencingArea =
-          factor.influencingarea as InfluencingArea;
         const influencingFactor: InfluencingFactor = new InfluencingFactor(
           factor.name,
           factor.description,
-          variable,
-          influencingArea,
         );
         console.log(influencingFactor);
         results.push(influencingFactor);
