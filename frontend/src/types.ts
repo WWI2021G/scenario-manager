@@ -13,10 +13,8 @@ export type InfluencMatrix = Map<string, Map<string, number>>;
 export interface FutureProjection {
   id: number;
   name: string;
-  mainProjection: string;
-  mainProjectionDescription: string;
-  alternativeProjection: string;
-  alternativeProjectionDescription: string;
+  projection: string;
+  projectionDescription: string;
 }
 
 export interface ProjectionBundles {
