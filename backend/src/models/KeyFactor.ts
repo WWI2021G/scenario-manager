@@ -1,13 +1,13 @@
-import { Property } from "./Property";
-
 export class KeyFactor {
   private name: string;
   private critical: boolean;
-  private properties: [Property | undefined, Property | undefined];
+  private curState: string;
+  private properties: [string | undefined, string | undefined];
 
-  constructor(name: string) {
+  constructor(name: string, curState: string) {
     this.name = name;
     this.critical = false;
+    this.curState = curState;
     this.properties = [undefined, undefined];
   }
 
@@ -27,18 +27,23 @@ export class KeyFactor {
     this.critical = critical;
   }
 
-  getProperties(): [Property | undefined, Property | undefined] {
+  getCurState(): string {
+    return this.curState;
+  }
+
+  updateCurState(curState: string) {
+    this.curState = curState;
+  }
+
+  getProperties(): [string | undefined, string | undefined] {
     return this.properties;
   }
 
-  setProperties(
-    propertyA: Property | undefined,
-    propertyB: Property | undefined,
-  ) {
+  setProperties(propertyA: string | undefined, propertyB: string | undefined) {
     this.properties = [propertyA, propertyB];
   }
 
-  updateProperty(propNum: number, property: Property | undefined) {
+  updateProperty(propNum: number, property: string | undefined) {
     this.properties[propNum] = property;
   }
 }

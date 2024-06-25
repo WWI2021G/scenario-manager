@@ -13,7 +13,7 @@ describe("ConsistencyMatrix", () => {
   beforeEach(() => {
     consistencyMatrix = new ConsistencyMatrix();
 
-    const keyFactor = new KeyFactor("KeyFactorName");
+    const keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
     const probability = Probability.average;
     const timeFrame = new Date();
     const type = ProjectionType.Trend;

@@ -2,8 +2,6 @@ import { describe } from "node:test";
 import { ScenarioProject } from "../src/models/ScenarioProject";
 import { ScenarioType } from "../src/models/ScenarioType";
 import { InfluencingFactor } from "../src/models/InfluencingFactor";
-import { InfluencingArea } from "../src/models/InfluencingArea";
-import { Variable } from "../src/models/Variable";
 import { KeyFactor } from "../src/models/KeyFactor";
 import { FutureProjection } from "../src/models/FutureProjection";
 import { Probability } from "../src/models/Probability";
@@ -17,13 +15,8 @@ let scenarioProject = new ScenarioProject(
   ScenarioType.Umfeldszenario,
   new User("Test", "testpw"),
 );
-let influencingFactor = new InfluencingFactor(
-  "Baz",
-  "Baz factors in bar",
-  Variable.ControlVariable,
-  InfluencingArea.Gesellschaft,
-);
-let keyFactor = new KeyFactor("Bar");
+let influencingFactor = new InfluencingFactor("Baz", "Baz factors in bar");
+const keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",
