@@ -4,15 +4,9 @@ import { InfluencingFactor } from "../models/InfluencingFactor";
 
 class ScenarioController {
   addInfluencingFactors(req: Request, res: Response) {
-    const {
-      name,
-      description,
-    }: { name: string; description: string; } =
+    const { name, description }: { name: string; description: string } =
       req.body;
-    const influencingFactor = new InfluencingFactor(
-      name,
-      description,
-    );
+    const influencingFactor = new InfluencingFactor(name, description);
     console.log(scenarioService.successMessage());
     console.log("Success");
     res.status(201).json(influencingFactor);

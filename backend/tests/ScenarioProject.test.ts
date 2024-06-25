@@ -15,10 +15,7 @@ let scenarioProject = new ScenarioProject(
   ScenarioType.Umfeldszenario,
   new User("Test", "testpw"),
 );
-let influencingFactor = new InfluencingFactor(
-  "Baz",
-  "Baz factors in bar",
-);
+let influencingFactor = new InfluencingFactor("Baz", "Baz factors in bar");
 const keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",

@@ -10,18 +10,9 @@ describe("InfluenceMatrix", () => {
   beforeEach(() => {
     influenceMatrix = new InfluenceMatrix();
 
-    factorA = new InfluencingFactor(
-      "FactorA",
-      "FactorA factors in A",
-    );
-    factorB = new InfluencingFactor(
-      "FactorB",
-      "FactorB factors in B",
-    );
-    factorC = new InfluencingFactor(
-      "FactorC",
-      "FactorC factors in C",
-    );
+    factorA = new InfluencingFactor("FactorA", "FactorA factors in A");
+    factorB = new InfluencingFactor("FactorB", "FactorB factors in B");
+    factorC = new InfluencingFactor("FactorC", "FactorC factors in C");
   });
 
   test("should set and get influence correctly", () => {

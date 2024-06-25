@@ -1,10 +1,7 @@
 import { describe } from "node:test";
 import { InfluencingFactor } from "../src/models/InfluencingFactor";
 
-let influencingFactor = new InfluencingFactor(
-  "Baz",
-  "Baz factors in bar",
-);
+let influencingFactor = new InfluencingFactor("Baz", "Baz factors in bar");
 
 describe("Testing InfluencingFactor class", () => {
   test("Test constructor", () => {

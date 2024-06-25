@@ -134,7 +134,7 @@ class DBController {
   async addInfluencingFactor(req: Request, res: Response) {
     const {
       scenarioProject_id,
-      influencingFactor: { name, description, },
+      influencingFactor: { name, description },
     }: {
       scenarioProject_id: number;
       influencingFactor: {
@@ -142,10 +142,7 @@ class DBController {
         description: string;
       };
     } = req.body;
-    const influencingFactor = new InfluencingFactor(
-      name,
-      description,
-    );
+    const influencingFactor = new InfluencingFactor(name, description);
     try {
       const influencingFactor_id = await dbService.insertInfluencingFactor(
         scenarioProject_id,
@@ -182,10 +179,7 @@ class DBController {
       name: string;
       description: string;
     } = req.body;
-    const influencingFactor = new InfluencingFactor(
-      name,
-      description,
-    );
+    const influencingFactor = new InfluencingFactor(name, description);
     try {
       const influencingFactor_id =
         await dbService.selectInfluencingFactorID(influencingFactor);
