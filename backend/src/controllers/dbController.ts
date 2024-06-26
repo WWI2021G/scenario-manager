@@ -1,5 +1,8 @@
+import { FutureProjection } from "../models/FutureProjection";
 import { InfluencingFactor } from "../models/InfluencingFactor";
 import { KeyFactor } from "../models/KeyFactor";
+import { Probability } from "../models/Probability";
+import { ProjectionType } from "../models/ProjectionType";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { ScenarioType } from "../models/ScenarioType";
 import { User } from "../models/User";
@@ -134,13 +137,12 @@ class DBController {
   async addInfluencingFactor(req: Request, res: Response) {
     const {
       scenarioProject_id,
-      influencingFactor: { name, description },
+      name,
+      description,
     }: {
       scenarioProject_id: number;
-      influencingFactor: {
-        name: string;
-        description: string;
-      };
+      name: string;
+      description: string;
     } = req.body;
     const influencingFactor = new InfluencingFactor(name, description);
     try {
@@ -381,6 +383,112 @@ class DBController {
         prop_name,
       );
       res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addFutureProjection(req: Request, res: Response) {
+    try {
+      const {
+        keyfactor_id,
+        name,
+        description,
+        probability,
+        timeframe,
+        projectionType,
+      }: {
+        keyfactor_id: number;
+        name: string;
+        probability: Probability;
+        description: string;
+        timeframe: Date;
+        projectionType: ProjectionType;
+      } = req.body;
+      const keyfactor = await dbService.selectKeyFactor(keyfactor_id);
+      const futureProjection = new FutureProjection(
+        name,
+        description,
+        keyfactor,
+        probability,
+        timeframe,
+        projectionType,
+      );
+      const futureProjection_id = await dbService.insertFutureProjection(
+        keyfactor_id,
+        futureProjection,
+      );
+      res.status(200).json({ futureProjection_id: futureProjection_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjectionID(req: Request, res: Response) {
+    try {
+      const {
+        keyfactor_id,
+        name,
+        description,
+        probability,
+        timeframe,
+        projectionType,
+      }: {
+        keyfactor_id: number;
+        name: string;
+        probability: Probability;
+        description: string;
+        timeframe: Date;
+        projectionType: ProjectionType;
+      } = req.body;
+      const keyfactor = await dbService.selectKeyFactor(keyfactor_id);
+      const futureProjection = new FutureProjection(
+        name,
+        description,
+        keyfactor,
+        probability,
+        timeframe,
+        projectionType,
+      );
+      const futureProjection_id = await dbService.selectFutureProjectionID(futureProjection);
+      res.status(200).json({ futureProjection_id: futureProjection_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjection(req: Request, res: Response) {
+    try {
+      const futureProjection = await dbService.selectFutureProjection(parseFloat(req.params.id));
+      res.status(200).json(futureProjection);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjectionByName(req: Request, res: Response) {
+    try {
+      const { name }: { name: string } = req.body;
+      const futureProjection = await dbService.selectFutureProjectionByName(name);
+      res.status(200).json(futureProjection);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjectionsForKeyFactor(req: Request, res: Response) {
+    try {
+      const futureProjections = await dbService.selectFutureProjectionsForKeyFactor(parseFloat(req.params.id));
+      res.status(200).json(futureProjections);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjectionsForScenarioProject(req: Request, res: Response) {
+    try {
+      const futureProjections = await dbService.selectFutureProjectionsForKeyFactor(parseFloat(req.params.id));
+      res.status(200).json(futureProjections);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
