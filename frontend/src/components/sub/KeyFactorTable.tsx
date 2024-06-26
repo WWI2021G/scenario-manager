@@ -14,20 +14,42 @@ import Button from '@mui/material/Button';
 const KeyFactorTable = () => {
   const [keyFactors, setKeyFactors] = useState<KeyFactor[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedKeyFactor, setSelectedKeyFactor] = useState<KeyFactor | null>(null);
 
   const handleAddKeyFactor = (newKeyFactor: KeyFactor) => {
-    setKeyFactors([...keyFactors, newKeyFactor]);
+    if (selectedKeyFactor) {
+      // Update existing key factor
+      setKeyFactors(
+        keyFactors.map((kf) =>
+          kf.id === newKeyFactor.id ? newKeyFactor : kf
+        )
+      );
+    } else {
+      // Add new key factor
+      setKeyFactors([...keyFactors, { ...newKeyFactor, id: keyFactors.length + 1 }]);
+    }
     setShowForm(false);
+    setSelectedKeyFactor(null);
+  };
+
+  const handleEditKeyFactor = (keyFactor: KeyFactor) => {
+    setSelectedKeyFactor(keyFactor);
+    setShowForm(true);
   };
 
   const handleCancel = () => {
     setShowForm(false);
+    setSelectedKeyFactor(null);
   };
 
   return (
     <Box>
       {showForm ? (
-        <KeyFactorForm onSubmit={handleAddKeyFactor} onCancel={handleCancel} />
+        <KeyFactorForm
+          onSubmit={handleAddKeyFactor}
+          onCancel={handleCancel}
+          initialData={selectedKeyFactor}
+        />
       ) : (
         <>
           <Button
@@ -48,9 +70,13 @@ const KeyFactorTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {keyFactors.map((keyFactor, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{keyFactor.title}</TableCell>
+                {keyFactors.map((keyFactor) => (
+                  <TableRow key={keyFactor.id}>
+                    <TableCell>
+                      <Button onClick={() => handleEditKeyFactor(keyFactor)}>
+                        {keyFactor.title}
+                      </Button>
+                    </TableCell>
                     <TableCell>
                       {keyFactor.description.split(' ').slice(0, 3).join(' ')}...
                     </TableCell>

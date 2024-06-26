@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 test('renders Influence Matrix', () => {
   render(<InfluencMatrixComponent />);
-  expect(screen.getByText('Influence Matrix')).toBeInTheDocument();
+  expect(screen.getByText('Einflussmatrix')).toBeInTheDocument();
 });
 
 test('renders key factors in the table headers', () => {

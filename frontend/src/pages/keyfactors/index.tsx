@@ -5,7 +5,7 @@ import KeyFactorTable from '@/components/sub/KeyFactorTable';
 const KeyFactorsPage: React.FC = () => {
   return (
     <RootLayout>
-      <h1>Key Factors</h1>
+      <h1 className='text-3xl my-4 font-bold'>Schlüsselfaktoren</h1>
       <KeyFactorTable />
     </RootLayout>
   );
