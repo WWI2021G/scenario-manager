@@ -56,7 +56,9 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS InfluencingFactor (
                  influencingfactor_id SERIAL PRIMARY KEY,
                  name VARCHAR(50) UNIQUE NOT NULL,
-                 description VARCHAR(200)
+                 description VARCHAR(200),
+                 activesum INT,
+                 passivesum INT
                );`,
       },
       {
@@ -76,28 +78,30 @@ class DBService {
         table_name: "FutureProjection",
         query: `CREATE TABLE IF NOT EXISTS FutureProjection (
                  futureprojection_id SERIAL PRIMARY KEY,
+                 name VARCHAR(20) UNIQUE,
                  probability VARCHAR(6) CHECK (probability IN ('low', 'medium', 'high')),
                  description VARCHAR(200),
                  timeFrame TIMESTAMP,
                  projectionType VARCHAR(6) CHECK (projectionType IN ('Trend', 'Extreme')),
                  keyfactor_id INT,
-                 scenarioproject_id INT,
-                 FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id),
-                 FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id)
+                 FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id)
                );`,
       },
       {
         table_name: "ProjectionBundle",
         query: `CREATE TABLE IF NOT EXISTS ProjectionBundle (
                  projectionbundle_id SERIAL PRIMARY KEY,
-                 name VARCHAR(50) UNIQUE NOT NULL,
-                 description VARCHAR(200)
+                 consistency INT,
+                 numPartInconsistencies INT,
+                 pValue NUMeric(6, 5),
+                 scenarioproject_id INT,
+                 FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id)
                );`,
       },
       {
         table_name: "RawScenario",
         query: `CREATE TABLE IF NOT EXISTS RawScenario (
-                 rs_id SERIAL PRIMARY KEY,
+                 rawscenario_id SERIAL PRIMARY KEY,
                  name VARCHAR(50) UNIQUE NOT NULL,
                  quality INT CHECK (
                    quality > 0
@@ -115,12 +119,12 @@ class DBService {
                );`,
       },
       {
-        table_name: "KF-RS",
-        query: `CREATE TABLE IF NOT EXISTS kf_rs (
-                 keyfactor_id INT,
-                 rs_id INT,
-                 FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id),
-                 FOREIGN KEY (rs_id) REFERENCES RawScenario(rs_id)
+        table_name: "PB-RS",
+        query: `CREATE TABLE IF NOT EXISTS pb_rs (
+                 projectionbundle_id INT,
+                 rawscenario_id INT,
+                 FOREIGN KEY (projectionbundle_id) REFERENCES ProjectionBundle(projectionbundle_id),
+                 FOREIGN KEY (rawscenario_id) REFERENCES RawScenario(rawscenario_id)
                );`,
       },
       {

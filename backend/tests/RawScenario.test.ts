@@ -2,13 +2,12 @@ import { describe } from "node:test";
 import { RawScenario } from "../src/models/RawScenario";
 import { ProjectionBundle } from "../src/models/ProjectionBundle";
 
-let projectionBundle = new ProjectionBundle("Buz", "Buz bundles Projections");
-let rawScenario = new RawScenario("Fii", "Fii is a scenario for baz", 23);
+let projectionBundle = new ProjectionBundle(10, 29, 5);
+let rawScenario = new RawScenario("Fii", 23);
 
 describe("Testing ProjectionBundle class", () => {
   test("Test constructor", () => {
     expect(rawScenario.getName()).toBe("Fii");
-    expect(rawScenario.getDescription()).toBe("Fii is a scenario for baz");
     expect(rawScenario.getProjectionBundles()).toStrictEqual([]);
     expect(rawScenario.getQuality()).toBe(23);
   });
@@ -16,11 +15,6 @@ describe("Testing ProjectionBundle class", () => {
   test("Test updateName", () => {
     rawScenario.updateName("Bar");
     expect(rawScenario.getName()).toBe("Bar");
-  });
-
-  test("Test updateDescription", () => {
-    rawScenario.updateDescription("Bar projects baz");
-    expect(rawScenario.getDescription()).toBe("Bar projects baz");
   });
 
   test("Test updateQuality", () => {
