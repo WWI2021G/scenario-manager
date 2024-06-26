@@ -22,10 +22,15 @@ export default function InfluencingFactorsPage() {
     router.push('/influencing-factors/create');
   };
 
+  //let currentSelectedProject = localStorage.getItem('currentSelectedProject');
+  let currentSelectedProject = 'Project 1 (Dev Placeholder)'
+
   return (
     <RootLayout>
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
-      <Button variant="contained" color="primary" onClick={handleCreate} sx={{ mb: 2 }}>
+      <h1 className='text-2xl my-4 font-bold'>Einflussfaktorenliste</h1>
+      <h2 className='text-lg my-2'>{currentSelectedProject}</h2>
+      <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleCreate} sx={{ mb: 2 }}>
         Create New Influencing Factor
       </Button>
       <Button variant="outlined" color="secondary" sx={{ mb: 2, ml: 2 }}>
@@ -37,8 +42,6 @@ export default function InfluencingFactorsPage() {
           <th style={{ width: '5%' }}>ID</th>
           <th>Name</th>
           <th>Description</th>
-          <th>Variable</th>
-          <th>Influencing Areas</th>
         </tr>
         </thead>
         <tbody>
@@ -47,8 +50,6 @@ export default function InfluencingFactorsPage() {
             <td>{factor.id}</td>
             <td>{factor.name}</td>
             <td>{factor.description}</td>
-            <td>{factor.variable}</td>
-            <td>{factor.influencingArea}</td>
           </tr>
         ))}
         </tbody>

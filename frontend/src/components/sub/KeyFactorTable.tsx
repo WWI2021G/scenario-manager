@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import KeyFactorForm from '../main/KeyFactorForm';
-import { InfluencingArea, KeyFactor } from '@/types';
+import { KeyFactor } from '@/types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -45,7 +45,6 @@ const KeyFactorTable = () => {
                   <TableCell>Description</TableCell>
                   <TableCell>Property</TableCell>
                   <TableCell>Current State</TableCell>
-                  <TableCell>Influencing Area</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -63,7 +62,6 @@ const KeyFactorTable = () => {
                         .join(' ')}
                       ...
                     </TableCell>
-                    <TableCell>{keyFactor.influencingArea}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

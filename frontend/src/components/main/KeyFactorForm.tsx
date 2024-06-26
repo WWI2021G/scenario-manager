@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InfluencingArea, KeyFactor } from '@/types';
+import { KeyFactor } from '@/types';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -17,7 +17,6 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => 
     description: '',
     property: '',
     currentStateDescription: '',
-    influencingArea: InfluencingArea.Handel,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,13 +24,6 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => 
     setKeyFactor({
       ...keyFactor,
       [name]: value,
-    });
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    setKeyFactor({
-      ...keyFactor,
-      influencingArea: e.target.value as InfluencingArea,
     });
   };
 
@@ -74,21 +66,7 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => 
         fullWidth
         margin="normal"
       />
-      <TextField
-        select
-        label="Influencing Area"
-        name="influencingArea"
-        value={keyFactor.influencingArea}
-        onChange={handleSelectChange}
-        fullWidth
-        margin="normal"
-      >
-        {Object.values(InfluencingArea).map((area) => (
-          <MenuItem key={area} value={area}>
-            {area}
-          </MenuItem>
-        ))}
-      </TextField>
+
       <Button type="submit" variant="contained" className='bg-primary hover:bg-primary-hover mr-4'>
         Add KeyFactor Description
       </Button>
