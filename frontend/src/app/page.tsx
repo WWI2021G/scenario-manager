@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="font-bold text-md">Vorhandene Projekte</div>
+      <div className="font-bold text-3xl">Vorhandene Projekte</div>
       <div className="flex flex-row">
         <TextField className="my-4 w-[400px]" label="Suche Projekt" variant="outlined" />
         <Button className="text-black my-4 mx-2 w-40 justify-center border-gray-400" variant={"outlined"}

@@ -39,7 +39,7 @@ const InfluencMatrixComponent: React.FC = () => {
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Influence Matrix
+        Einflussmatrix
       </Typography>
       <TableContainer>
         <Table sx={{ borderCollapse: 'collapse' }}>

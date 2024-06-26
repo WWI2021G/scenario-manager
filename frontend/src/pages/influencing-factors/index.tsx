@@ -28,7 +28,7 @@ export default function InfluencingFactorsPage() {
   return (
     <RootLayout>
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
-      <h1 className='text-2xl my-4 font-bold'>Einflussfaktorenliste</h1>
+      <h1 className='text-3xl my-4 font-bold'>Einflussfaktorenliste</h1>
       <h2 className='text-lg my-2'>{currentSelectedProject}</h2>
       <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleCreate} sx={{ mb: 2 }}>
         Create New Influencing Factor

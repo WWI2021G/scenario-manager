@@ -9,6 +9,15 @@ export enum ProjectionType {
   EXTREME = 'EXTREME',
 }
 
+export enum ScenarioType {
+  Umfeldszenario = "Umfeldszenario",
+  LangfristigesUmfeldszenario = "LangfristigesUmfeldszenario",
+  KurzfristigesUmfeldszenario = "KurzfristigesUmfeldszenario",
+  Systemszenario = "Systemszenario",
+  RisikomeidendesSystemszenario = "RisikomeidendesSystemszenario",
+  RisikosuchendesSystemszenario = "RisikosuchendesSystemszenario",
+}
+
 export interface KeyFactor {
   id: number;
   title: string;
@@ -44,7 +53,7 @@ export interface ScenarioProject {
   keyFactors: KeyFactor[];
   futureProjections: FutureProjection[];
   projectionBundles: ProjectionBundle[];
-  scenarioType: string; // Assuming ScenarioType is a string for simplicity
+  scenarioType: ScenarioType;
 }
 
 

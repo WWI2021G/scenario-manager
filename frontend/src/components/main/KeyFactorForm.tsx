@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Box } from '@mui/material';
 import { KeyFactor } from '@/types';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 
 interface KeyFactorFormProps {
   onSubmit: (keyFactor: KeyFactor) => void;
   onCancel: () => void;
+  initialData?: KeyFactor | null;
 }
 
-const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => {
+const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initialData }) => {
   const [keyFactor, setKeyFactor] = useState<KeyFactor>({
     id: 0,
     title: '',
@@ -19,12 +17,15 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => 
     currentStateDescription: '',
   });
 
+  useEffect(() => {
+    if (initialData) {
+      setKeyFactor(initialData);
+    }
+  }, [initialData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setKeyFactor({
-      ...keyFactor,
-      [name]: value,
-    });
+    setKeyFactor({ ...keyFactor, [name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,46 +34,57 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel }) => 
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        maxWidth: '800px',
+        margin: '0 auto',
+      }}
+    >
       <TextField
         label="Title"
         name="title"
         value={keyFactor.title}
         onChange={handleChange}
-        fullWidth
-        margin="normal"
+        required
       />
       <TextField
         label="Description"
         name="description"
         value={keyFactor.description}
         onChange={handleChange}
-        fullWidth
-        margin="normal"
+        required
+        multiline
+        rows={4}
       />
       <TextField
         label="Property"
         name="property"
         value={keyFactor.property}
         onChange={handleChange}
-        fullWidth
-        margin="normal"
+        required
       />
       <TextField
         label="Current State Description"
         name="currentStateDescription"
         value={keyFactor.currentStateDescription}
         onChange={handleChange}
-        fullWidth
-        margin="normal"
+        required
+        multiline
+        rows={4}
       />
-
-      <Button type="submit" variant="contained" className='bg-primary hover:bg-primary-hover mr-4'>
-        Add KeyFactor Description
-      </Button>
-      <Button type="button" variant="contained" color="secondary" onClick={onCancel}>
-        Back
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="contained" color="primary" type="submit">
+          {initialData ? 'Update KeyFactor' : 'Add KeyFactor'}
+        </Button>
+        <Button variant="outlined" color="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+      </Box>
     </Box>
   );
 };
