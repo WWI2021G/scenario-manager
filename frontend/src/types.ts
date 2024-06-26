@@ -24,6 +24,8 @@ export interface KeyFactor {
   description: string;
   property: string;
   currentStateDescription: string;
+  projectionA: FutureProjection | undefined;
+  projectionB: FutureProjection | undefined;
 }
 
 export type InfluencMatrix = Map<string, Map<string, number>>;

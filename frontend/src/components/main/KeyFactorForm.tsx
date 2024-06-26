@@ -15,6 +15,8 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
     description: '',
     property: '',
     currentStateDescription: '',
+    projectionA: undefined,
+    projectionB: undefined,
   });
 
   useEffect(() => {
