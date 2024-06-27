@@ -1,14 +1,40 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Box, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { KeyFactor, InfluencMatrix } from '@/types';
+import * as React from "react";
+import { useState } from "react";
+import {
+  Box,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from "@mui/material";
+import { KeyFactor, InfluencMatrix } from "@/types";
 
 const keyFactors: KeyFactor[] = [
-  { id: 1, title: 'Factor1', description: '', property: '', currentStateDescription: '' },
-  { id: 2, title: 'Factor2', description: '', property: '', currentStateDescription: ''},
-  { id: 3, title: 'Factor3', description: '', property: '', currentStateDescription: ''},
-  { id: 4, title: 'Factor4', description: '', property: '', currentStateDescription: ''},
-  { id: 5, title: 'Factor5', description: '', property: '', currentStateDescription: ''},
+  {
+    id: 1, title: "Factor1", description: "", property: "", currentStateDescription: "", projectionA: undefined,
+    projectionB: undefined
+  },
+  {
+    id: 2, title: "Factor2", description: "", property: "", currentStateDescription: "", projectionA: undefined,
+    projectionB: undefined
+  },
+  {
+    id: 3, title: "Factor3", description: "", property: "", currentStateDescription: "", projectionA: undefined,
+    projectionB: undefined
+  },
+  {
+    id: 4, title: "Factor4", description: "", property: "", currentStateDescription: "", projectionA: undefined,
+    projectionB: undefined
+  },
+  {
+    id: 5, title: "Factor5", description: "", property: "", currentStateDescription: "", projectionA: undefined,
+    projectionB: undefined
+  }
 ];
 
 const initializeMatrix = (factors: KeyFactor[]): InfluencMatrix => {
@@ -37,17 +63,17 @@ const InfluencMatrixComponent: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Einflussmatrix
       </Typography>
       <TableContainer>
-        <Table sx={{ borderCollapse: 'collapse' }}>
+        <Table sx={{ borderCollapse: "collapse" }}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ padding: '4px' }}></TableCell>
+              <TableCell sx={{ padding: "4px" }}></TableCell>
               {keyFactors.map((factor) => (
-                <TableCell key={factor.id} align="center" sx={{ padding: '4px' }}>
+                <TableCell key={factor.id} align="center" sx={{ padding: "4px" }}>
                   {factor.title}
                 </TableCell>
               ))}
@@ -56,19 +82,19 @@ const InfluencMatrixComponent: React.FC = () => {
           <TableBody>
             {keyFactors.map((rowFactor) => (
               <TableRow key={rowFactor.id}>
-                <TableCell component="th" scope="row" sx={{ padding: '4px' }}>
+                <TableCell component="th" scope="row" sx={{ padding: "4px" }}>
                   {rowFactor.title}
                 </TableCell>
                 {keyFactors.map((colFactor) => (
-                  <TableCell key={colFactor.id} align="center" sx={{ padding: '4px' }}>
+                  <TableCell key={colFactor.id} align="center" sx={{ padding: "4px" }}>
                     {rowFactor.title === colFactor.title ? (
-                      '-'
+                      "-"
                     ) : (
                       <Select
                         value={matrix.get(rowFactor.title)?.get(colFactor.title) || 0}
                         onChange={(e) => handleChange(rowFactor.title, colFactor.title, Number(e.target.value))}
                         displayEmpty
-                        sx={{ padding: '0', minWidth: '50px' }}
+                        sx={{ padding: "0", minWidth: "50px" }}
                       >
                         {[0, 1, 2, 3].map((val) => (
                           <MenuItem key={val} value={val}>

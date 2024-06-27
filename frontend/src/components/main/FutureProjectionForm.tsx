@@ -9,6 +9,8 @@ const placeholderKeyFactor: KeyFactor = {
   description: '',
   property: '',
   currentStateDescription: '',
+  projectionA: undefined,
+  projectionB: undefined,
 };
 
 const FutureProjectionForm: React.FC = () => {
