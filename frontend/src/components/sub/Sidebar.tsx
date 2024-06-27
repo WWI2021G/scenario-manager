@@ -45,6 +45,7 @@ const SideNavbar = () => {
           { text: 'Einflussmatrix', icon: <ContactMailIcon />, path: '/influence-matrix' },
           { text: 'Schlüsselfaktoren', icon: <ContactMailIcon />, path: '/keyfactors' },
           { text: 'Zukunfts-Projektionen', icon: <ContactMailIcon />, path: '/future-projection' },
+          { text: 'Konsistenzmatrix-Projektionen', icon: <ContactMailIcon />, path: '/consistency-analysis' },
         ].map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
