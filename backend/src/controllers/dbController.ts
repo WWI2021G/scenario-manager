@@ -2,6 +2,7 @@ import { FutureProjection } from "../models/FutureProjection";
 import { InfluencingFactor } from "../models/InfluencingFactor";
 import { KeyFactor } from "../models/KeyFactor";
 import { Probability } from "../models/Probability";
+import { ProjectionBundle } from "../models/ProjectionBundle";
 import { ProjectionType } from "../models/ProjectionType";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { ScenarioType } from "../models/ScenarioType";
@@ -50,6 +51,16 @@ class DBController {
   async getUser(req: Request, res: Response) {
     try {
       const user: User = await dbService.selectUser(parseFloat(req.params.id));
+      res.status(200).json(user);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getUserByName(req: Request, res: Response) {
+    const { name }: { name: string } = req.body;
+    try {
+      const user: User = await dbService.selectUserByName(name);
       res.status(200).json(user);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -207,6 +218,74 @@ class DBController {
       const influencingFactor: InfluencingFactor =
         await dbService.selectInfluencingFactorByName(name);
       res.status(200).json(influencingFactor);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setActiveSum(req: Request, res: Response) {
+    const {
+      name,
+      description,
+      activeSum,
+      passiveSum,
+    }: {
+      name: string;
+      description: string;
+      activeSum: number;
+      passiveSum: number;
+    } = req.body;
+    const influencingFactor = new InfluencingFactor(name, description);
+    influencingFactor.setActiveSum(activeSum);
+    influencingFactor.setPassiveSum(passiveSum);
+    try {
+      const message = await dbService.updateActiveSum(influencingFactor);
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getActiveSum(req: Request, res: Response) {
+    try {
+      const activeSum = await dbService.selectActiveSum(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ activeSum: activeSum });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async setPassiveSum(req: Request, res: Response) {
+    const {
+      name,
+      description,
+      activeSum,
+      passiveSum,
+    }: {
+      name: string;
+      description: string;
+      activeSum: number;
+      passiveSum: number;
+    } = req.body;
+    const influencingFactor = new InfluencingFactor(name, description);
+    influencingFactor.setActiveSum(activeSum);
+    influencingFactor.setPassiveSum(passiveSum);
+    try {
+      const message = await dbService.updatePassiveSum(influencingFactor);
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getPassiveSum(req: Request, res: Response) {
+    try {
+      const passiveSum = await dbService.selectPassiveSum(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ passiveSum: passiveSum });
     } catch (error: any) {
       res.status(500).send(error.message);
     }
@@ -424,6 +503,23 @@ class DBController {
     }
   }
 
+  async linkFutureProjectionAndProjectionBundle(req: Request, res: Response) {
+    const {
+      futureProjection_id,
+      projectionBundle_id,
+    }: { futureProjection_id: number; projectionBundle_id: number } = req.body;
+    try {
+      const message =
+        await dbService.connectFutureProjectionAndProjectionBundle(
+          futureProjection_id,
+          projectionBundle_id,
+        );
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
   async getFutureProjectionID(req: Request, res: Response) {
     try {
       const {
@@ -450,7 +546,8 @@ class DBController {
         timeframe,
         projectionType,
       );
-      const futureProjection_id = await dbService.selectFutureProjectionID(futureProjection);
+      const futureProjection_id =
+        await dbService.selectFutureProjectionID(futureProjection);
       res.status(200).json({ futureProjection_id: futureProjection_id });
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -459,7 +556,9 @@ class DBController {
 
   async getFutureProjection(req: Request, res: Response) {
     try {
-      const futureProjection = await dbService.selectFutureProjection(parseFloat(req.params.id));
+      const futureProjection = await dbService.selectFutureProjection(
+        parseFloat(req.params.id),
+      );
       res.status(200).json(futureProjection);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -469,7 +568,8 @@ class DBController {
   async getFutureProjectionByName(req: Request, res: Response) {
     try {
       const { name }: { name: string } = req.body;
-      const futureProjection = await dbService.selectFutureProjectionByName(name);
+      const futureProjection =
+        await dbService.selectFutureProjectionByName(name);
       res.status(200).json(futureProjection);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -478,7 +578,10 @@ class DBController {
 
   async getFutureProjectionsForKeyFactor(req: Request, res: Response) {
     try {
-      const futureProjections = await dbService.selectFutureProjectionsForKeyFactor(parseFloat(req.params.id));
+      const futureProjections =
+        await dbService.selectFutureProjectionsForKeyFactor(
+          parseFloat(req.params.id),
+        );
       res.status(200).json(futureProjections);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -487,8 +590,117 @@ class DBController {
 
   async getFutureProjectionsForScenarioProject(req: Request, res: Response) {
     try {
-      const futureProjections = await dbService.selectFutureProjectionsForKeyFactor(parseFloat(req.params.id));
+      const futureProjections =
+        await dbService.selectFutureProjectionsForScenarioProject(
+          parseFloat(req.params.id),
+        );
       res.status(200).json(futureProjections);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getFutureProjectionsForProjectionBundle(req: Request, res: Response) {
+    try {
+      const futureProjections =
+        await dbService.selectFutureProjectionsForProjectionBundle(
+          parseFloat(req.params.id),
+        );
+      res.status(200).json(futureProjections);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addProjectionBundle(req: Request, res: Response) {
+    try {
+      const {
+        futureProjection_id,
+        consistency,
+        numPartInconsistencies,
+        pValue,
+      }: {
+        futureProjection_id: number;
+        consistency: number;
+        numPartInconsistencies: number;
+        pValue: number;
+      } = req.body;
+      const projectionBundle = new ProjectionBundle(
+        consistency,
+        numPartInconsistencies,
+        pValue,
+      );
+      const projectionBundle_id = await dbService.insertProjectionBundle(
+        futureProjection_id,
+        projectionBundle,
+      );
+      res.status(200).json({ scenarioProject_id: projectionBundle_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getProjectionBundle(req: Request, res: Response) {
+    try {
+      const projectionBundle: ProjectionBundle =
+        await dbService.selectProjectionBundle(parseFloat(req.params.id));
+      res.status(200).json(projectionBundle);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getConsistency(req: Request, res: Response) {
+    try {
+      const consistency: number = await dbService.selectConsistency(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ consistency: consistency });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getNumPartInconsistencies(req: Request, res: Response) {
+    try {
+      const numPartInconsistencies: number =
+        await dbService.selectNumPartInconsistencies(parseFloat(req.params.id));
+      res.status(200).json({ numPartInconsistencies: numPartInconsistencies });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getPValue(req: Request, res: Response) {
+    try {
+      const pValue: number = await dbService.selectPValue(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json({ pValue: pValue });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getProjectionBundlesForRawScenario(req: Request, res: Response) {
+    try {
+      const projectionBundles: ProjectionBundle[] =
+        await dbService.selectProjectionBundlesForRawScenario(
+          parseFloat(req.params.id),
+        );
+      res.status(200).json(projectionBundles);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getProjectionBundlesForScenarioProject(req: Request, res: Response) {
+    try {
+      const projectionBundles: ProjectionBundle[] =
+        await dbService.selectProjectionBundlesForScenarioProject(
+          parseFloat(req.params.id),
+        );
+      res.status(200).json(projectionBundles);
     } catch (error: any) {
       res.status(500).send(error.message);
     }

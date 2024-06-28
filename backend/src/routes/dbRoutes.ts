@@ -10,6 +10,7 @@ router.get("/redoDB", dbController.redoDB);
 router.get("/user/:id", dbController.getUser);
 router.post("/user/add", dbController.addUser);
 router.post("/userid", dbController.getUserID);
+router.post("/username", dbController.getUserByName);
 
 router.get("/sp/:id", dbController.getScenarioProject);
 router.get("/sp/user/:id", dbController.getAllScenarioProjectsForUser);
@@ -23,6 +24,10 @@ router.post("/if/add", dbController.addInfluencingFactor);
 router.post("/if/link", dbController.linkInfluencingFactorAndScenarioProject);
 router.post("/ifid", dbController.getInfluencingFactorID);
 router.post("/ifname", dbController.getInfluencingFactorByName);
+router.get("/if/as/:id", dbController.getActiveSum);
+router.get("/if/ps/:id", dbController.getPassiveSum);
+router.post("/if/as/update", dbController.setActiveSum);
+router.post("/if/ps/update", dbController.setPassiveSum);
 
 router.get("/kf/:id", dbController.getKeyFactor);
 router.get("/kf/sp/:id", dbController.getKeyFactorsForScenarioProject);
@@ -40,8 +45,21 @@ router.post("/kf/prop2/update", dbController.setPropertyTwo);
 router.get("/fp/:id", dbController.getFutureProjection);
 router.get("/fp/kf/:id", dbController.getFutureProjectionsForKeyFactor);
 router.get("/fp/sp/:id", dbController.getFutureProjectionsForScenarioProject);
+router.get("/fp/pb/:id", dbController.getFutureProjectionsForProjectionBundle);
 router.post("/fp/add", dbController.addFutureProjection);
+router.post("/fp/link", dbController.linkFutureProjectionAndProjectionBundle);
 router.post("/fpid", dbController.getFutureProjectionID);
 router.post("/fpname", dbController.getFutureProjectionByName);
+
+router.get("/pb/:id", dbController.getProjectionBundle);
+router.get("/pb/consistency/:id", dbController.getConsistency);
+router.get(
+  "/pb/numPartInconsistencies/:id",
+  dbController.getNumPartInconsistencies,
+);
+router.get("/pb/pValue/:id", dbController.getPValue);
+router.get("/pb/rs/:id", dbController.getProjectionBundlesForRawScenario);
+router.get("/pb/sp/:id", dbController.getProjectionBundlesForScenarioProject);
+router.post("/pb/add", dbController.addProjectionBundle);
 
 export default router;

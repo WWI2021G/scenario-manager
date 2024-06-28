@@ -8,6 +8,7 @@ import { KeyFactor } from "../models/KeyFactor";
 import { FutureProjection } from "../models/FutureProjection";
 import { Probability } from "../models/Probability";
 import { ProjectionType } from "../models/ProjectionType";
+import { ProjectionBundle } from "../models/ProjectionBundle";
 
 dotenv.config();
 
@@ -218,6 +219,30 @@ class DBService {
     }
   }
 
+  async selectUserByName(scenarioUser_name: string): Promise<User> {
+    try {
+      const result = await db.one<{ username: string; password: string }>(
+        `SELECT
+          username,
+          PASSWORD
+        FROM
+          scenariouser
+        WHERE
+          username = $1;`,
+        scenarioUser_name,
+      );
+      const user = new User(result.username, result.password);
+      console.log("Request for ScenarioUser: " + scenarioUser_name);
+      return user;
+    } catch (error) {
+      console.error(
+        "Error getting user from name: " + scenarioUser_name,
+        error,
+      );
+      throw error;
+    }
+  }
+
   async insertScenarioProject(
     scenarioProject: ScenarioProject,
   ): Promise<number> {
@@ -240,7 +265,7 @@ class DBService {
       );
       console.log(
         "Created scenarioProject in database with id: " +
-        createdScenarioProject_id,
+          createdScenarioProject_id,
       );
       return createdScenarioProject_id;
     } catch (error) {
@@ -270,7 +295,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error selecting scenarioproject_id for Scenario: " +
-        scenarioProject.getName(),
+          scenarioProject.getName(),
         error,
       );
       throw error;
@@ -356,13 +381,13 @@ class DBService {
       });
       console.log(
         "Request for all ScenarioProjects with scenarioUser_id: " +
-        scenarioUser_id,
+          scenarioUser_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting ScenarioProject for scenarioUser_id: " +
-        scenarioUser_id,
+          scenarioUser_id,
         error,
       );
       throw error;
@@ -392,7 +417,10 @@ class DBService {
         );
       }
       const createdInfluencingFactor_id: number = await db.one<number>(
-        "INSERT INTO influencingfactor (name, description) VALUES ($1, $2) RETURNING influencingfactor_id;",
+        `INSERT INTO
+          influencingfactor (name, description)
+        VALUES
+          ($1, $2) RETURNING influencingfactor_id;`,
         [influencingFactor.getName(), influencingFactor.getDescription()],
         (influencingFactor) => influencingFactor.influencingfactor_id,
       );
@@ -402,7 +430,7 @@ class DBService {
       );
       console.log(
         "Created influencingFactor in database with id: " +
-        createdInfluencingFactor_id,
+          createdInfluencingFactor_id,
       );
       return createdInfluencingFactor_id;
     } catch (error: any) {
@@ -456,13 +484,13 @@ class DBService {
       );
       console.log(
         "Request for existing influencingFactor: " +
-        influencingFactor.getName(),
+          influencingFactor.getName(),
       );
       return influencingFactor_id;
     } catch (error) {
       console.error(
         "Error selecting influencingFactor_id for InfluencingFactor: " +
-        influencingFactor.getName(),
+          influencingFactor.getName(),
         error,
       );
       throw error;
@@ -476,14 +504,14 @@ class DBService {
       const result = await db.one<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
+        activesum: number;
+        passivesum: number;
       }>(
         `SELECT
           name,
           description,
-          variable,
-          influencingarea
+          activesum,
+          passivesum
         FROM
           influencingfactor
         WHERE
@@ -494,6 +522,8 @@ class DBService {
         result.name,
         result.description,
       );
+      influencingFactor.setActiveSum(result.activesum);
+      influencingFactor.setPassiveSum(result.passivesum);
       console.log(
         "Request for existing influencingFactor_id: " + influencingFactor_id,
       );
@@ -534,14 +564,116 @@ class DBService {
       );
       console.log(
         "Request for existing influencingFactor by name: " +
-        influencingFactor_name,
+          influencingFactor_name,
       );
       return influencingFactor;
     } catch (error) {
       console.error(
         "Error selecting influencingFactor for InfluencingFactor: " +
-        influencingFactor_name,
+          influencingFactor_name,
         error,
+      );
+      throw error;
+    }
+  }
+
+  async updateActiveSum(influencingFactor: InfluencingFactor): Promise<string> {
+    try {
+      await db.none(
+        `UPDATE
+          influencingfactor
+        SET
+          activeSum = $1
+        WHERE
+          name = $2;`,
+        [influencingFactor.getActiveSum(), influencingFactor.getName()],
+      );
+      const message =
+        "Successfully updated activeSum for InfluencingFactor: " +
+        influencingFactor.getName();
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error updating activeSum for InfluencingFactor: " +
+          influencingFactor.getName(),
+      );
+      throw error;
+    }
+  }
+
+  async selectActiveSum(influencingFactor_id: number): Promise<number> {
+    try {
+      const activesum = await db.one<number>(
+        `SELECT
+          activesum
+        FROM
+          influencingfactor
+        WHERE
+          influencingfactor_id = $1;`,
+        influencingFactor_id,
+        (as) => as.activesum,
+      );
+      console.log(
+        "Request for activeSum of InfluencingFactor: " + influencingFactor_id,
+      );
+      return activesum;
+    } catch (error) {
+      console.error(
+        "Error selecting activeSum for InfluencingFactor: " +
+          influencingFactor_id,
+      );
+      throw error;
+    }
+  }
+
+  async updatePassiveSum(
+    influencingFactor: InfluencingFactor,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `UPDATE
+          influencingfactor
+        SET
+          passiveSum = $1
+        WHERE
+          name = $2;`,
+        [influencingFactor.getPassiveSum(), influencingFactor.getName()],
+      );
+      const message =
+        "Successfully updated passiveSum for InfluencingFactor: " +
+        influencingFactor.getName();
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error updating passiveSum for InfluencingFactor: " +
+          influencingFactor.getName(),
+      );
+      throw error;
+    }
+  }
+
+  async selectPassiveSum(influencingFactor_id: number): Promise<number> {
+    try {
+      const passiveSum = await db.one<number>(
+        `SELECT
+          passivesum
+        FROM
+          influencingfactor
+        WHERE
+          influencingfactor_id = $1;`,
+        influencingFactor_id,
+        (as) => as.passivesum,
+      );
+      console.log(
+        "Request for passiveSum of InfluencingFactor: " + influencingFactor_id,
+      );
+      return passiveSum;
+    } catch (error) {
+      console.error(
+        "Error selecting passiveSum for InfluencingFactor: " +
+          influencingFactor_id,
       );
       throw error;
     }
@@ -578,13 +710,13 @@ class DBService {
       });
       console.log(
         "Request for all InfluencingFactors with scenarioProject_id: " +
-        scenarioProject_id,
+          scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all InfluencingFactors for scenarioProject_id: " +
-        scenarioProject_id,
+          scenarioProject_id,
         error,
       );
       throw error;
@@ -710,6 +842,7 @@ class DBService {
         keyFactor.getName(),
         (crit) => crit.critical,
       );
+      console.log("Request for critical of KeyFactor: " + keyFactor.getName());
       return critical;
     } catch (error) {
       console.error("Error selecting critical for KeyFactor: " + keyFactor);
@@ -849,13 +982,13 @@ class DBService {
       });
       console.log(
         "Request for all KeyFactors with scenarioProject_id: " +
-        scenarioProject_id,
+          scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all KeyFactors for scenarioProject_id: " +
-        scenarioProject_id,
+          scenarioProject_id,
         error,
       );
       throw error;
@@ -1000,6 +1133,36 @@ class DBService {
     }
   }
 
+  async connectFutureProjectionAndProjectionBundle(
+    futureProjection_id: number,
+    projectionBundle_id: number,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `INSERT INTO
+          fp_pb (futureprojection_id, projectionbundle_id)
+        VALUES
+          ($1, $2);`,
+        [futureProjection_id, projectionBundle_id],
+      );
+      return (
+        "Successfully connected futureProjection_id: " +
+        futureProjection_id +
+        " and projectionBundle_id: " +
+        projectionBundle_id
+      );
+    } catch (error) {
+      console.error(
+        "Error connecting InfluencingFactor and ScenarioProject",
+        error,
+      );
+      throw {
+        message: "Error connecting InfluencingFactor and ScenarioProject",
+        name: "ConnectionError",
+      };
+    }
+  }
+
   async selectFutureProjectionID(
     futureProjection: FutureProjection,
   ): Promise<number> {
@@ -1016,13 +1179,13 @@ class DBService {
       );
       console.log(
         "Request for existing FutureProjectionID: " +
-        futureProjection.getName(),
+          futureProjection.getName(),
       );
       return futureProjection_id;
     } catch (error) {
       console.error(
         "Error selecting ID for FutureProjection: " +
-        futureProjection.getName(),
+          futureProjection.getName(),
         error,
       );
       throw error;
@@ -1161,8 +1324,7 @@ class DBService {
         results.push(futureProjection);
       });
       console.log(
-        "Request for all FutureProjections with keyfactor_id: " +
-        keyfactor_id,
+        "Request for all FutureProjections with keyfactor_id: " + keyfactor_id,
       );
       return results;
     } catch (error) {
@@ -1198,11 +1360,13 @@ class DBService {
           futureprojection fp
           JOIN keyfactor k ON k.keyfactor_id = fp.keyfactor_id
         WHERE
-          scenarioproject_id = 1;`,
+          scenarioproject_id = $1;`,
         scenarioProject_id,
       );
       for (let i = 0; i < query_results.length; i++) {
-        const keyFactor = await this.selectKeyFactor(query_results[i].keyfactor_id);
+        const keyFactor = await this.selectKeyFactor(
+          query_results[i].keyfactor_id,
+        );
         const futureProjection = new FutureProjection(
           query_results[i].name,
           query_results[i].description,
@@ -1213,16 +1377,333 @@ class DBService {
         );
         console.log(futureProjection);
         results.push(futureProjection);
-      };
+      }
       console.log(
         "Request for all FutureProjections with scenarioProject_id: " +
-        scenarioProject_id,
+          scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting FutureProjections for ScenarioProject: " +
+          scenarioProject_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectFutureProjectionsForProjectionBundle(
+    projectionBundle_id: number,
+  ): Promise<FutureProjection[]> {
+    try {
+      var results: FutureProjection[] = [];
+      const query_results = await db.any<{
+        name: string;
+        probability: Probability;
+        description: string;
+        timeFrame: Date;
+        projectionType: ProjectionType;
+        keyfactor_id: number;
+      }>(
+        `SELECT
+          name,
+          probability,
+          description,
+          timeFrame,
+          projectionType,
+          fp.keyfactor_id
+        FROM
+          futureprojection fp
+          JOIN fp_pb fp_pb ON fp.futureprojection_id = fp_pb.futureprojection_id
+        WHERE
+          projectionbundle_id = $1;`,
+        projectionBundle_id,
+      );
+      for (let i = 0; i < query_results.length; i++) {
+        const keyFactor = await this.selectKeyFactor(
+          query_results[i].keyfactor_id,
+        );
+        const futureProjection = new FutureProjection(
+          query_results[i].name,
+          query_results[i].description,
+          keyFactor,
+          query_results[i].probability,
+          query_results[i].timeFrame,
+          query_results[i].projectionType,
+        );
+        console.log(futureProjection);
+        results.push(futureProjection);
+      }
+      console.log(
+        "Request for all FutureProjections with scenarioProject_id: " +
+          projectionBundle_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting FutureProjections for ScenarioProject: " +
+          projectionBundle_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async insertProjectionBundle(
+    scenarioProject_id: number,
+    projectionBundle: ProjectionBundle,
+  ): Promise<number> {
+    try {
+      const projectionBundle_id = await db.one<number>(
+        `INSERT INTO
+          projectionbundle(
+            consistency,
+            numpartinconsistencies,
+            pvalue,
+            scenarioproject_id
+          )
+        VALUES
+          ($1, $2, $3, $4) RETURNING projectionbundle_id;`,
+        [
+          projectionBundle.getConsistency(),
+          projectionBundle.getNumPartInconsistencies(),
+          projectionBundle.getPValue(),
+          scenarioProject_id,
+        ],
+        (bp) => bp.projectionbundle_id,
+      );
+      console.log(
+        "Created ProjectionBundle in database with ID: " + projectionBundle_id,
+      );
+      return projectionBundle_id;
+    } catch (error) {
+      console.error("Error inserting ProjectionBundle");
+      throw error;
+    }
+  }
+
+  async selectProjectionBundle(
+    projectionBundle_id: number,
+  ): Promise<ProjectionBundle> {
+    try {
+      const result_pb = await db.one<{
+        consistency: number;
+        numpartinconsistencies: number;
+        pvalue: number;
+      }>(
+        `SELECT
+          consistency,
+          numpartinconsistencies,
+          pvalue
+        FROM
+          projectionbundle
+        WHERE
+          projectionbundle_id = $1;`,
+        projectionBundle_id,
+      );
+      const projectionBundle = new ProjectionBundle(
+        result_pb.consistency,
+        result_pb.numpartinconsistencies,
+        result_pb.pvalue,
+      );
+      const futureProjections =
+        await this.selectFutureProjectionsForProjectionBundle(
+          projectionBundle_id,
+        );
+      futureProjections.forEach((fp) => {
+        projectionBundle.addProjection(fp);
+      });
+      console.log(
+        "Request for existing projectionBundle_id: " + projectionBundle_id,
+      );
+      return projectionBundle;
+    } catch (error) {
+      console.error("Error selecting ProjectionBundle: " + projectionBundle_id);
+      throw error;
+    }
+  }
+
+  async selectConsistency(projectionBundle_id: number): Promise<number> {
+    try {
+      const consistency = await db.one<number>(
+        `SELECT
+          consistency
+        FROM
+          projectionbundle
+        WHERE
+          projectionbundle_id = $1;`,
+        projectionBundle_id,
+        (pb) => pb.consistency,
+      );
+      console.log(
+        "Request for consistency of projectionBundle_id: " +
+          projectionBundle_id,
+      );
+      return consistency;
+    } catch (error) {
+      console.error(
+        "Error selecting consistency for ProjectionBundle: " +
+          projectionBundle_id,
+      );
+      throw error;
+    }
+  }
+
+  async selectNumPartInconsistencies(
+    projectionBundle_id: number,
+  ): Promise<number> {
+    try {
+      const numPartInconsistencies = await db.one<number>(
+        `SELECT
+          numpartinconsistencies
+        FROM
+          projectionbundle
+        WHERE
+          projectionbundle_id = $1;`,
+        projectionBundle_id,
+        (pb) => pb.numpartinconsistencies,
+      );
+      console.log(
+        "Request for numPartInconsistencies of projectionBundle_id: " +
+          projectionBundle_id,
+      );
+      return numPartInconsistencies;
+    } catch (error) {
+      console.error(
+        "Error selecting numPartInconsistencies for ProjectionBundle: " +
+          projectionBundle_id,
+      );
+      throw error;
+    }
+  }
+
+  async selectPValue(projectionBundle_id: number): Promise<number> {
+    try {
+      const pValue = await db.one<number>(
+        `SELECT
+          pvalue
+        FROM
+          projectionbundle
+        WHERE
+          projectionbundle_id = $1;`,
+        projectionBundle_id,
+        (pb) => pb.pvalue,
+      );
+      console.log(
+        "Request for pValue of projectionBundle_id: " + projectionBundle_id,
+      );
+      return pValue;
+    } catch (error) {
+      console.error(
+        "Error selecting pValue for ProjectionBundle: " + projectionBundle_id,
+      );
+      throw error;
+    }
+  }
+
+  async selectProjectionBundlesForRawScenario(
+    rawScenario_id: number,
+  ): Promise<ProjectionBundle[]> {
+    try {
+      var results: ProjectionBundle[] = [];
+      const query_results = await db.any<{
+        projectionbundle_id: number;
+        consistency: number;
+        numpartinconsistencies: number;
+        pvalue: number;
+      }>(
+        `SELECT
+          pbrs.projectionbundle_id,
+          consistency,
+          numpartinconsistencies,
+          pvalue
+        FROM
+          projectionbundle pb
+          JOIN pb_rs pbrs ON pb.projectionbundle_id = pbrs.projectionbundle_id
+        WHERE
+          rawscenario_id = $1;`,
+        rawScenario_id,
+      );
+      for (let i = 0; i < query_results.length; i++) {
+        const projectionBundle: ProjectionBundle = new ProjectionBundle(
+          query_results[i].consistency,
+          query_results[i].numpartinconsistencies,
+          query_results[i].pvalue,
+        );
+        const futureProjections =
+          await this.selectFutureProjectionsForProjectionBundle(
+            query_results[i].projectionbundle_id,
+          );
+        futureProjections.forEach((fp) => {
+          projectionBundle.addProjection(fp);
+        });
+        console.log(projectionBundle);
+        results.push(projectionBundle);
+      }
+      console.log(
+        "Request for all ProjectionBundles with rawScenario_id: " +
+          rawScenario_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting all ProjectionBundles for rawScenario_id: " +
+          rawScenario_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectProjectionBundlesForScenarioProject(
+    scenarioProject_id: number,
+  ): Promise<ProjectionBundle[]> {
+    try {
+      var results: ProjectionBundle[] = [];
+      const query_results = await db.any<{
+        projectionbundle_id: number;
+        consistency: number;
+        numpartinconsistencies: number;
+        pvalue: number;
+      }>(
+        `SELECT
+          projectionbundle_id,
+          consistency,
+          numpartinconsistencies,
+          pvalue
+        FROM
+          projectionbundle
+        WHERE
+          scenarioProject_id = $1;`,
         scenarioProject_id,
+      );
+      console.log(query_results);
+      for (let i = 0; i < query_results.length; i++) {
+        const projectionBundle: ProjectionBundle = new ProjectionBundle(
+          query_results[i].consistency,
+          query_results[i].numpartinconsistencies,
+          query_results[i].pvalue,
+        );
+        const futureProjections =
+          await this.selectFutureProjectionsForProjectionBundle(
+            query_results[i].projectionbundle_id,
+          );
+        futureProjections.forEach((fp) => {
+          projectionBundle.addProjection(fp);
+        });
+        console.log(projectionBundle);
+        results.push(projectionBundle);
+      }
+      console.log(
+        "Request for all ProjectionBundles with scenarioProject_id: " +
+          scenarioProject_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting all ProjectionBundles for scenarioProject_id: " +
+          scenarioProject_id,
         error,
       );
       throw error;
