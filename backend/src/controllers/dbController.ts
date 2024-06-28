@@ -4,6 +4,7 @@ import { KeyFactor } from "../models/KeyFactor";
 import { Probability } from "../models/Probability";
 import { ProjectionBundle } from "../models/ProjectionBundle";
 import { ProjectionType } from "../models/ProjectionType";
+import { RawScenario } from "../models/RawScenario";
 import { ScenarioProject } from "../models/ScenarioProject";
 import { ScenarioType } from "../models/ScenarioType";
 import { User } from "../models/User";
@@ -136,7 +137,7 @@ class DBController {
   async getAllScenarioProjectsForUser(req: Request, res: Response) {
     try {
       const scenarioProjects: ScenarioProject[] =
-        await dbService.selectAllScenarioProjectsForUser(
+        await dbService.selectScenarioProjectsForUser(
           parseFloat(req.params.id),
         );
       res.status(200).json(scenarioProjects);
@@ -640,6 +641,22 @@ class DBController {
     }
   }
 
+  async linkProjectionBundleAndRawScenario(req: Request, res: Response) {
+    const {
+      projectionBundle_id,
+      rawScenario_id,
+    }: { projectionBundle_id: number; rawScenario_id: number } = req.body;
+    try {
+      const message = await dbService.connectProjectionBundleAndRawScenario(
+        projectionBundle_id,
+        rawScenario_id,
+      );
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
   async getProjectionBundle(req: Request, res: Response) {
     try {
       const projectionBundle: ProjectionBundle =
@@ -701,6 +718,60 @@ class DBController {
           parseFloat(req.params.id),
         );
       res.status(200).json(projectionBundles);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async addRawScenario(req: Request, res: Response) {
+    const { name, quality }: { name: string; quality: number } = req.body;
+    const rawScenario: RawScenario = new RawScenario(name, quality);
+    try {
+      const rawScenario_id = await dbService.insertRawScenario(rawScenario);
+      res.status(200).json({ rawScenario_id: rawScenario_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getRawScenarioID(req: Request, res: Response) {
+    const { name, quality }: { name: string; quality: number } = req.body;
+    const rawScenario: RawScenario = new RawScenario(name, quality);
+    try {
+      const rawScenario_id = await dbService.selectRawScenarioID(rawScenario);
+      res.status(200).json({ rawScenario_id: rawScenario_id });
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getRawScenario(req: Request, res: Response) {
+    try {
+      const rawScenario: RawScenario = await dbService.selectRawScenario(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json(rawScenario);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getRawScenarioByName(req: Request, res: Response) {
+    const { name }: { name: string } = req.body;
+    try {
+      const rawScenario = await dbService.selectRawScenarioByName(name);
+      res.status(200).json(rawScenario);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
+  async getRawScenariosForScenarioProject(req: Request, res: Response) {
+    try {
+      const rawScenarios = await dbService.selectRawScenariosForScenarioProject(
+        parseFloat(req.params.id),
+      );
+      res.status(200).json(rawScenarios);
     } catch (error: any) {
       res.status(500).send(error.message);
     }

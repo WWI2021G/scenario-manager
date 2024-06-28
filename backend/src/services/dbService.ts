@@ -9,6 +9,7 @@ import { FutureProjection } from "../models/FutureProjection";
 import { Probability } from "../models/Probability";
 import { ProjectionType } from "../models/ProjectionType";
 import { ProjectionBundle } from "../models/ProjectionBundle";
+import { RawScenario } from "../models/RawScenario";
 
 dotenv.config();
 
@@ -345,7 +346,7 @@ class DBService {
     }
   }
 
-  async selectAllScenarioProjectsForUser(
+  async selectScenarioProjectsForUser(
     scenarioUser_id: number,
   ): Promise<ScenarioProject[]> {
     try {
@@ -376,7 +377,7 @@ class DBService {
           scenarioType,
           user,
         );
-        console.log(scenarioProject);
+        console.log(scenarioProject.getName());
         results.push(scenarioProject);
       });
       console.log(
@@ -451,21 +452,19 @@ class DBService {
           ($1, $2);`,
         [scenarioProject_id, influencingFactor_id],
       );
-      return (
+      const message =
         "Successfully connected influencingFactor_id: " +
         influencingFactor_id +
         " and scenarioProject_id: " +
-        scenarioProject_id
-      );
+        scenarioProject_id;
+      console.log(message);
+      return message;
     } catch (error) {
       console.error(
         "Error connecting InfluencingFactor and ScenarioProject",
         error,
       );
-      throw {
-        message: "Error connecting InfluencingFactor and ScenarioProject",
-        name: "ConnectionError",
-      };
+      throw error;
     }
   }
 
@@ -977,7 +976,7 @@ class DBService {
         );
         keyFactor.updateCritical(factor.critical);
         keyFactor.setProperties(factor.prop_one, factor.prop_two);
-        console.log(keyFactor);
+        console.log(keyFactor.getName());
         results.push(keyFactor);
       });
       console.log(
@@ -1145,21 +1144,19 @@ class DBService {
           ($1, $2);`,
         [futureProjection_id, projectionBundle_id],
       );
-      return (
+      const message =
         "Successfully connected futureProjection_id: " +
         futureProjection_id +
         " and projectionBundle_id: " +
-        projectionBundle_id
-      );
+        projectionBundle_id;
+      console.log(message);
+      return message;
     } catch (error) {
       console.error(
-        "Error connecting InfluencingFactor and ScenarioProject",
+        "Error connecting FutureProjection and ProjectionBundle",
         error,
       );
-      throw {
-        message: "Error connecting InfluencingFactor and ScenarioProject",
-        name: "ConnectionError",
-      };
+      throw error;
     }
   }
 
@@ -1320,7 +1317,7 @@ class DBService {
           fp.timeFrame,
           fp.projectionType,
         );
-        console.log(futureProjection);
+        console.log(futureProjection.getName());
         results.push(futureProjection);
       });
       console.log(
@@ -1375,7 +1372,7 @@ class DBService {
           query_results[i].timeFrame,
           query_results[i].projectionType,
         );
-        console.log(futureProjection);
+        console.log(futureProjection.getName());
         results.push(futureProjection);
       }
       console.log(
@@ -1432,7 +1429,7 @@ class DBService {
           query_results[i].timeFrame,
           query_results[i].projectionType,
         );
-        console.log(futureProjection);
+        console.log(futureProjection.getName());
         results.push(futureProjection);
       }
       console.log(
@@ -1479,6 +1476,31 @@ class DBService {
       return projectionBundle_id;
     } catch (error) {
       console.error("Error inserting ProjectionBundle");
+      throw error;
+    }
+  }
+
+  async connectProjectionBundleAndRawScenario(
+    projectionBundle_id: number,
+    rawScenario_id: number,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `INSERT INTO
+          pb_rs (projectionbundle_id, rawscenario_id)
+        VALUES
+          ($1, $2);`,
+        [projectionBundle_id, rawScenario_id],
+      );
+      const message =
+        "Successfully connected projectionBundle_id: " +
+        projectionBundle_id +
+        " and rawScenario_id: " +
+        rawScenario_id;
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error("Error connecting ProjectionBundle and RawScenario", error);
       throw error;
     }
   }
@@ -1625,6 +1647,7 @@ class DBService {
           rawscenario_id = $1;`,
         rawScenario_id,
       );
+      console.log(query_results);
       for (let i = 0; i < query_results.length; i++) {
         const projectionBundle: ProjectionBundle = new ProjectionBundle(
           query_results[i].consistency,
@@ -1703,6 +1726,167 @@ class DBService {
     } catch (error) {
       console.error(
         "Error selecting all ProjectionBundles for scenarioProject_id: " +
+          scenarioProject_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async insertRawScenario(rawScenario: RawScenario): Promise<number> {
+    try {
+      const rawScenario_id = db.one<number>(
+        `INSERT INTO
+          rawscenario (name, quality)
+        VALUES
+          ($1, $2) RETURNING rawscenario_id`,
+        [rawScenario.getName(), rawScenario.getQuality()],
+        (rs) => rs.rawscenario_id,
+      );
+      console.log("Created RawScenario in database with ID: " + rawScenario_id);
+      return rawScenario_id;
+    } catch (error) {
+      console.error(
+        "Error inserting RawScenario: " + rawScenario.getName(),
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectRawScenarioID(rawScenario: RawScenario): Promise<number> {
+    try {
+      const rawScenario_id: number = await db.one<number>(
+        `SELECT
+          rawscenario_id
+        FROM
+          rawscenario
+        WHERE
+          name = $1;`,
+        rawScenario.getName(),
+        (rs) => rs.rawscenario_id,
+      );
+      console.log("Request for existing rawScenario: " + rawScenario.getName());
+      return rawScenario_id;
+    } catch (error) {
+      console.error(
+        "Error selecting id from rawScenario: " + rawScenario.getName(),
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectRawScenario(rawScenario_id: number): Promise<RawScenario> {
+    try {
+      const result = await db.one<{ name: string; quality: number }>(
+        `SELECT
+          name,
+          quality
+        FROM
+          rawscenario
+        WHERE
+          rawscenario_id = $1;`,
+        rawScenario_id,
+      );
+      const rawScenario = new RawScenario(result.name, result.quality);
+      const projectionBundles =
+        await this.selectProjectionBundlesForRawScenario(rawScenario_id);
+      projectionBundles.forEach((projectionBundle) => {
+        rawScenario.addProjectionBundle(projectionBundle);
+      });
+      console.log("Request for rawScenario_id: " + rawScenario_id);
+      return rawScenario;
+    } catch (error) {
+      console.error(
+        "Error getting rawScenario from ID: " + rawScenario_id,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectRawScenarioByName(
+    rawScenario_name: string,
+  ): Promise<RawScenario> {
+    try {
+      const result = await db.one<{
+        rawscenario_id: number;
+        name: string;
+        quality: number;
+      }>(
+        `SELECT
+          rawscenario_id,
+          name,
+          quality
+        FROM
+          scenariouser
+        WHERE
+          name = $1;`,
+        rawScenario_name,
+      );
+      const rawScenario = new RawScenario(result.name, result.quality);
+      const projectionBundles =
+        await this.selectProjectionBundlesForRawScenario(result.rawscenario_id);
+      projectionBundles.forEach((projectionBundle) => {
+        rawScenario.addProjectionBundle(projectionBundle);
+      });
+      console.log("Request for rawScenario_name: " + rawScenario_name);
+      return rawScenario;
+    } catch (error) {
+      console.error(
+        "Error getting rawScenario from name: " + rawScenario_name,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async selectRawScenariosForScenarioProject(
+    scenarioProject_id: number,
+  ): Promise<RawScenario[]> {
+    try {
+      var results: RawScenario[] = [];
+      const query_results = await db.any<{
+        rawscenario_id: number;
+        name: string;
+        quality: number;
+      }>(
+        `SELECT
+          rs.rawscenario_id,
+          name,
+          quality
+        FROM
+          rawscenario rs
+          JOIN pb_rs pbrs ON pbrs.rawscenario_id = rs.rawscenario_id
+          JOIN projectionbundle pb ON pb.projectionbundle_id = pbrs.projectionbundle_id
+        WHERE
+          scenarioproject_id = $1;`,
+        scenarioProject_id,
+      );
+      for (let i = 0; i < query_results.length; i++) {
+        const rawScenario: RawScenario = new RawScenario(
+          query_results[i].name,
+          query_results[i].quality,
+        );
+        const projectionBundles =
+          await this.selectProjectionBundlesForRawScenario(
+            query_results[i].rawscenario_id,
+          );
+        projectionBundles.forEach((projectionBundle) => {
+          rawScenario.addProjectionBundle(projectionBundle);
+        });
+        console.log(rawScenario.getName());
+        results.push(rawScenario);
+      }
+      console.log(
+        "Request for all RawScenarios with scenarioProject_id: " +
+          scenarioProject_id,
+      );
+      return results;
+    } catch (error) {
+      console.error(
+        "Error selecting all RawScenarios for scenarioProject_id: " +
           scenarioProject_id,
         error,
       );
