@@ -5,7 +5,7 @@ import { KeyFactor } from "../src/models/KeyFactor";
 import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 
-let projectionBundle = new ProjectionBundle("Buz", "Buz bundles Projections");
+let projectionBundle = new ProjectionBundle(20, 4, 5);
 let keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
@@ -18,19 +18,25 @@ let futureProjection = new FutureProjection(
 
 describe("Testing ProjectionBundle class", () => {
   test("Test constructor", () => {
-    expect(projectionBundle.getName()).toBe("Buz");
-    expect(projectionBundle.getDescription()).toBe("Buz bundles Projections");
+    expect(projectionBundle.getConsistency()).toBe(20);
+    expect(projectionBundle.getNumPartInconsistencies()).toBe(4);
+    expect(projectionBundle.getPValue()).toBe(5);
     expect(projectionBundle.getProjections()).toStrictEqual([]);
   });
 
-  test("Test updateName", () => {
-    projectionBundle.updateName("Bar");
-    expect(projectionBundle.getName()).toBe("Bar");
+  test("Test setConsistency", () => {
+    projectionBundle.setConsistency(24);
+    expect(projectionBundle.getConsistency()).toBe(24);
   });
 
-  test("Test updateDescription", () => {
-    projectionBundle.updateDescription("Bar bundles Projections");
-    expect(projectionBundle.getDescription()).toBe("Bar bundles Projections");
+  test("Test setNumPartInconsistencies", () => {
+    projectionBundle.setNumPartInconsistencies(6);
+    expect(projectionBundle.getNumPartInconsistencies()).toBe(6);
+  });
+
+  test("Test setPValue", () => {
+    projectionBundle.setPValue(2);
+    expect(projectionBundle.getPValue()).toBe(2);
   });
 
   test("Test addProjection", () => {

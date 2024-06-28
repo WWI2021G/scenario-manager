@@ -1,30 +1,20 @@
 import { FutureProjection } from "./FutureProjection";
 
 export class ProjectionBundle {
-  private name: string;
-  private description: string;
   private projections: FutureProjection[];
+  private consistency: number;
+  private numPartInconsistencies: number;
+  private pValue: number;
 
-  constructor(name: string, description: string) {
-    this.name = name;
-    this.description = description;
+  constructor(
+    consistency: number,
+    numPartInconsistencies: number,
+    pValue: number,
+  ) {
     this.projections = [];
-  }
-
-  getName(): string {
-    return this.name;
-  }
-
-  updateName(name: string) {
-    this.name = name;
-  }
-
-  getDescription(): string {
-    return this.description;
-  }
-
-  updateDescription(description: string) {
-    this.description = description;
+    this.consistency = consistency;
+    this.numPartInconsistencies = numPartInconsistencies;
+    this.pValue = pValue;
   }
 
   getProjections(): FutureProjection[] {
@@ -39,5 +29,29 @@ export class ProjectionBundle {
     this.projections = this.projections.filter(
       (element: FutureProjection) => element !== projection,
     );
+  }
+
+  getConsistency(): number {
+    return this.consistency;
+  }
+
+  setConsistency(consistency: number) {
+    this.consistency = consistency;
+  }
+
+  getNumPartInconsistencies(): number {
+    return this.numPartInconsistencies;
+  }
+
+  setNumPartInconsistencies(numPartInconsistencies: number) {
+    this.numPartInconsistencies = numPartInconsistencies;
+  }
+
+  getPValue(): number {
+    return this.pValue;
+  }
+
+  setPValue(pValue: number) {
+    this.pValue = pValue;
   }
 }

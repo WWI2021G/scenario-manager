@@ -25,7 +25,7 @@ let futureProjection = new FutureProjection(
   new Date(new Date().getMonth() + 3),
   ProjectionType.Trend,
 );
-let projectionBundle = new ProjectionBundle("Biz", "Biz bundles Bar and Bir");
+let projectionBundle = new ProjectionBundle(50, 4, 23);
 
 describe("Testing ScenarioProject class", () => {
   test("Test constructor", () => {

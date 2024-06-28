@@ -2,13 +2,11 @@ import { ProjectionBundle } from "./ProjectionBundle";
 
 export class RawScenario {
   private name: string;
-  private description: string;
   private projectionBundles: ProjectionBundle[];
   private quality: number;
 
-  constructor(name: string, description: string, quality: number) {
+  constructor(name: string, quality: number) {
     this.name = name;
-    this.description = description;
     this.quality = quality;
     this.projectionBundles = [];
   }
@@ -19,14 +17,6 @@ export class RawScenario {
 
   updateName(name: string) {
     this.name = name;
-  }
-
-  getDescription(): string {
-    return this.description;
-  }
-
-  updateDescription(description: string) {
-    this.description = description;
   }
 
   getQuality(): number {
