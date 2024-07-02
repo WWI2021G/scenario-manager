@@ -2,7 +2,7 @@ import { describe } from "node:test";
 import { ProjectionBundleCatalog } from "../src/models/ProjectionBundleCatalog";
 import { ProjectionBundle } from "../src/models/ProjectionBundle";
 
-let projectionBundle = new ProjectionBundle("Faa", "Faa bundles foo");
+let projectionBundle = new ProjectionBundle(51, 4, 2);
 let projectionBundleCatalog = new ProjectionBundleCatalog(
   "Boz",
   "Boz catalogs all bundles for biz",

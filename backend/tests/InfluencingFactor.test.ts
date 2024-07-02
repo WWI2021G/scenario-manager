@@ -18,4 +18,16 @@ describe("Testing InfluencingFactor class", () => {
     influencingFactor.updateDescription("Bar factors in baz");
     expect(influencingFactor.getDescription()).toBe("Bar factors in baz");
   });
+
+  test("Test setActiveSum", () => {
+    expect(influencingFactor.getActiveSum()).toBe(0);
+    influencingFactor.setActiveSum(55);
+    expect(influencingFactor.getActiveSum()).toBe(55);
+  });
+
+  test("Test setPassiveSum", () => {
+    expect(influencingFactor.getPassiveSum()).toBe(0);
+    influencingFactor.setPassiveSum(55);
+    expect(influencingFactor.getPassiveSum()).toBe(55);
+  });
 });

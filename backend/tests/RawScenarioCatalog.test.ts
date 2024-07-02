@@ -2,7 +2,7 @@ import { describe } from "node:test";
 import { RawScenario } from "../src/models/RawScenario";
 import { RawScenarioCatalog } from "../src/models/RawScenarioCatalog";
 
-let rawScenario = new RawScenario("Fii", "Fii is a scenario for baz", 23);
+let rawScenario = new RawScenario("Fii", 23);
 let rawScenarioCatalog = new RawScenarioCatalog(
   "Fuu",
   "Fuu catalogs scenarios for baz",

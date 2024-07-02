@@ -9,9 +9,9 @@ describe("DistanceMatrix", () => {
 
   beforeEach(() => {
     matrix = new DistanceMatrix();
-    bundleA = new ProjectionBundle("BundleA", "BundleA bundles A");
-    bundleB = new ProjectionBundle("BundleB", "BundleB bundles B");
-    bundleC = new ProjectionBundle("BundleC", "BundleC bundles C");
+    bundleA = new ProjectionBundle(51, 4, 2);
+    bundleB = new ProjectionBundle(52, 5, 3);
+    bundleC = new ProjectionBundle(53, 6, 4);
   });
 
   test("should set and get distance correctly", () => {
