@@ -46,6 +46,9 @@ export interface ProjectionBundle {
   name: string;
   description: string;
   projections: FutureProjection[];
+  numberOfPartialInconsistencies: number;
+  pValue: number;
+  probability: number;
 }
 
 export interface ScenarioProject {
