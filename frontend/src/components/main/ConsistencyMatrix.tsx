@@ -10,7 +10,7 @@ import {
   Paper,
   Select,
   MenuItem,
-  Typography,
+  Typography, Button
 } from "@mui/material";
 import {
   KeyFactor,
@@ -183,6 +183,14 @@ const ConsistencyMatrix: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Konsistenzmatrix
       </Typography>
+      <Box sx={{ display: "flex", justifyContent: "left",  my: 2}}>
+        <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
+          Add Future Projection
+        </Button>
+        <Button variant="outlined" color="secondary" >
+          Cancel
+        </Button>
+      </Box>
       <TableContainer
         component={Paper}
         sx={{
