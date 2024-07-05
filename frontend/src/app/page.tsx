@@ -7,21 +7,40 @@ import { FilterList } from "@mui/icons-material";
 import TableHover from "@/components/sub/ProjectTable";
 import ScenarioProjectForm from '../components/main/ScenarioProjectForm';
 import { ScenarioProject } from '@/types';
-
+import axios from 'axios';
 
 export default function Home() {
+  // HACK: Immer eins
+  // Mit Session-Variable ersetzen <2024-07-04> Weiberle17
+  const user_id = 1;
   const [isProjectListEmpty, setIsProjectListEmpty] = React.useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const [projects, setProjects] = React.useState<ScenarioProject[]>([]);
+
+  React.useEffect(() => {
+    getProjects(1);
+  }, [projects]);
+
+  const getProjects = (userID: number) => {
+    axios.get('http://localhost:3001/db/sp/user/' + userID)
+      .then(response => {
+        setProjects(response.data), setIsProjectListEmpty(false)
+      })
+      .catch(_error => setIsProjectListEmpty(true));
+  };
 
   const handleCreateProject = () => {
     setShowForm(true);
   };
 
   const handleSaveProject = (project: ScenarioProject) => {
-    setProjects([...projects, project]);
+    console.log(project);
+    axios.post('http://localhost:3001/db/sp/add', { project, user_id })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => console.error(error));
     setShowForm(false);
-    setIsProjectListEmpty(false);
   };
 
   return (
@@ -30,7 +49,7 @@ export default function Home() {
       <div className="flex flex-row">
         <TextField className="my-4 w-[400px]" label="Suche Projekt" variant="outlined" />
         <Button className="text-black my-4 mx-2 w-40 justify-center border-gray-400" variant={"outlined"}
-                startIcon={<FilterList />}>Filter</Button>
+          startIcon={<FilterList />}>Filter</Button>
       </div>
       {showForm ? (
         <ScenarioProjectForm onSave={handleSaveProject} />

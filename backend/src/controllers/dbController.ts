@@ -98,17 +98,17 @@ class DBController {
 
   async addScenarioProject(req: Request, res: Response) {
     const {
-      name,
-      description,
-      scenarioType,
-      user: { userName, userPasswordHash },
+      project: { name, description, scenarioType },
+      user_id,
     }: {
-      name: string;
-      description: string;
-      scenarioType: ScenarioType;
-      user: { userName: string; userPasswordHash: string };
+      project: {
+        name: string;
+        description: string;
+        scenarioType: ScenarioType;
+      };
+      user_id: number;
     } = req.body;
-    const user = new User(userName, userPasswordHash);
+    const user = await dbService.selectUser(user_id);
     const scenarioProject = new ScenarioProject(
       name,
       description,

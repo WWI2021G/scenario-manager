@@ -377,7 +377,6 @@ class DBService {
           scenarioType,
           user,
         );
-        console.log(scenarioProject.getName());
         results.push(scenarioProject);
       });
       console.log(
