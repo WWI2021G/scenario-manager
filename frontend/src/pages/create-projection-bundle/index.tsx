@@ -1,14 +1,8 @@
-// pages/create-projection-bundle.tsx
-import React from "react";
-import FutureProjectionSelection from "@/components/sub/FutureProjectionSelection";
-import RootLayout from "@/components/main/RootLayout";
+import React from 'react';
+import ProjectionBundleTable from '@/components/sub/ProjectionBundleTable';
 
-const CreateProjectionBundlePage: React.FC = () => {
-  return (
-    <RootLayout>
-      <FutureProjectionSelection />
-    </RootLayout>
-  );
+const ProjectionBundlesPage: React.FC = () => {
+  return <ProjectionBundleTable />;
 };
 
-export default CreateProjectionBundlePage;
+export default ProjectionBundlesPage;

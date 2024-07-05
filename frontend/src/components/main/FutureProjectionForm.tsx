@@ -1,7 +1,9 @@
+"use client";
 import React, { useState } from 'react';
 import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { FutureProjection, KeyFactor, Probability, ProjectionType } from '@/types';
+import { format, parseISO } from 'date-fns';
 
 const placeholderKeyFactor: KeyFactor = {
   id: 0,
@@ -149,11 +151,11 @@ const FutureProjectionForm: React.FC = () => {
             label="Time Frame"
             name="timeFrame"
             type="date"
-            value={mainProjection.timeFrame.toISOString().substr(0, 10)}
+            value={format(mainProjection.timeFrame, 'yyyy-MM-dd')}
             onChange={(e) =>
               setMainProjection({
                 ...mainProjection,
-                timeFrame: new Date(e.target.value),
+                timeFrame: parseISO(e.target.value),
               })
             }
             required
@@ -221,11 +223,11 @@ const FutureProjectionForm: React.FC = () => {
             label="Time Frame"
             name="timeFrame"
             type="date"
-            value={alternativeProjection.timeFrame.toISOString().substr(0, 10)}
+            value={format(alternativeProjection.timeFrame, 'yyyy-MM-dd')}
             onChange={(e) =>
               setAlternativeProjection({
                 ...alternativeProjection,
-                timeFrame: new Date(e.target.value)
+                timeFrame: parseISO(e.target.value)
               })
             }
             required

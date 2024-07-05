@@ -49,6 +49,19 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
       <Typography variant="h4" component="h1" gutterBottom>
         Select Future Projections
       </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateBundle}
+          disabled={selectedProjections.length === 0}
+        >
+          Create Projection Bundle
+        </Button>
+        <Button variant="outlined" color="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -84,19 +97,6 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
           </TableBody>
         </Table>
       </TableContainer>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCreateBundle}
-          disabled={selectedProjections.length === 0}
-        >
-          Create Projection Bundle
-        </Button>
-        <Button variant="outlined" color="secondary" onClick={onCancel}>
-          Cancel
-        </Button>
-      </Box>
     </Box>
   );
 };

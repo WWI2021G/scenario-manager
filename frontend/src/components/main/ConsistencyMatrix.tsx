@@ -1,28 +1,46 @@
-import React, { useState } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Typography } from '@mui/material';
-import { KeyFactor, FutureProjection, ProjectionType, Probability } from "@/types";
+import React, { useState } from "react";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Select,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+import {
+  KeyFactor,
+  FutureProjection,
+  ProjectionType,
+  Probability,
+} from "@/types";
+import zIndex from "@mui/material/styles/zIndex";
 
 const keyFactors: KeyFactor[] = [
   {
     id: 1,
-    title: 'Einkaufsmotivation 1',
-    description: 'Motivation for shopping',
-    property: 'Behavioral',
-    currentStateDescription: 'Current state of shopping motivation',
+    title: "Einkaufsmotivation 1",
+    description: "Motivation for shopping",
+    property: "Behavioral",
+    currentStateDescription: "Current state of shopping motivation",
     projectionA: {
       id: 1,
-      name: 'Erlebniseinkauf 1',
+      name: "Erlebniseinkauf 1",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for Erlebnis shopping',
+      projectionDescription: "Projection for Erlebnis shopping",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.HIGH,
     },
     projectionB: {
       id: 2,
-      name: 'Der wahrhafte Verbraucher 1',
+      name: "Der wahrhafte Verbraucher 1",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for genuine consumers',
+      projectionDescription: "Projection for genuine consumers",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.MEDIUM,
@@ -30,24 +48,24 @@ const keyFactors: KeyFactor[] = [
   },
   {
     id: 2,
-    title: 'Einkaufsmotivation 2',
-    description: 'Motivation for shopping',
-    property: 'Behavioral',
-    currentStateDescription: 'Current state of shopping motivation',
+    title: "Einkaufsmotivation 2",
+    description: "Motivation for shopping",
+    property: "Behavioral",
+    currentStateDescription: "Current state of shopping motivation",
     projectionA: {
       id: 3,
-      name: 'Erlebniseinkauf 2',
+      name: "Erlebniseinkauf 2",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for Erlebnis shopping',
+      projectionDescription: "Projection for Erlebnis shopping",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.HIGH,
     },
     projectionB: {
       id: 4,
-      name: 'Der wahrhafte Verbraucher 2',
+      name: "Der wahrhafte Verbraucher 2",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for genuine consumers',
+      projectionDescription: "Projection for genuine consumers",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.MEDIUM,
@@ -55,29 +73,79 @@ const keyFactors: KeyFactor[] = [
   },
   {
     id: 3,
-    title: 'Einkaufsmotivation 3',
-    description: 'Motivation for shopping',
-    property: 'Behavioral',
-    currentStateDescription: 'Current state of shopping motivation',
+    title: "Einkaufsmotivation 3",
+    description: "Motivation for shopping",
+    property: "Behavioral",
+    currentStateDescription: "Current state of shopping motivation",
     projectionA: {
       id: 5,
-      name: 'Erlebniseinkauf 3',
+      name: "Erlebniseinkauf 3",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for Erlebnis shopping',
+      projectionDescription: "Projection for Erlebnis shopping",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.HIGH,
     },
     projectionB: {
       id: 6,
-      name: 'Der wahrhafte Verbraucher 3',
+      name: "Der wahrhafte Verbraucher 3",
       keyFactor: {} as KeyFactor, // Circular reference handled later
-      projectionDescription: 'Projection for genuine consumers',
+      projectionDescription: "Projection for genuine consumers",
       timeFrame: new Date(),
       projectionType: ProjectionType.TREND,
       probability: Probability.MEDIUM,
     },
-  }
+  },
+  {
+    id: 4,
+    title: "Einkaufsmotivation 4",
+    description: "Motivation for shopping",
+    property: "Behavioral",
+    currentStateDescription: "Current state of shopping motivation",
+    projectionA: {
+      id: 7,
+      name: "Erlebniseinkauf 4",
+      keyFactor: {} as KeyFactor, // Circular reference handled later
+      projectionDescription: "Projection for Erlebnis shopping",
+      timeFrame: new Date(),
+      projectionType: ProjectionType.TREND,
+      probability: Probability.HIGH,
+    },
+    projectionB: {
+      id: 8,
+      name: "Der wahrhafte Verbraucher 4",
+      keyFactor: {} as KeyFactor, // Circular reference handled later
+      projectionDescription: "Projection for genuine consumers",
+      timeFrame: new Date(),
+      projectionType: ProjectionType.TREND,
+      probability: Probability.MEDIUM,
+    },
+  },
+  {
+    id: 5,
+    title: "Einkaufsmotivation 5",
+    description: "Motivation for shopping",
+    property: "Behavioral",
+    currentStateDescription: "Current state of shopping motivation",
+    projectionA: {
+      id: 9,
+      name: "Erlebniseinkauf 5",
+      keyFactor: {} as KeyFactor, // Circular reference handled later
+      projectionDescription: "Projection for Erlebnis shopping",
+      timeFrame: new Date(),
+      projectionType: ProjectionType.TREND,
+      probability: Probability.HIGH,
+    },
+    projectionB: {
+      id: 10,
+      name: "Der wahrhafte Verbraucher 5",
+      keyFactor: {} as KeyFactor, // Circular reference handled later
+      projectionDescription: "Projection for genuine consumers",
+      timeFrame: new Date(),
+      projectionType: ProjectionType.TREND,
+      probability: Probability.MEDIUM,
+    },
+  },
 ];
 
 // Fix circular references
@@ -86,7 +154,9 @@ keyFactors.forEach((kf) => {
   if (kf.projectionB) kf.projectionB.keyFactor = kf;
 });
 
-const allProjections: (FutureProjection | undefined)[] = keyFactors.flatMap(kf => [kf.projectionA, kf.projectionB]);
+const allProjections: (FutureProjection | undefined)[] = keyFactors.flatMap(
+  (kf) => [kf.projectionA, kf.projectionB]
+);
 
 const ConsistencyMatrix: React.FC = () => {
   const [matrix, setMatrix] = useState<number[][]>(() => {
@@ -106,71 +176,155 @@ const ConsistencyMatrix: React.FC = () => {
     return projRow?.keyFactor.id === projCol?.keyFactor.id;
   };
 
+  const acceptedValues = [1, 2, 6, 8, 9];
+
   return (
-    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "100%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Konsistenzmatrix
       </Typography>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxHeight: "80vh", // Set a max height for the table container
+          overflowY: "auto", // Enable vertical scrolling
+        }}
+      >
+        <Table stickyHeader>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{zIndex: 4}}>
               <TableCell />
               <TableCell />
               {keyFactors.map((kf, kfIndex) => (
-                <TableCell key={`kf-head-${kfIndex}`} colSpan={2} align="center">
+                <TableCell
+                  key={`kf-head-${kfIndex}`}
+                  colSpan={2}
+                  align="center"
+                  sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 4,
+                    background: "#fff",
+                    maxWidth: "200px", // Set a maximum width for wrapping
+                    whiteSpace: "normal", // Allow wrapping
+                    wordBreak: "break-word", // Break words if necessary
+                    overflowWrap: "break-word", // Handle overflow
+                  }}
+                >
                   {kf.title}
                 </TableCell>
               ))}
             </TableRow>
-            <TableRow>
-              <TableCell />
-              <TableCell />
+            <TableRow >
+              <TableCell sx={{zIndex: 4}}/>
+              <TableCell sx={{zIndex: 4}}/>
               {allProjections.map((proj, index) => (
-                <TableCell key={`proj-head-${index}`} align="center">
-                  {proj?.name ?? ''}
+                <TableCell
+                  key={`proj-head-${index}`}
+                  align="center"
+                  sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 5,
+                    background: "#fff",
+                    maxWidth: "200px", // Set a maximum width for wrapping
+                    whiteSpace: "normal", // Allow wrapping
+                    overflowWrap: "break-word", // Handle overflow
+                  }}
+                >
+                  {proj?.name ?? ""}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {allProjections.map((projRow, i) => (
-              <TableRow key={`row-${i}`} sx={{ height: 70 }}>
+              <TableRow key={`row-${i}`} sx={{ height: 70, background: "#fff", zIndex: 4}}>
                 {i % 2 === 0 && (
-                  <TableCell rowSpan={2} component="th" scope="row">
+                  <TableCell
+                    rowSpan={2}
+                    component="th"
+                    scope="row"
+                    sx={{
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 1,
+                      background: "#fff",
+                      width: "200px", // Set a maximum width for wrapping
+                      whiteSpace: "normal", // Allow wrapping
+                      overflowWrap: "break-word", // Handle overflow
+                    }}
+                  >
                     {keyFactors[Math.floor(i / 2)].title}
                   </TableCell>
                 )}
-                <TableCell component="th" scope="row">
-                  {projRow?.name ?? ''}
+                <TableCell
+                  component="th"
+                  scope="row"
+                  sx={{
+                    position: "sticky",
+                    left: 0,
+                    zIndex: 2,
+                    background: "#fff",
+                    maxWidth: "250px", // Set a maximum width for wrapping
+                    whiteSpace: "normal", // Allow wrapping
+                    overflowWrap: "break-word", // Handle overflow
+                    lineBreak: "normal",
+                  }}
+                >
+                  {projRow?.name ?? ""}
                 </TableCell>
                 {allProjections.map((projCol, j) => (
                   <TableCell
                     key={`cell-${i}-${j}`}
                     align="center"
                     sx={{
-                      bgcolor: (i >= j || j >= -i)
-                        ? isSameKeyFactor(i, j)
-                          ? 'grey.500'
-                          : 'gray.400'
-                        : 'grey.400'
+                      background: '#fff',
+                      bgcolor:
+                        i >= j || j >= -i
+                          ? isSameKeyFactor(i, j)
+                            ? "grey.500"
+                            : "gray.400"
+                          : "white",
+                      zIndex: 1,
+                      position: "sticky",
                     }}
                   >
                     {i > j ? (
                       isSameKeyFactor(i, j) ? (
-                        <Box sx={{ bgcolor: 'grey.400', width: '100%', height: '100%' }} />
-                      ) : (
-                        <TextField
-                          type="number"
-                          inputProps={{ min: 1, max: 5 }}
-                          value={matrix[i][j]}
-                          onChange={(e) => handleChange(i, j, Number(e.target.value))}
-                          disabled={i === j}
-                          sx={{ width: '60px' }}
+                        <Box
+                          sx={{
+                            bgcolor: "white",
+                            width: "100%",
+                            height: "100%",
+                            zIndex: 2,
+                          }}
                         />
+                      ) : (
+                        <Select
+                          value={matrix[i][j]}
+                          onChange={(e) =>
+                            handleChange(i, j, Number(e.target.value))
+                          }
+                          displayEmpty
+                          sx={{ width: "60px", zIndex: 2, background: "#fff" }}
+                        >
+                          {acceptedValues.map((value) => (
+                            <MenuItem key={value} value={value}>
+                              {value}
+                            </MenuItem>
+                          ))}
+                        </Select>
                       )
                     ) : (
-                      <Box sx={{ bgcolor: 'grey.300', width: '100%', height: '100%' }} />
+                      <Box
+                        sx={{
+                          bgcolor: "grey.300",
+                          width: "100%",
+                          height: "100%",
+                          zIndex: 2,
+                        }}
+                      />
                     )}
                   </TableCell>
                 ))}
