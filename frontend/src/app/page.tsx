@@ -19,7 +19,7 @@ export default function Home() {
 
   React.useEffect(() => {
     getProjects(1);
-  }, [projects]);
+  }, [showForm]);
 
   const getProjects = (userID: number) => {
     axios.get('http://localhost:3001/db/sp/user/' + userID)

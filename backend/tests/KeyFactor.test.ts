@@ -1,6 +1,5 @@
 import { describe } from "node:test";
 import { KeyFactor } from "../src/models/KeyFactor";
-import { Property } from "../src/models/Property";
 
 let keyFactor = new KeyFactor("Foo", "Foo is currently like this...");
 let propertyA = "Bar";
@@ -39,11 +38,12 @@ describe("Testing KeyFactor class", () => {
   });
 
   test("Test updateProperty", () => {
-    keyFactor.updateProperty(0, propertyC);
+    keyFactor.updateProperty(1, propertyC);
     expect(keyFactor.getProperties()).toStrictEqual([propertyC, propertyB]);
-    keyFactor.updateProperty(1, propertyA);
+    keyFactor.updateProperty(2, propertyA);
     expect(keyFactor.getProperties()).toStrictEqual([propertyC, propertyA]);
-    keyFactor.updateProperty(0, undefined);
+    keyFactor.updateProperty(1, undefined);
     expect(keyFactor.getProperties()).toStrictEqual([undefined, propertyA]);
+    expect(() => keyFactor.updateProperty(0, propertyA)).toThrow("updateProperty only takes 1 or 2 as first argument");
   });
 });

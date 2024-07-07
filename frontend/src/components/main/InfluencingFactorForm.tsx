@@ -6,7 +6,6 @@ import { Box, Button, TextField, Typography, Select, MenuItem, FormControl, Inpu
 
 export default function InfluencingFactorForm() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
-    id: 0,
     name: '',
     description: '',
   });
@@ -19,9 +18,8 @@ export default function InfluencingFactorForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setInfluencingFactorsList([...influencingFactorsList, { ...influencingFactor, id: influencingFactorsList.length + 1 }]);
+    setInfluencingFactorsList([...influencingFactorsList, { ...influencingFactor, }]);
     setInfluencingFactor({
-      id: 0,
       name: '',
       description: '',
     });
@@ -61,7 +59,7 @@ export default function InfluencingFactorForm() {
         </Typography>
         <List>
           {influencingFactorsList.map((factor) => (
-            <ListItem key={factor.id}>
+            <ListItem key={factor.name}>
               <ListItemText
                 primary={`${factor.name} - ${factor.description}`}
               />

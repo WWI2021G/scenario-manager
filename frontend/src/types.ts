@@ -20,10 +20,10 @@ export enum ScenarioType {
 
 export interface KeyFactor {
   id: number;
-  title: string;
-  description: string;
-  property: string;
-  currentStateDescription: string;
+  name: string;
+  prop_one: string;
+  prop_two: string;
+  curState: string;
   projectionA: FutureProjection | undefined;
   projectionB: FutureProjection | undefined;
 }
@@ -32,11 +32,9 @@ export type InfluencMatrix = Map<string, Map<string, number>>;
 
 
 export interface FutureProjection {
-  id: number;
   name: string;
   keyFactor: KeyFactor;
-  projectionDescription: string;
-  timeFrame: Date;
+  description: string;
   projectionType: ProjectionType;
   probability: Probability;
 }
@@ -63,7 +61,6 @@ export interface ScenarioProject {
 
 
 export interface InfluencingFactor {
-  id: number;
   name: string;
   description: string;
 }

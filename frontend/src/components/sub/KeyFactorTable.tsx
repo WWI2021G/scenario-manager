@@ -10,11 +10,27 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import axios from 'axios';
 
 const KeyFactorTable = () => {
+  // HACK: Immer eins
+  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
+  const scenarioProjectID: number = 1;
   const [keyFactors, setKeyFactors] = useState<KeyFactor[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedKeyFactor, setSelectedKeyFactor] = useState<KeyFactor | null>(null);
+
+  React.useEffect(() => {
+    getProjectKeyFactors(scenarioProjectID);
+  }, [showForm]);
+
+  const getProjectKeyFactors = (scenarioProjectID: number) => {
+    axios.get('http://localhost:3001/db/kf/sp/' + scenarioProjectID)
+      .then(response => {
+        setKeyFactors(response.data)
+      })
+      .catch(error => console.error(error));
+  };
 
   const handleAddKeyFactor = (newKeyFactor: KeyFactor) => {
     if (selectedKeyFactor) {
@@ -40,6 +56,7 @@ const KeyFactorTable = () => {
   const handleCancel = () => {
     setShowForm(false);
     setSelectedKeyFactor(null);
+    router.push("/keyfactors");
   };
 
   return (
@@ -52,20 +69,13 @@ const KeyFactorTable = () => {
         />
       ) : (
         <>
-          <Button
-            variant="contained"
-            className='bg-primary hover:bg-primary-hover'
-            onClick={() => setShowForm(true)}
-          >
-            Add KeyFactor
-          </Button>
           <TableContainer component={Paper} className="mt-4">
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Title</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Property</TableCell>
+                  <TableCell>Property 1</TableCell>
+                  <TableCell>Property 2</TableCell>
                   <TableCell>Current State</TableCell>
                 </TableRow>
               </TableHead>
@@ -74,19 +84,18 @@ const KeyFactorTable = () => {
                   <TableRow key={keyFactor.id}>
                     <TableCell>
                       <Button onClick={() => handleEditKeyFactor(keyFactor)}>
-                        {keyFactor.title}
+                        {keyFactor.name}
                       </Button>
                     </TableCell>
+                    <TableCell>{keyFactor.prop_one}</TableCell>
+                    <TableCell>{keyFactor.prop_two}</TableCell>
                     <TableCell>
-                      {keyFactor.description.split(' ').slice(0, 3).join(' ')}...
-                    </TableCell>
-                    <TableCell>{keyFactor.property}</TableCell>
-                    <TableCell>
-                      {keyFactor.currentStateDescription
-                        .split(' ')
-                        .slice(0, 3)
-                        .join(' ')}
-                      ...
+                      {keyFactor.curState ? (
+                        keyFactor.curState
+                          .split(' ')
+                          .slice(0, 3)
+                          .join(' ')) : ('')}
+                      {keyFactor.curState && ' ...'}
                     </TableCell>
                   </TableRow>
                 ))}
