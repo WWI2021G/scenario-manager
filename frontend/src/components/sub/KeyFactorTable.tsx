@@ -11,8 +11,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const KeyFactorTable = () => {
+  const router = useRouter();
   // HACK: Immer eins
   // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
   const scenarioProjectID: number = 1;

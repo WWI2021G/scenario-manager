@@ -33,8 +33,10 @@ export type InfluencMatrix = Map<string, Map<string, number>>;
 
 export interface FutureProjection {
   name: string;
+  keyFactor_id: number;
   keyFactor: KeyFactor;
   description: string;
+  timeFrame: Date;
   projectionType: ProjectionType;
   probability: Probability;
 }

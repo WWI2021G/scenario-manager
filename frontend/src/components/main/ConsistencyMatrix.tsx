@@ -69,7 +69,7 @@ const ConsistencyMatrix: React.FC = () => {
   const isSameKeyFactor = (i: number, j: number) => {
     const projRow = futureProjections[i];
     const projCol = futureProjections[j];
-    return projRow?.keyFactor.name === projCol?.keyFactor.name;
+    return projRow?.keyFactor?.name === projCol?.keyFactor?.name;
   };
 
   const acceptedValues = [1, 2, 6, 8, 9];

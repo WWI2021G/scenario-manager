@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { FutureProjection, Probability, ProjectionType } from '@/types';
+import { FutureProjection, Probability, ProjectionType, KeyFactor } from '@/types';
 import { format, parseISO } from 'date-fns';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -11,25 +11,23 @@ const FutureProjectionForm: React.FC = () => {
   const keyFactor_id: number = parseInt(router.query.keyFactor_id as string);
   const [mainProjection, setMainProjection] = useState<FutureProjection>({
     keyFactor_id: keyFactor_id,
+    keyFactor: {} as KeyFactor,
     probability: Probability.LOW,
     projectionType: ProjectionType.TREND,
     timeFrame: new Date(),
-    id: 0,
     name: '',
     description: ''
   });
 
   const [alternativeProjection, setAlternativeProjection] = useState<FutureProjection>({
     keyFactor_id: keyFactor_id,
+    keyFactor: {} as KeyFactor,
     probability: Probability.LOW,
     projectionType: ProjectionType.TREND,
     timeFrame: new Date(),
-    id: 0,
     name: '',
     description: ''
   });
-  console.log(mainProjection.keyFactor_id);
-  console.log(alternativeProjection.keyFactor_id);
 
   const handleChangeMain = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
