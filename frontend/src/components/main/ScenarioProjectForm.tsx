@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState } from "react"; 
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { ScenarioProject, ScenarioType } from "@/types";
 import { SelectChangeEvent } from "@mui/material/Select";
@@ -43,11 +43,6 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
       projectionBundles: [],
       scenarioType: ScenarioType.Umfeldszenario,
     });
-  };
-
-  const handleCancel = () => {
-    // Placeholder function for cancel
-
   };
 
   return (

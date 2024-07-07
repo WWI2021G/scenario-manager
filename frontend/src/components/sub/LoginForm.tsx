@@ -1,8 +1,8 @@
-// components/LoginForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { User } from '@/types';
+
 const mockUser: User = {
   id: 1,
   username: 'testuser',
@@ -13,18 +13,27 @@ const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (username === mockUser.username && password === mockUser.password) {
       setError('');
-      router.push('/');  // Navigate to the homepage on successful login
+      router.push('/project-list'); // Navigate to the homepage on successful login
     } else {
       setError('Invalid username or password');
     }
   };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <Box
@@ -67,3 +76,4 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
+

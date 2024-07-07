@@ -185,7 +185,7 @@ const ConsistencyMatrix: React.FC = () => {
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "left",  my: 2}}>
         <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
-          Add Future Projection
+          Konsitenzwerte speichern
         </Button>
         <Button variant="outlined" color="secondary" >
           Cancel
@@ -311,6 +311,7 @@ const ConsistencyMatrix: React.FC = () => {
                       ) : (
                         <Select
                           value={matrix[i][j]}
+                          defaultValue={1}
                           onChange={(e) =>
                             handleChange(i, j, Number(e.target.value))
                           }
