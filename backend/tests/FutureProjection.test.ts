@@ -9,9 +9,9 @@ let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",
   keyFactor,
-  Probability.high,
+  Probability.HIGH,
   new Date(new Date().getMonth() + 3),
-  ProjectionType.Trend,
+  ProjectionType.TREND,
 );
 
 describe("Testing FutureProjection class", () => {
@@ -19,11 +19,11 @@ describe("Testing FutureProjection class", () => {
     expect(futureProjection.getName()).toBe("Fuu");
     expect(futureProjection.getDescription()).toBe("Fuu projects Bar");
     expect(futureProjection.getKeyFactor()).toBe(keyFactor);
-    expect(futureProjection.getProbability()).toBe(Probability.high);
+    expect(futureProjection.getProbability()).toBe(Probability.HIGH);
     expect(futureProjection.getTimeFrame()).toStrictEqual(
       new Date(new Date().getMonth() + 3),
     );
-    expect(futureProjection.getType()).toBe(ProjectionType.Trend);
+    expect(futureProjection.getType()).toBe(ProjectionType.TREND);
   });
 
   test("Test updateName", () => {
@@ -46,10 +46,10 @@ describe("Testing FutureProjection class", () => {
   });
 
   test("Test updateProbability", () => {
-    futureProjection.updateProbability(Probability.average);
-    expect(futureProjection.getProbability()).toBe(Probability.average);
-    futureProjection.updateProbability(Probability.small);
-    expect(futureProjection.getProbability()).toBe(Probability.small);
+    futureProjection.updateProbability(Probability.MEDIUM);
+    expect(futureProjection.getProbability()).toBe(Probability.MEDIUM);
+    futureProjection.updateProbability(Probability.LOW);
+    expect(futureProjection.getProbability()).toBe(Probability.LOW);
   });
 
   test("Test updateTimeFrame", () => {
@@ -60,7 +60,7 @@ describe("Testing FutureProjection class", () => {
   });
 
   test("Test updateType", () => {
-    futureProjection.updateType(ProjectionType.Extreme);
-    expect(futureProjection.getType()).toBe(ProjectionType.Extreme);
+    futureProjection.updateType(ProjectionType.EXTREME);
+    expect(futureProjection.getType()).toBe(ProjectionType.EXTREME);
   });
 });
