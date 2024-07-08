@@ -4,19 +4,19 @@ import { KeyFactor, FutureProjection, ProjectionType, Probability } from '@/type
 
 const dummyFutureProjections: FutureProjection[] = [
   {
-    id: 1,
     name: 'Erlebniseinkauf 1',
+    keyFactor_id: 0,
     keyFactor: {} as KeyFactor,
-    projectionDescription: 'Projection for Erlebnis shopping',
+    description: 'Projection for Erlebnis shopping',
     timeFrame: new Date(),
     projectionType: ProjectionType.TREND,
     probability: Probability.HIGH,
   },
   {
-    id: 2,
     name: 'Der wahrhafte Verbraucher 1',
+    keyFactor_id: 0,
     keyFactor: {} as KeyFactor,
-    projectionDescription: 'Projection for genuine consumers',
+    description: 'Projection for genuine consumers',
     timeFrame: new Date(),
     projectionType: ProjectionType.TREND,
     probability: Probability.MEDIUM,
@@ -35,7 +35,7 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
   const handleSelectProjection = (projection: FutureProjection) => {
     setSelectedProjections((prev) =>
       prev.includes(projection)
-        ? prev.filter((p) => p.id !== projection.id)
+        ? prev.filter((p) => p.name !== projection.name)
         : [...prev, projection]
     );
   };
@@ -78,17 +78,17 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
           </TableHead>
           <TableBody>
             {dummyFutureProjections.map((projection) => (
-              <TableRow key={projection.id}>
+              <TableRow key={projection.name}>
                 <TableCell>
                   <Checkbox
                     checked={selectedProjections.includes(projection)}
                     onChange={() => handleSelectProjection(projection)}
                   />
                 </TableCell>
-                <TableCell>{projection.id}</TableCell>
                 <TableCell>{projection.name}</TableCell>
-                <TableCell>{projection.keyFactor.title}</TableCell>
-                <TableCell>{projection.projectionDescription}</TableCell>
+                <TableCell>{projection.name}</TableCell>
+                <TableCell>{projection.keyFactor.name}</TableCell>
+                <TableCell>{projection.description}</TableCell>
                 <TableCell>{projection.timeFrame.toLocaleDateString()}</TableCell>
                 <TableCell>{projection.projectionType}</TableCell>
                 <TableCell>{projection.probability}</TableCell>

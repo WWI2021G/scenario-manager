@@ -1,4 +1,4 @@
 export enum ProjectionType {
-  Trend = "Trend",
-  Extreme = "Extreme",
+  TREND = "TREND",
+  EXTREME = "EXTREME",
 }

@@ -11,9 +11,9 @@ let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",
   keyFactor,
-  Probability.high,
+  Probability.HIGH,
   new Date(new Date().getMonth() + 3),
-  ProjectionType.Trend,
+  ProjectionType.TREND,
 );
 
 describe("Testing ProjectionBundle class", () => {

@@ -1,38 +1,32 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { FutureProjection, KeyFactor, Probability, ProjectionType } from '@/types';
+import { FutureProjection, Probability, ProjectionType, KeyFactor } from '@/types';
 import { format, parseISO } from 'date-fns';
-
-const placeholderKeyFactor: KeyFactor = {
-  id: 0,
-  title: '',
-  description: '',
-  property: '',
-  currentStateDescription: '',
-  projectionA: undefined,
-  projectionB: undefined,
-};
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
 const FutureProjectionForm: React.FC = () => {
+  const router = useRouter();
+  const keyFactor_id: number = parseInt(router.query.keyFactor_id as string);
   const [mainProjection, setMainProjection] = useState<FutureProjection>({
-    keyFactor: placeholderKeyFactor,
+    keyFactor_id: keyFactor_id,
+    keyFactor: {} as KeyFactor,
     probability: Probability.LOW,
     projectionType: ProjectionType.TREND,
     timeFrame: new Date(),
-    id: 0,
     name: '',
-    projectionDescription: ''
+    description: ''
   });
 
   const [alternativeProjection, setAlternativeProjection] = useState<FutureProjection>({
-    keyFactor: placeholderKeyFactor,
+    keyFactor_id: keyFactor_id,
+    keyFactor: {} as KeyFactor,
     probability: Probability.LOW,
     projectionType: ProjectionType.TREND,
     timeFrame: new Date(),
-    id: 0,
     name: '',
-    projectionDescription: ''
+    description: ''
   });
 
   const handleChangeMain = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,14 +51,21 @@ const FutureProjectionForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder function for submit
-    console.log('Main Projection submitted', mainProjection);
-    console.log('Alternative Projection submitted', alternativeProjection);
+    axios.post("http://localhost:3001/db/fp/add", mainProjection)
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => console.error(error));
+    axios.post("http://localhost:3001/db/fp/add", alternativeProjection)
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => console.error(error));
+    router.push('/keyfactors');
   };
 
   const handleCancel = () => {
-    // Placeholder function for cancel
-    console.log('Form canceled');
+    router.push('/keyfactors');
   };
 
   return (
@@ -107,8 +108,8 @@ const FutureProjectionForm: React.FC = () => {
           />
           <TextField
             label="Main Projection Description"
-            name="projectionDescription"
-            value={mainProjection.projectionDescription}
+            name="description"
+            value={mainProjection.description}
             onChange={handleChangeMain}
             required
             multiline
@@ -179,8 +180,8 @@ const FutureProjectionForm: React.FC = () => {
           />
           <TextField
             label="Alternative Projection Description"
-            name="projectionDescription"
-            value={alternativeProjection.projectionDescription}
+            name="description"
+            value={alternativeProjection.description}
             onChange={handleChangeAlternative}
             required
             multiline
