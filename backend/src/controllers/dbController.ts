@@ -200,7 +200,7 @@ class DBController {
     try {
       const influencingFactor_id =
         await dbService.selectInfluencingFactorID(influencingFactor);
-      res.status(200).json({ scenarioProject_id: influencingFactor_id });
+      res.status(200).json({ influencingFactor_id: influencingFactor_id });
     } catch (error: any) {
       res.status(500).send(error.message);
     }

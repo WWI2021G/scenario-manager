@@ -479,6 +479,7 @@ class DBService {
         WHERE
           name = $1;`,
         influencingFactor.getName(),
+        (influencingFactor) => influencingFactor.influencingfactor_id,
       );
       console.log(
         "Request for existing influencingFactor: " +
@@ -685,8 +686,8 @@ class DBService {
       const query_results = await db.any<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
+        activesum: number;
+        passivesum: number;
       }>(
         `SELECT
           i.*
@@ -703,7 +704,8 @@ class DBService {
           factor.name,
           factor.description,
         );
-        console.log(influencingFactor);
+        influencingFactor.setActiveSum(factor.activesum);
+        influencingFactor.setPassiveSum(factor.passivesum);
         results.push(influencingFactor);
       });
       console.log(

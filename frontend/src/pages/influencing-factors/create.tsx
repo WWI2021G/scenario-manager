@@ -14,6 +14,8 @@ export default function CreateInfluencingFactor() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
     name: '',
     description: '',
+    activeSum: 0,
+    passiveSum: 0,
   });
   const router = useRouter();
 
