@@ -2,13 +2,15 @@ export class KeyFactor {
   private name: string;
   private critical: boolean;
   private curState: string;
-  private properties: [string | undefined, string | undefined];
+  private prop_one: string | undefined;
+  private prop_two: string | undefined;
 
   constructor(name: string, curState: string) {
     this.name = name;
     this.critical = false;
     this.curState = curState;
-    this.properties = [undefined, undefined];
+    this.prop_one = undefined;
+    this.prop_two = undefined;
   }
 
   getName(): string {
@@ -36,14 +38,21 @@ export class KeyFactor {
   }
 
   getProperties(): [string | undefined, string | undefined] {
-    return this.properties;
+    return [this.prop_one, this.prop_two];
   }
 
   setProperties(propertyA: string | undefined, propertyB: string | undefined) {
-    this.properties = [propertyA, propertyB];
+    this.prop_one = propertyA;
+    this.prop_two = propertyB;
   }
 
   updateProperty(propNum: number, property: string | undefined) {
-    this.properties[propNum] = property;
+    if (propNum == 1) {
+      this.prop_one = property;
+    } else if (propNum == 2) {
+      this.prop_two = property;
+    } else {
+      throw new Error("updateProperty only takes 1 or 2 as first argument");
+    }
   }
 }

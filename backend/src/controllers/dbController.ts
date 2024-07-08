@@ -149,12 +149,15 @@ class DBController {
   async addInfluencingFactor(req: Request, res: Response) {
     const {
       scenarioProject_id,
-      name,
-      description,
+      influencingFactor: { name,
+        description,
+      }
     }: {
       scenarioProject_id: number;
-      name: string;
-      description: string;
+      influencingFactor: {
+        name: string;
+        description: string;
+      };
     } = req.body;
     const influencingFactor = new InfluencingFactor(name, description);
     try {
@@ -428,12 +431,12 @@ class DBController {
   async setPropertyOne(req: Request, res: Response) {
     try {
       const {
-        keyfactor_id,
-        prop_name,
-      }: { keyfactor_id: number; prop_name: string } = req.body;
+        keyFactor_id,
+        prop_one,
+      }: { keyFactor_id: number; prop_one: string } = req.body;
       const message = await dbService.insertPropertyOne(
-        keyfactor_id,
-        prop_name,
+        keyFactor_id,
+        prop_one,
       );
       res.status(200).send(message);
     } catch (error: any) {
@@ -455,12 +458,12 @@ class DBController {
   async setPropertyTwo(req: Request, res: Response) {
     try {
       const {
-        keyfactor_id,
-        prop_name,
-      }: { keyfactor_id: number; prop_name: string } = req.body;
+        keyFactor_id,
+        prop_two,
+      }: { keyFactor_id: number; prop_two: string } = req.body;
       const message = await dbService.insertPropertyTwo(
-        keyfactor_id,
-        prop_name,
+        keyFactor_id,
+        prop_two,
       );
       res.status(200).send(message);
     } catch (error: any) {
@@ -471,31 +474,31 @@ class DBController {
   async addFutureProjection(req: Request, res: Response) {
     try {
       const {
-        keyfactor_id,
+        keyFactor_id,
         name,
         description,
         probability,
-        timeframe,
+        timeFrame,
         projectionType,
       }: {
-        keyfactor_id: number;
+        keyFactor_id: number;
         name: string;
         probability: Probability;
         description: string;
-        timeframe: Date;
+        timeFrame: Date;
         projectionType: ProjectionType;
       } = req.body;
-      const keyfactor = await dbService.selectKeyFactor(keyfactor_id);
+      const keyfactor = await dbService.selectKeyFactor(keyFactor_id);
       const futureProjection = new FutureProjection(
         name,
         description,
         keyfactor,
         probability,
-        timeframe,
+        timeFrame,
         projectionType,
       );
       const futureProjection_id = await dbService.insertFutureProjection(
-        keyfactor_id,
+        keyFactor_id,
         futureProjection,
       );
       res.status(200).json({ futureProjection_id: futureProjection_id });

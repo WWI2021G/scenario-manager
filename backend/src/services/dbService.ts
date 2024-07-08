@@ -84,10 +84,10 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS FutureProjection (
                  futureprojection_id SERIAL PRIMARY KEY,
                  name VARCHAR(20) UNIQUE,
-                 probability VARCHAR(6) CHECK (probability IN ('low', 'medium', 'high')),
+                 probability VARCHAR(6) CHECK (probability IN ('LOW', 'MEDIUM', 'HIGH')),
                  description VARCHAR(200),
                  timeFrame TIMESTAMP,
-                 projectionType VARCHAR(6) CHECK (projectionType IN ('Trend', 'Extreme')),
+                 projectionType VARCHAR(7) CHECK (projectionType IN ('TREND', 'EXTREME')),
                  keyfactor_id INT,
                  FOREIGN KEY (keyfactor_id) REFERENCES KeyFactor(keyfactor_id)
                );`,
@@ -965,7 +965,9 @@ class DBService {
           JOIN scenarioProject sp ON sp.scenarioproject_id = spif.scenarioproject_id
           JOIN keyfactor k ON i.influencingfactor_id = k.keyfactor_id
         WHERE
-          sp.scenarioproject_id = $1;`,
+          sp.scenarioproject_id = $1
+        ORDER BY
+          i.influencingfactor_id ASC;`,
         scenarioProject_id,
       );
       query_results.forEach((factor) => {

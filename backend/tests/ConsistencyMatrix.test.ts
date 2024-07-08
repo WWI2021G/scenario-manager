@@ -14,9 +14,9 @@ describe("ConsistencyMatrix", () => {
     consistencyMatrix = new ConsistencyMatrix();
 
     const keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
-    const probability = Probability.average;
+    const probability = Probability.MEDIUM;
     const timeFrame = new Date();
-    const type = ProjectionType.Trend;
+    const type = ProjectionType.TREND;
 
     projectionA = new FutureProjection(
       "ProjectionA",

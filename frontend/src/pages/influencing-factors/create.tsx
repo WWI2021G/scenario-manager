@@ -8,14 +8,18 @@ import {
   Typography,
 } from "@mui/material";
 import { InfluencingFactor,  } from '@/types';
+import axios from 'axios';
 
 export default function CreateInfluencingFactor() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
-    id: 0,
     name: '',
     description: '',
   });
   const router = useRouter();
+
+  // HACK: Immer eins
+  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
+  let scenarioProject_id = 1;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
     const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
@@ -24,10 +28,11 @@ export default function CreateInfluencingFactor() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const storedFactors = localStorage.getItem('influencingFactors');
-    const factors = storedFactors ? JSON.parse(storedFactors) : [];
-    factors.push({ ...influencingFactor, id: factors.length + 1 });
-    localStorage.setItem('influencingFactors', JSON.stringify(factors));
+    axios.post('http://localhost:3001/db/if/add', { scenarioProject_id, influencingFactor })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => console.error(error));
     router.push('/influencing-factors');
   };
 

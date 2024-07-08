@@ -2,13 +2,13 @@ import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TableHover from '@/components/sub/ProjectTable';
-import { ScenarioProject } from '@/types';
+import { ScenarioProject, ScenarioType } from '@/types';
 
 describe('TableHover', () => {
   const projects: ScenarioProject[] = [
-    { name: 'Projekt Shell', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: 'type1' },
-    { name: 'Projekt BMW', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: 'type2' },
-    { name: 'Projekt Festool', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: 'type3' },
+    { name: 'Projekt Shell', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: ScenarioType.Umfeldszenario },
+    { name: 'Projekt BMW', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: ScenarioType.KurzfristigesUmfeldszenario },
+    { name: 'Projekt Festool', description: '', influencingFactors: [], keyFactors: [], futureProjections: [], projectionBundles: [], scenarioType: ScenarioType.LangfristigesUmfeldszenario },
   ];
 
   test('renders the table with header', () => {
