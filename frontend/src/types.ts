@@ -65,6 +65,8 @@ export interface ScenarioProject {
 export interface InfluencingFactor {
   name: string;
   description: string;
+  activeSum: number;
+  passiveSum: number;
 }
 
 type Quality = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;

@@ -8,6 +8,8 @@ export default function InfluencingFactorForm() {
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
     name: '',
     description: '',
+    activeSum: 0,
+    passiveSum: 0,
   });
   const [influencingFactorsList, setInfluencingFactorsList] = useState<InfluencingFactor[]>([]);
 
@@ -22,6 +24,8 @@ export default function InfluencingFactorForm() {
     setInfluencingFactor({
       name: '',
       description: '',
+      activeSum: 0,
+      passiveSum: 0,
     });
   };
 
