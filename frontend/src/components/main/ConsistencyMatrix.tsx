@@ -15,8 +15,6 @@ import {
 import {
   KeyFactor,
   FutureProjection,
-  ProjectionType,
-  Probability,
 } from "@/types";
 import zIndex from "@mui/material/styles/zIndex";
 import axios from "axios";
@@ -79,7 +77,10 @@ const ConsistencyMatrix: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Konsistenzmatrix
       </Typography>
-      <Box sx={{ display: "flex", justifyContent: "left", my: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "left",  my: 2}}>
+        <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
+          Konsitenzwerte speichern
+        </Button>
         <Button variant="outlined" color="secondary" >
           Cancel
         </Button>
