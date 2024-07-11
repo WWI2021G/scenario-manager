@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { User } from '@/types';
 import bcrypt from 'bcryptjs';
 import axios from 'axios';
-
-const mockUser: User = {
-  id: 1,
-  username: 'testuser',
-  password: 'password123',
-};
 
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -39,6 +32,9 @@ const LoginForm: React.FC = () => {
           return;
         }
       });
+    if (!hashedPassword) {
+      return;
+    }
     const match = await bcrypt.compare(password, hashedPassword);
 
     if (match) {
