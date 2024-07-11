@@ -22,6 +22,7 @@ class DBController {
   }
 
   async getUserID(req: Request, res: Response) {
+    console.log(req.body);
     const {
       userName,
       userPasswordHash,

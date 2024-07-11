@@ -33,7 +33,7 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS scenarioUser (
                  scenarioUser_id SERIAL PRIMARY KEY,
                  userName VARCHAR(50) UNIQUE NOT NULL,
-                 PASSWORD VARCHAR(50) NOT NULL
+                 PASSWORD VARCHAR(70) NOT NULL
                );`,
       },
       {
