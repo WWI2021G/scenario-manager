@@ -293,7 +293,7 @@ class DBController {
     }
   }
 
-  async updateInfluencingFactor(req: Request, res: Response) {
+  async setInfluencingFactor(req: Request, res: Response) {
     const { oldName, newName, description } = req.body;
     try {
       await dbService.updateInfluencingFactor(oldName, newName, description);
