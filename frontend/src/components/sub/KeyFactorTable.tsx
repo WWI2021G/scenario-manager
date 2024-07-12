@@ -15,16 +15,19 @@ import { useRouter } from 'next/router';
 
 const KeyFactorTable = () => {
   const router = useRouter();
-  // HACK: Immer eins
-  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
-  const scenarioProjectID: number = 1;
+  const [scenarioProject_id, setScenarioProject_id] = useState<number>();
   const [keyFactors, setKeyFactors] = useState<KeyFactor[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedKeyFactor, setSelectedKeyFactor] = useState<KeyFactor | null>(null);
 
   React.useEffect(() => {
-    getProjectKeyFactors(scenarioProjectID);
-  }, [showForm]);
+    if (typeof window) {
+      setScenarioProject_id(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+    if (scenarioProject_id) {
+    getProjectKeyFactors(scenarioProject_id);
+    }
+  }, [scenarioProject_id, showForm]);
 
   const getProjectKeyFactors = (scenarioProjectID: number) => {
     axios.get('http://localhost:3001/db/kf/sp/' + scenarioProjectID)

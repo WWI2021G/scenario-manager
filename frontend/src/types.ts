@@ -59,6 +59,7 @@ export interface ScenarioProject {
   futureProjections: FutureProjection[];
   projectionBundles: ProjectionBundle[];
   scenarioType: ScenarioType;
+  user: User;
 }
 
 

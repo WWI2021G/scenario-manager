@@ -18,7 +18,9 @@ const ProjectManager: React.FC = () => {
   const [projects, setProjects] = React.useState<ScenarioProject[]>([]);
 
   React.useEffect(() => {
-    setUser_id(Number(sessionStorage.getItem("user_id")));
+    if (typeof window) {
+      setUser_id(Number(sessionStorage.getItem("user_id")));
+    }
     if (user_id) {
       getProjects(user_id);
     }

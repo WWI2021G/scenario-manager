@@ -7,21 +7,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { InfluencingFactor,  } from '@/types';
+import { InfluencingFactor, } from '@/types';
 import axios from 'axios';
 
 export default function CreateInfluencingFactor() {
+  const [scenarioProject_id, setScenarioProject_id] = useState<number>();
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>({
     name: '',
     description: '',
     activeSum: 0,
     passiveSum: 0,
   });
-  const router = useRouter();
 
-  // HACK: Immer eins
-  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
-  let scenarioProject_id = 1;
+  React.useEffect(() => {
+    if (typeof window) {
+      setScenarioProject_id(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+  }, [scenarioProject_id]);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
     const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });

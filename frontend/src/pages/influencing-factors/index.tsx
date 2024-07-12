@@ -8,12 +8,18 @@ import RootLayout from "@/components/main/RootLayout";
 import axios from 'axios';
 
 export default function InfluencingFactorsPage() {
+  const [currentSelectedProject, setCurrentSelectedProject] = useState<number>();
   const [influencingFactors, setInfluencingFactors] = useState<InfluencingFactor[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    getProjectInfluencingFactors(currentSelectedProject);
-  }, []);
+    if (typeof window) {
+      setCurrentSelectedProject(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+    if (currentSelectedProject) {
+      getProjectInfluencingFactors(currentSelectedProject);
+    }
+  }, [currentSelectedProject]);
 
   const getProjectInfluencingFactors = (scenarioProjectID: number) => {
     axios.get('http://localhost:3001/db/if/sp/' + scenarioProjectID)
@@ -31,10 +37,6 @@ export default function InfluencingFactorsPage() {
   const handleDone = () => {
     router.push('/influence-matrix');
   };
-
-  // HACK: Immer eins
-  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
-  let currentSelectedProject = 1;
 
   return (
     <RootLayout>
