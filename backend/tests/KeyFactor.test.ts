@@ -44,6 +44,8 @@ describe("Testing KeyFactor class", () => {
     expect(keyFactor.getProperties()).toStrictEqual([propertyC, propertyA]);
     keyFactor.updateProperty(1, undefined);
     expect(keyFactor.getProperties()).toStrictEqual([undefined, propertyA]);
-    expect(() => keyFactor.updateProperty(0, propertyA)).toThrow("updateProperty only takes 1 or 2 as first argument");
+    expect(() => keyFactor.updateProperty(0, propertyA)).toThrow(
+      "updateProperty only takes 1 or 2 as first argument",
+    );
   });
 });

@@ -149,9 +149,7 @@ class DBController {
   async addInfluencingFactor(req: Request, res: Response) {
     const {
       scenarioProject_id,
-      influencingFactor: { name,
-        description,
-      }
+      influencingFactor: { name, description },
     }: {
       scenarioProject_id: number;
       influencingFactor: {
@@ -295,6 +293,22 @@ class DBController {
     }
   }
 
+  async setInfluencingFactor(req: Request, res: Response) {
+    const { oldName, newName, description } = req.body;
+    try {
+      await dbService.updateInfluencingFactor(oldName, newName, description);
+      res
+        .status(200)
+        .json({ message: "Influencing factor updated successfully" });
+    } catch (error: any) {
+      if (error.message.includes("already exists")) {
+        res.status(400).send(error.message);
+      } else {
+        res.status(500).send(error.message);
+      }
+    }
+  }
+
   async getInfluencingFactorsForScenarioProject(req: Request, res: Response) {
     try {
       const influencingFactors: InfluencingFactor[] =
@@ -434,10 +448,7 @@ class DBController {
         keyFactor_id,
         prop_one,
       }: { keyFactor_id: number; prop_one: string } = req.body;
-      const message = await dbService.insertPropertyOne(
-        keyFactor_id,
-        prop_one,
-      );
+      const message = await dbService.insertPropertyOne(keyFactor_id, prop_one);
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -461,10 +472,7 @@ class DBController {
         keyFactor_id,
         prop_two,
       }: { keyFactor_id: number; prop_two: string } = req.body;
-      const message = await dbService.insertPropertyTwo(
-        keyFactor_id,
-        prop_two,
-      );
+      const message = await dbService.insertPropertyTwo(keyFactor_id, prop_two);
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
