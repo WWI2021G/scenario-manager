@@ -4,7 +4,6 @@ export class User {
 
   constructor(userName: string, userPasswordHash: string) {
     this.userName = userName;
-    // TODO: Hash passwords <2024-06-11>
     this.userPasswordHash = userPasswordHash;
   }
 

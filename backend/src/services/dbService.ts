@@ -33,7 +33,7 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS scenarioUser (
                  scenarioUser_id SERIAL PRIMARY KEY,
                  userName VARCHAR(50) UNIQUE NOT NULL,
-                 PASSWORD VARCHAR(50) NOT NULL
+                 PASSWORD VARCHAR(70) NOT NULL
                );`,
       },
       {
@@ -508,6 +508,7 @@ class DBService {
         WHERE
           name = $1;`,
         influencingFactor.getName(),
+        (influencingFactor) => influencingFactor.influencingfactor_id,
       );
       console.log(
         "Request for existing influencingFactor: " +
@@ -714,8 +715,8 @@ class DBService {
       const query_results = await db.any<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
+        activesum: number;
+        passivesum: number;
       }>(
         `SELECT
           i.*
@@ -732,7 +733,8 @@ class DBService {
           factor.name,
           factor.description,
         );
-        console.log(influencingFactor);
+        influencingFactor.setActiveSum(factor.activesum);
+        influencingFactor.setPassiveSum(factor.passivesum);
         results.push(influencingFactor);
       });
       console.log(

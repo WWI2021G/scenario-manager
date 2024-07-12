@@ -14,6 +14,8 @@ const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialDa
   const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>(initialData || {
     name: '',
     description: '',
+    activeSum: 0,
+    passiveSum: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -23,7 +25,13 @@ const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialDa
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(influencingFactor);
+    setInfluencingFactorsList([...influencingFactorsList, { ...influencingFactor, }]);
+    setInfluencingFactor({
+      name: '',
+      description: '',
+      activeSum: 0,
+      passiveSum: 0,
+    });
   };
 
   return (

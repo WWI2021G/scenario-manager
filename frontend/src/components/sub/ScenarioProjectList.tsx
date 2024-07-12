@@ -1,4 +1,3 @@
-
 // components/ProjectManager.tsx
 import * as React from 'react';
 import Box from '@mui/material/Box';
@@ -11,14 +10,13 @@ import { ScenarioProject } from '@/types';
 import axios from 'axios';
 
 const ProjectManager: React.FC = () => {
-  // HACK: Immer eins
-  // Mit Session-Variable ersetzen <2024-07-04> Weiberle17
-  const user_id = 1;
+  const [user_id, setUser_id] = React.useState<number>(0);
   const [isProjectListEmpty, setIsProjectListEmpty] = React.useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const [projects, setProjects] = React.useState<ScenarioProject[]>([]);
 
   React.useEffect(() => {
+    setUser_id(Number(sessionStorage.getItem("user_id")));
     getProjects(user_id);
   }, []);
 
