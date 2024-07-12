@@ -1,4 +1,3 @@
-'use client';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
@@ -18,8 +17,10 @@ const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialDa
     passiveSum: 0,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const [influencingFactorsList, setInfluencingFactorsList] = useState<InfluencingFactor[]>([]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
+    const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
     setInfluencingFactor({ ...influencingFactor, [name]: value });
   };
 

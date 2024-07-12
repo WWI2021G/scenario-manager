@@ -4,7 +4,11 @@ import { useRouter } from 'next/router';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 
-const EditInfluencingFactorForm: React.FC = () => {
+interface EditInfluencingFactorFormProps {
+  ifName: string;
+}
+
+const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({ifName}) => {
   const router = useRouter();
   const { name } = router.query;
 
