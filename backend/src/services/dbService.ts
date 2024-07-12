@@ -439,6 +439,47 @@ class DBService {
     }
   }
 
+  async updateInfluencingFactor(
+    oldName: string,
+    newName: string,
+    description: string,
+  ): Promise<void> {
+    try {
+      // Check if the new name already exists
+      const existing = await db.oneOrNone<{ name: string }>(
+        `SELECT
+          name
+        FROM
+          influencingfactor
+        WHERE
+          name = $1
+          AND name != $2;`,
+        [newName, oldName],
+      );
+
+      if (existing) {
+        throw new Error(
+          `Influencing factor WITH name $ { newName } already EXISTS.`,
+        );
+      }
+
+      // Update the influencing factor
+      await db.none(
+        `UPDATE
+          influencingfactor
+        SET
+          name = $1,
+          description = $2
+        WHERE
+          name = $3;`,
+        [newName, description, oldName],
+      );
+    } catch (error) {
+      console.error("Error updating influencing factor:", error);
+      throw error;
+    }
+  }
+
   async connectInfluencingFactorAndScenarioProject(
     influencingFactor_id: number,
     scenarioProject_id: number,
@@ -543,14 +584,14 @@ class DBService {
       const result = await db.one<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
+        activesum: number;
+        passivesum: number;
       }>(
         `SELECT
           name,
           description,
-          variable,
-          influencingarea
+          activesum,
+          passivesum
         FROM
           influencingfactor
         WHERE
@@ -561,6 +602,8 @@ class DBService {
         result.name,
         result.description,
       );
+      influencingFactor.setActiveSum(result.activesum);
+      influencingFactor.setPassiveSum(result.passivesum);
       console.log(
         "Request for existing influencingFactor by name: " +
           influencingFactor_name,
@@ -729,14 +772,14 @@ class DBService {
       const query_results = await db.any<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
+        activesum: number;
+        passivesum: number;
       }>(
         `SELECT
           name,
           description,
-          variable,
-          influencingarea
+          activesum,
+          passivesum
         FROM
           influencingfactor;`,
       );
@@ -745,6 +788,8 @@ class DBService {
           factor.name,
           factor.description,
         );
+        influencingFactor.setActiveSum(factor.activesum);
+        influencingFactor.setPassiveSum(factor.passivesum);
         console.log(influencingFactor);
         results.push(influencingFactor);
       });

@@ -28,6 +28,7 @@ router.get("/if/as/:id", dbController.getActiveSum);
 router.get("/if/ps/:id", dbController.getPassiveSum);
 router.post("/if/as/update", dbController.setActiveSum);
 router.post("/if/ps/update", dbController.setPassiveSum);
+router.post("/if/update", dbController.setInfluencingFactor);
 
 router.get("/kf/:id", dbController.getKeyFactor);
 router.get("/kf/sp/:id", dbController.getKeyFactorsForScenarioProject);

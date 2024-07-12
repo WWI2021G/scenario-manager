@@ -4,7 +4,6 @@ import InfluencingFactorForm from '../../components/main/InfluencingFactorForm';
 export default function Home() {
   return (
     <div>
-      <InfluencingFactorForm />
     </div>
   );
 }
