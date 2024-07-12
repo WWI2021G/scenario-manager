@@ -8,17 +8,21 @@ import TableHover from "@/components/sub/ProjectTable";
 import ScenarioProjectForm from '@/components/main/ScenarioProjectForm';
 import { ScenarioProject } from '@/types';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const ProjectManager: React.FC = () => {
-  const [user_id, setUser_id] = React.useState<number>(0);
+  const router = useRouter();
+  const [user_id, setUser_id] = React.useState<number>();
   const [isProjectListEmpty, setIsProjectListEmpty] = React.useState(true);
   const [showForm, setShowForm] = React.useState(false);
   const [projects, setProjects] = React.useState<ScenarioProject[]>([]);
 
   React.useEffect(() => {
     setUser_id(Number(sessionStorage.getItem("user_id")));
-    getProjects(user_id);
-  }, []);
+    if (user_id) {
+      getProjects(user_id);
+    }
+  }, [user_id]);
 
   const getProjects = (userID: number) => {
     axios.get('http://localhost:3001/db/sp/user/' + userID)
@@ -34,6 +38,11 @@ const ProjectManager: React.FC = () => {
   };
 
   const handleSaveProject = (project: ScenarioProject) => {
+    if (!user_id) {
+      router.push('/');
+      console.log("UserID undefined");
+      return;
+    }
     console.log(project);
     axios.post('http://localhost:3001/db/sp/add', { project, user_id })
       .then(response => {
