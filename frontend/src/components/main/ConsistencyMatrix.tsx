@@ -19,20 +19,22 @@ import {
 import zIndex from "@mui/material/styles/zIndex";
 import axios from "axios";
 
-// HACK: Immer eins
-// Mit Session-Variable ersetzen <2024-07-04> Weiberle17
-const scenarioProject_id = 1
-
 const ConsistencyMatrix: React.FC = () => {
+  const [scenarioProject_id, setScenarioProject_id] = useState<number>();
   const [futureProjections, setFutureProjections] = useState<FutureProjection[]>([]);
   const [keyFactors, setKeyFactors] = useState<KeyFactor[]>([]);
   const [matrix, setMatrix] = useState<number[][]>([]);
 
   React.useEffect(() => {
-    getFutureProjections(scenarioProject_id);
-    getKeyFactors(scenarioProject_id);
-    initiateMatrix();
-  }, []);
+    if (typeof window) {
+      setScenarioProject_id(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+    if (scenarioProject_id) {
+      getFutureProjections(scenarioProject_id);
+      getKeyFactors(scenarioProject_id);
+      initiateMatrix();
+    }
+  }, [scenarioProject_id]);
 
   const getFutureProjections = async (scenarioProject_id: number) => {
     await axios.get("http://localhost:3001/db/fp/sp/" + scenarioProject_id)
@@ -50,8 +52,8 @@ const ConsistencyMatrix: React.FC = () => {
       .catch(error => console.error(error))
   };
 
-    console.log(futureProjections);
-    console.log(keyFactors);
+  console.log(futureProjections);
+  console.log(keyFactors);
   const initiateMatrix = () => {
     console.log(futureProjections.length);
     const size = 6;
@@ -77,7 +79,7 @@ const ConsistencyMatrix: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Konsistenzmatrix
       </Typography>
-      <Box sx={{ display: "flex", justifyContent: "left",  my: 2}}>
+      <Box sx={{ display: "flex", justifyContent: "left", my: 2 }}>
         <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
           Konsitenzwerte speichern
         </Button>

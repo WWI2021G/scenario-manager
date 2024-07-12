@@ -31,15 +31,18 @@ const initializeMatrix = (factors: InfluencingFactor[]): InfluencMatrix => {
 
 const InfluencMatrixComponent: React.FC = () => {
   const router = useRouter();
-  // HACK: Immer eins
-  // Mit Session-Variable ersetzen <2024-07-05> Weiberle17
-  const scenarioProjectID = 1;
+  const [scenarioProject_id, setScenarioProject_id] = useState<number>();
   const [influencingFactors, setInfluencingFactors] = useState<InfluencingFactor[]>([]);
   const [matrix, setMatrix] = useState<InfluencMatrix>(initializeMatrix(influencingFactors));
 
   React.useEffect(() => {
-    getProjectInfluencingFactors(scenarioProjectID);
-  }, []);
+    if (typeof window) {
+      setScenarioProject_id(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+    if (scenarioProject_id) {
+      getProjectInfluencingFactors(scenarioProject_id);
+    }
+  }, [scenarioProject_id]);
 
   const getProjectInfluencingFactors = async (scenarioProjectID: number) => {
     axios.get('http://localhost:3001/db/if/sp/' + scenarioProjectID)
@@ -104,13 +107,17 @@ const InfluencMatrixComponent: React.FC = () => {
   }
 
   const createKeyFactors = async () => {
-    await getProjectInfluencingFactors(scenarioProjectID);
+    if (!scenarioProject_id) {
+      console.error("scenarioProject_id hasn't been set correctly");
+      return;
+    }
+    await getProjectInfluencingFactors(scenarioProject_id);
     if (influencingFactors.length <= 20) {
       await postKeyFactors(influencingFactors);
       return;
     }
     let scenarioType: ScenarioType = {} as ScenarioType;
-    await axios.get("http://localhost:3001/db/sp/" + scenarioProjectID)
+    await axios.get("http://localhost:3001/db/sp/" + scenarioProject_id)
       .then(response => {
         scenarioType = response.data.scenarioType;
       })
@@ -181,15 +188,15 @@ const InfluencMatrixComponent: React.FC = () => {
     for (let i = 0; i < influencingFactors.length; i++) {
       let influencingFactor_id = 0;
       await axios.post("http://localhost:3001/db/ifid", influencingFactors[i])
-      .then(response => {
-        influencingFactor_id = response.data.influencingFactor_id
-      })
-      .catch(error => console.error(error));
-      await axios.post("http://localhost:3001/db/kf/add", { "scenarioProject_id": scenarioProjectID, "influencingFactor_id": influencingFactor_id })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => console.error(error));
+        .then(response => {
+          influencingFactor_id = response.data.influencingFactor_id
+        })
+        .catch(error => console.error(error));
+      await axios.post("http://localhost:3001/db/kf/add", { "scenarioProject_id": scenarioProject_id, "influencingFactor_id": influencingFactor_id })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => console.error(error));
     }
   };
 

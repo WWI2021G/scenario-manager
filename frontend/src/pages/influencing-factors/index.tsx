@@ -11,19 +11,25 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function InfluencingFactorsPage() {
+  const [currentSelectedProject, setCurrentSelectedProject] = useState<number>();
   const [influencingFactors, setInfluencingFactors] = useState<InfluencingFactor[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedFactor, setSelectedFactor] = useState<InfluencingFactor | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    getProjectInfluencingFactors(currentSelectedProject);
-  }, []);
+    if (typeof window) {
+      setCurrentSelectedProject(Number(sessionStorage.getItem("scenarioProject_id")));
+    }
+    if (currentSelectedProject) {
+      getProjectInfluencingFactors(currentSelectedProject);
+    }
+  }, [currentSelectedProject]);
 
   const getProjectInfluencingFactors = (scenarioProjectID: number) => {
     axios.get(`http://localhost:3001/db/if/sp/${scenarioProjectID}`)
       .then(response => {
-        setInfluencingFactors(response.data);
+        setInfluencingFactors(response.data)
       })
       .catch(error => console.error(error));
   };
@@ -54,7 +60,7 @@ export default function InfluencingFactorsPage() {
   };
 
   const handleDelete = () => {
-    if (selectedFactor) {
+    if (selectedFactor && currentSelectedProject) {
       axios.delete(`http://localhost:3001/db/if/${selectedFactor.name}`)
         .then(() => {
           getProjectInfluencingFactors(currentSelectedProject);
@@ -63,9 +69,6 @@ export default function InfluencingFactorsPage() {
     }
     handleMenuClose();
   };
-
-  let currentSelectedProject = 1;
-
   return (
     <RootLayout>
       <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
@@ -128,4 +131,3 @@ export default function InfluencingFactorsPage() {
     </RootLayout>
   );
 }
-
