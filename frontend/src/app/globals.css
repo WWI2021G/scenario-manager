@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+.material-button {
+  @apply bg-primary hover:bg-primary-hover text-white;
+}
