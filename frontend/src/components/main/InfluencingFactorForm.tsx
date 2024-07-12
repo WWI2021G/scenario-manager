@@ -1,4 +1,4 @@
-
+'use client';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography } from "@mui/material";
