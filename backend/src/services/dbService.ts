@@ -266,7 +266,7 @@ class DBService {
       );
       console.log(
         "Created scenarioProject in database with id: " +
-          createdScenarioProject_id,
+        createdScenarioProject_id,
       );
       return createdScenarioProject_id;
     } catch (error) {
@@ -296,7 +296,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error selecting scenarioproject_id for Scenario: " +
-          scenarioProject.getName(),
+        scenarioProject.getName(),
         error,
       );
       throw error;
@@ -335,7 +335,7 @@ class DBService {
       console.log(scenarioProject);
       console.log(
         "Request for existing scenarioProject_id: " + scenarioProject_id,
-      );
+     );
       return scenarioProject;
     } catch (error) {
       console.error(
@@ -381,13 +381,13 @@ class DBService {
       });
       console.log(
         "Request for all ScenarioProjects with scenarioUser_id: " +
-          scenarioUser_id,
+        scenarioUser_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting ScenarioProject for scenarioUser_id: " +
-          scenarioUser_id,
+        scenarioUser_id,
         error,
       );
       throw error;
@@ -430,7 +430,7 @@ class DBService {
       );
       console.log(
         "Created influencingFactor in database with id: " +
-          createdInfluencingFactor_id,
+        createdInfluencingFactor_id,
       );
       return createdInfluencingFactor_id;
     } catch (error: any) {
@@ -447,31 +447,19 @@ class DBService {
     try {
       // Check if the new name already exists
       const existing = await db.oneOrNone<{ name: string }>(
-        `SELECT
-          name
-        FROM
-          influencingfactor
-        WHERE
-          name = $1
-          AND name != $2;`,
+        `SELECT name FROM influencingfactor WHERE name = $1 AND name != $2;`,  
         [newName, oldName],
       );
 
       if (existing) {
         throw new Error(
-          `Influencing factor WITH name $ { newName } already EXISTS.`,
+          `Influencing factor with name ${newName} already exists.`,
         );
       }
 
       // Update the influencing factor
       await db.none(
-        `UPDATE
-          influencingfactor
-        SET
-          name = $1,
-          description = $2
-        WHERE
-          name = $3;`,
+        `UPDATE influencingfactor SET name = $1, description = $2 WHERE name = $3;`,
         [newName, description, oldName],
       );
     } catch (error) {
@@ -509,12 +497,12 @@ class DBService {
   }
 
   async selectInfluencingFactorID(
-    influencingFactor: InfluencingFactor,
-  ): Promise<number> {
-    try {
-      const influencingFactor_id: number = await db.one<number>(
-        `SELECT
-          influencingfactor_id
+      influencingFactor: InfluencingFactor,
+    ): Promise<number> {
+      try {
+        const influencingFactor_id: number = await db.one<number>(
+          `SELECT
+            influencingfactor_id
         FROM
           influencingfactor
         WHERE
@@ -524,13 +512,13 @@ class DBService {
       );
       console.log(
         "Request for existing influencingFactor: " +
-          influencingFactor.getName(),
+        influencingFactor.getName(),
       );
       return influencingFactor_id;
     } catch (error) {
       console.error(
         "Error selecting influencingFactor_id for InfluencingFactor: " +
-          influencingFactor.getName(),
+        influencingFactor.getName(),
         error,
       );
       throw error;
@@ -584,8 +572,8 @@ class DBService {
       const result = await db.one<{
         name: string;
         description: string;
-        activesum: number;
-        passivesum: number;
+        variable: string;
+        influencingarea: string;
       }>(
         `SELECT
           name,
@@ -602,17 +590,15 @@ class DBService {
         result.name,
         result.description,
       );
-      influencingFactor.setActiveSum(result.activesum);
-      influencingFactor.setPassiveSum(result.passivesum);
       console.log(
         "Request for existing influencingFactor by name: " +
-          influencingFactor_name,
+        influencingFactor_name,
       );
       return influencingFactor;
     } catch (error) {
       console.error(
         "Error selecting influencingFactor for InfluencingFactor: " +
-          influencingFactor_name,
+        influencingFactor_name,
         error,
       );
       throw error;
@@ -638,7 +624,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error updating activeSum for InfluencingFactor: " +
-          influencingFactor.getName(),
+        influencingFactor.getName(),
       );
       throw error;
     }
@@ -663,7 +649,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error selecting activeSum for InfluencingFactor: " +
-          influencingFactor_id,
+        influencingFactor_id,
       );
       throw error;
     }
@@ -690,7 +676,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error updating passiveSum for InfluencingFactor: " +
-          influencingFactor.getName(),
+        influencingFactor.getName(),
       );
       throw error;
     }
@@ -715,7 +701,7 @@ class DBService {
     } catch (error) {
       console.error(
         "Error selecting passiveSum for InfluencingFactor: " +
-          influencingFactor_id,
+        influencingFactor_id,
       );
       throw error;
     }
@@ -753,13 +739,13 @@ class DBService {
       });
       console.log(
         "Request for all InfluencingFactors with scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all InfluencingFactors for scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
         error,
       );
       throw error;
@@ -772,8 +758,8 @@ class DBService {
       const query_results = await db.any<{
         name: string;
         description: string;
-        activesum: number;
-        passivesum: number;
+        variable: string;
+        influencingarea: string;
       }>(
         `SELECT
           name,
@@ -788,8 +774,6 @@ class DBService {
           factor.name,
           factor.description,
         );
-        influencingFactor.setActiveSum(factor.activesum);
-        influencingFactor.setPassiveSum(factor.passivesum);
         console.log(influencingFactor);
         results.push(influencingFactor);
       });
@@ -1029,13 +1013,13 @@ class DBService {
       });
       console.log(
         "Request for all KeyFactors with scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all KeyFactors for scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
         error,
       );
       throw error;
@@ -1224,13 +1208,13 @@ class DBService {
       );
       console.log(
         "Request for existing FutureProjectionID: " +
-          futureProjection.getName(),
+        futureProjection.getName(),
       );
       return futureProjection_id;
     } catch (error) {
       console.error(
         "Error selecting ID for FutureProjection: " +
-          futureProjection.getName(),
+        futureProjection.getName(),
         error,
       );
       throw error;
@@ -1425,13 +1409,13 @@ class DBService {
       }
       console.log(
         "Request for all FutureProjections with scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting FutureProjections for ScenarioProject: " +
-          scenarioProject_id,
+        scenarioProject_id,
         error,
       );
       throw error;
@@ -1482,13 +1466,13 @@ class DBService {
       }
       console.log(
         "Request for all FutureProjections with scenarioProject_id: " +
-          projectionBundle_id,
+        projectionBundle_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting FutureProjections for ScenarioProject: " +
-          projectionBundle_id,
+        projectionBundle_id,
         error,
       );
       throw error;
@@ -1608,13 +1592,13 @@ class DBService {
       );
       console.log(
         "Request for consistency of projectionBundle_id: " +
-          projectionBundle_id,
+        projectionBundle_id,
       );
       return consistency;
     } catch (error) {
       console.error(
         "Error selecting consistency for ProjectionBundle: " +
-          projectionBundle_id,
+        projectionBundle_id,
       );
       throw error;
     }
@@ -1636,13 +1620,13 @@ class DBService {
       );
       console.log(
         "Request for numPartInconsistencies of projectionBundle_id: " +
-          projectionBundle_id,
+        projectionBundle_id,
       );
       return numPartInconsistencies;
     } catch (error) {
       console.error(
         "Error selecting numPartInconsistencies for ProjectionBundle: " +
-          projectionBundle_id,
+        projectionBundle_id,
       );
       throw error;
     }
@@ -1714,13 +1698,13 @@ class DBService {
       }
       console.log(
         "Request for all ProjectionBundles with rawScenario_id: " +
-          rawScenario_id,
+        rawScenario_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all ProjectionBundles for rawScenario_id: " +
-          rawScenario_id,
+        rawScenario_id,
         error,
       );
       throw error;
@@ -1768,13 +1752,13 @@ class DBService {
       }
       console.log(
         "Request for all ProjectionBundles with scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all ProjectionBundles for scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
         error,
       );
       throw error;
@@ -1929,13 +1913,13 @@ class DBService {
       }
       console.log(
         "Request for all RawScenarios with scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
       );
       return results;
     } catch (error) {
       console.error(
         "Error selecting all RawScenarios for scenarioProject_id: " +
-          scenarioProject_id,
+        scenarioProject_id,
         error,
       );
       throw error;

@@ -27,6 +27,7 @@ export default function TableHover({ projects }: ProjectTableProps) {
     axios.post("http://localhost:3001/db/spid", { "name": project.name, "description": project.description, "scenarioType": project.scenarioType, "user": project.user })
       .then(response => {
         sessionStorage.setItem("scenarioProject_id", response.data.scenarioProject_id);
+        sessionStorage.setItem("scenarioProject_name", project.name);
         router.push('/influencing-factors');
       })
       .catch(error => console.error(error));
