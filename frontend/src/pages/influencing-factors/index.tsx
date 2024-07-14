@@ -11,16 +11,27 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function InfluencingFactorsPage() {
-  const [currentSelectedProject, setCurrentSelectedProject] = useState<number>();
+  const [currentSelectedProject, setCurrentSelectedProject] = useState<number | null>(null);
   const [influencingFactors, setInfluencingFactors] = useState<InfluencingFactor[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedFactor, setSelectedFactor] = useState<InfluencingFactor | null>(null);
+  const [projectName, setProjectName] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window) {
-      setCurrentSelectedProject(Number(sessionStorage.getItem("scenarioProject_id")));
+    if (typeof window !== 'undefined') {
+      const projectId = sessionStorage.getItem("scenarioProject_id");
+      const projectName = sessionStorage.getItem("scenarioProject_name");
+      if (projectId) {
+        setCurrentSelectedProject(Number(projectId));
+      }
+      if (projectName) {
+        setProjectName(projectName);
+      }
     }
+  }, []);
+
+  useEffect(() => {
     if (currentSelectedProject) {
       getProjectInfluencingFactors(currentSelectedProject);
     }
@@ -69,11 +80,12 @@ export default function InfluencingFactorsPage() {
     }
     handleMenuClose();
   };
+
   return (
     <RootLayout>
       <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
         <h1 className='text-3xl my-4 font-bold'>Einflussfaktorenliste</h1>
-        <h2 className='text-lg my-2'>Aktuelles Projekt: {sessionStorage.getItem("scenarioProject_name")}</h2>
+        <h2 className='text-lg my-2'>Aktuelles Projekt: {projectName}</h2>
         <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleCreate} sx={{ mb: 2 }}>
           Create New Influencing Factor
         </Button>
