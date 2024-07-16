@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useRouter } from 'next/router';
-import { KeyFactor } from '@/types';
+import { KeyFactor, FutureProjection } from '@/types';
 import axios from 'axios';
 
 interface KeyFactorFormProps {
@@ -21,26 +22,28 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
     projectionA: undefined,
     projectionB: undefined,
   });
-  const [futureProjectionsExist, setFutureProjectionsExist] = useState<boolean>(false);
+  const [futureProjections, setFutureProjections] = useState<FutureProjection[]>([]);
+  
+  const keyFactor_id = async (keyFactor_name: string) => {
+  const response = await axios.get(`http://localhost:3001/db/kf/name/${keyFactor_name}`);
+  return response.data.keyFactor_id;
+  };
 
   useEffect(() => {
     if (initialData) {
       setKeyFactor(initialData);
-      fetchFutureProjections();
+    
+      fetchFutureProjections(keyFactor_id);
     }
   }, [initialData]);
 
-  const fetchFutureProjections = async () => {
+  const fetchFutureProjections = async (keyFactorId: number) => {
     try {
-      if(!initialData) return;
-      const keyFactor_id = await axios.post("http://localhost:3001/db/kfid", { "name": initialData.name, "cur_state": initialData.curState })
-      const futureProjections = await axios.get(`http://localhost:3001/db/fp/kf/${keyFactor_id.data.keyFactor_id}`);
-      if (futureProjections.data.length > 0) {
-        setFutureProjectionsExist(true);
-      }
-  } catch (error) {
-    console.error('Error fetching future projections:', error);
-  };
+      const response = await axios.get(`http://localhost:3001/db/fp/kf/${keyFactorId}`);
+      setFutureProjections(response.data);
+    } catch (error) {
+      console.error('Error fetching future projections:', error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +70,7 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
     onSubmit(keyFactor);
   };
 
-  const onAddFP = async () => {
+  const handleAddOrUpdateFP = async () => {
     const keyFactor_name: string = keyFactor.name;
     const keyFactor_curState: string = keyFactor.curState;
     let keyFactor_id = undefined;
@@ -95,7 +98,7 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
         label="Name"
         name="name"
         value={keyFactor.name}
-        InputProps={{ readOnly: true, }}
+        InputProps={{ readOnly: true }}
       />
       <TextField
         label="Property 1"
@@ -124,8 +127,8 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
         <Button variant="contained" color="primary" type="submit">
           {initialData ? 'Update KeyFactor' : 'Add KeyFactor'}
         </Button>
-        <Button variant="contained" color="primary" onClick={onAddFP}>
-          {futureProjectionsExist ? 'Update Future Projections' : 'Add Future Projections'}
+        <Button variant="contained" color="primary" onClick={handleAddOrUpdateFP}>
+          {futureProjections.length === 2 ? 'Update Future Projections' : 'Add Future Projections'}
         </Button>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
           Cancel

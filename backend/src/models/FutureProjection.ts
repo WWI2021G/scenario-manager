@@ -6,6 +6,7 @@ export class FutureProjection {
   private name: string;
   private description: string;
   private keyFactor: KeyFactor;
+  private keyFactor_id: number;
   private probability: Probability;
   private timeFrame: Date;
   private type: ProjectionType;
@@ -14,6 +15,7 @@ export class FutureProjection {
     name: string,
     description: string,
     keyFactor: KeyFactor,
+    keyFactor_id: number,
     probability: Probability,
     timeFrame: Date,
     type: ProjectionType,
@@ -21,6 +23,7 @@ export class FutureProjection {
     this.name = name;
     this.description = description;
     this.keyFactor = keyFactor;
+    this.keyFactor_id = keyFactor_id;
     this.probability = probability;
     this.timeFrame = timeFrame;
     this.type = type;
@@ -48,6 +51,14 @@ export class FutureProjection {
 
   updateKeyFactor(keyFactor: KeyFactor) {
     this.keyFactor = keyFactor;
+  }
+
+  getKeyFactorID(): number {
+    return this.keyFactor_id;
+  }
+
+  updateKeyFactorID(keyFactor_id: number) {
+    this.keyFactor_id = keyFactor_id;
   }
 
   getProbability(): Probability {

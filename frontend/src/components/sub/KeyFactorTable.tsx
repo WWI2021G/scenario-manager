@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import KeyFactorForm from '../main/KeyFactorForm';
+import React, { useState, useEffect } from 'react';
 import { KeyFactor } from '@/types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -12,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import KeyFactorForm from '../main/KeyFactorForm';
 
 const KeyFactorTable = () => {
   const router = useRouter();
@@ -20,33 +20,33 @@ const KeyFactorTable = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedKeyFactor, setSelectedKeyFactor] = useState<KeyFactor | null>(null);
 
-  React.useEffect(() => {
-    if (typeof window) {
-      setScenarioProject_id(Number(sessionStorage.getItem("scenarioProject_id")));
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const projectID = Number(sessionStorage.getItem("scenarioProject_id"));
+      setScenarioProject_id(projectID);
+      if (projectID) {
+        getProjectKeyFactors(projectID);
+      }
     }
-    if (scenarioProject_id) {
-    getProjectKeyFactors(scenarioProject_id);
-    }
-  }, [scenarioProject_id, showForm]);
+  }, [showForm]);
 
   const getProjectKeyFactors = (scenarioProjectID: number) => {
     axios.get('http://localhost:3001/db/kf/sp/' + scenarioProjectID)
       .then(response => {
-        setKeyFactors(response.data)
+        console.log(response.data);
+        setKeyFactors(response.data);
       })
       .catch(error => console.error(error));
   };
 
   const handleAddKeyFactor = (newKeyFactor: KeyFactor) => {
     if (selectedKeyFactor) {
-      // Update existing key factor
       setKeyFactors(
         keyFactors.map((kf) =>
           kf.id === newKeyFactor.id ? newKeyFactor : kf
         )
       );
     } else {
-      // Add new key factor
       setKeyFactors([...keyFactors, { ...newKeyFactor, id: keyFactors.length + 1 }]);
     }
     setShowForm(false);
@@ -55,13 +55,13 @@ const KeyFactorTable = () => {
 
   const handleEditKeyFactor = (keyFactor: KeyFactor) => {
     setSelectedKeyFactor(keyFactor);
+    console.log(keyFactor);
     setShowForm(true);
   };
 
   const handleCancel = () => {
     setShowForm(false);
     setSelectedKeyFactor(null);
-    router.push("/keyfactors");
   };
 
   return (
