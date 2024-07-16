@@ -23,7 +23,7 @@ const ConsistencyMatrix: React.FC = () => {
   const [scenarioProject_id, setScenarioProject_id] = useState<number>();
   const [futureProjections, setFutureProjections] = useState<FutureProjection[]>([]);
   const [keyFactors, setKeyFactors] = useState<KeyFactor[]>([]);
-  const [matrix, setMatrix] = useState<number[][]>([]);
+  const [matrix, setMatrix] = useState<Map<FutureProjection, Map<FutureProjection, number>>>(new Map());
 
   React.useEffect(() => {
     if (typeof window) {
@@ -31,10 +31,15 @@ const ConsistencyMatrix: React.FC = () => {
     }
     if (scenarioProject_id) {
       getFutureProjections(scenarioProject_id);
-      getKeyFactors(scenarioProject_id);
-      initiateMatrix();
     }
   }, [scenarioProject_id]);
+
+  React.useEffect(() => {
+    if (futureProjections.length > 0) {
+      getKeyFactors();
+      initiateMatrix();
+    }
+  }, [futureProjections]);
 
   const getFutureProjections = async (scenarioProject_id: number) => {
     await axios.get("http://localhost:3001/db/fp/sp/" + scenarioProject_id)
@@ -44,33 +49,85 @@ const ConsistencyMatrix: React.FC = () => {
       .catch(error => console.error(error))
   };
 
-  const getKeyFactors = async (scenarioProject_id: number) => {
-    await axios.get("http://localhost:3001/db/kf/sp/" + scenarioProject_id)
+  const getKeyFactors = async () => {
+    //await axios.get("http://localhost:3001/db/kf/sp/" + scenarioProject_id)
+    //  .then(response => {
+    //    setKeyFactors(response.data)
+    //  })
+    //  .catch(error => console.error(error))
+    const keyFactorMap: Map<string, FutureProjection[]> = new Map();
+    const keyFactorArray: KeyFactor[] = [];
+    futureProjections.forEach(futureProjection => {
+      if (!keyFactorMap.has(futureProjection.keyFactor.name)) {
+        keyFactorMap.set(futureProjection.keyFactor.name, []);
+      }
+      const array: FutureProjection[] = keyFactorMap.get(futureProjection.keyFactor.name)!;
+      if (!array.includes(futureProjection)) {
+        array.push(futureProjection);
+      }
+    });
+    keyFactorMap.forEach(futureProjections => {
+      const keyFactor = futureProjections[0].keyFactor;
+      keyFactor.projectionA = futureProjections[0];
+      keyFactor.projectionB = futureProjections[1];
+      keyFactorArray.push(keyFactor);
+    });
+    setKeyFactors(keyFactorArray);
+  };
+
+  const initiateMatrix = () => {
+    const consistencyMatrix = new Map();
+    futureProjections.forEach(futureProjection => {
+      if (!consistencyMatrix.has(futureProjection)) {
+        consistencyMatrix.set(futureProjection, new Map());
+      }
+      const innerMap = consistencyMatrix.get(futureProjection);
+      futureProjections.forEach(innerFutureProjection => {
+        if (!innerMap.has(innerFutureProjection)) {
+          innerMap.set(innerFutureProjection, undefined);
+        }
+      });
+    });
+    setMatrix(consistencyMatrix);
+  };
+
+  const getValue = (projRow: FutureProjection | undefined, projCol: FutureProjection | undefined) => {
+    if (projRow && projCol) {
+      const innerMatrix = matrix.get(projRow);
+      return innerMatrix ? innerMatrix.get(projCol) : undefined;
+    }
+  };
+
+  const mapToJson = (map: Map<FutureProjection, Map<FutureProjection, number | undefined>> | Map<FutureProjection, number | undefined>) => {
+    const obj: any = {};
+    map.forEach((value, key) => {
+      if (value instanceof Map) {
+        obj[key.name] = mapToJson(value);
+      } else {
+        obj[key.name] = value;
+      }
+    });
+    return obj;
+  }
+
+  const handleChange = (projRow: FutureProjection | undefined, projCol: FutureProjection | undefined, value: number) => {
+    if (projRow && projCol) {
+      const innerMap = matrix.get(projRow);
+      if (innerMap) {
+        innerMap.set(projCol, value);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const jsonMatrix = mapToJson(matrix);
+    await axios.post("http://localhost:3001/db/pb/calculate", { "matrix": jsonMatrix })
       .then(response => {
-        setKeyFactors(response.data)
+        console.log(response);
       })
       .catch(error => console.error(error))
-  };
-
-  console.log(futureProjections);
-  console.log(keyFactors);
-  const initiateMatrix = () => {
-    console.log(futureProjections.length);
-    const size = 6;
-    setMatrix(Array.from({ length: size }, () => Array(size).fill(0)));
-  };
-
-  const handleChange = (i: number, j: number, value: number) => {
-    const newMatrix = [...matrix];
-    newMatrix[i][j] = value;
-    setMatrix(newMatrix);
-  };
-
-  const isSameKeyFactor = (i: number, j: number) => {
-    const projRow = futureProjections[i];
-    const projCol = futureProjections[j];
-    return projRow?.keyFactor?.name === projCol?.keyFactor?.name;
-  };
+  }
 
   const acceptedValues = [1, 2, 6, 8, 9];
 
@@ -80,7 +137,7 @@ const ConsistencyMatrix: React.FC = () => {
         Konsistenzmatrix
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "left", my: 2 }}>
-        <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
+        <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' onClick={handleSubmit}>
           Konsitenzwerte speichern
         </Button>
         <Button variant="outlined" color="secondary" >
@@ -99,9 +156,9 @@ const ConsistencyMatrix: React.FC = () => {
             <TableRow sx={{ zIndex: 4 }}>
               <TableCell />
               <TableCell />
-              {keyFactors.map((kf, kfIndex) => (
+              {keyFactors.map((kf) => (
                 <TableCell
-                  key={`kf-head-${kfIndex}`}
+                  key={`kf-head-${kf.name}`}
                   colSpan={2}
                   align="center"
                   sx={{
@@ -122,28 +179,30 @@ const ConsistencyMatrix: React.FC = () => {
             <TableRow >
               <TableCell sx={{ zIndex: 4 }} />
               <TableCell sx={{ zIndex: 4 }} />
-              {futureProjections.map((proj, index) => (
-                <TableCell
-                  key={`proj-head-${index}`}
-                  align="center"
-                  sx={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 5,
-                    background: "#fff",
-                    maxWidth: "200px", // Set a maximum width for wrapping
-                    whiteSpace: "normal", // Allow wrapping
-                    overflowWrap: "break-word", // Handle overflow
-                  }}
-                >
-                  {proj?.name ?? ""}
-                </TableCell>
+              {keyFactors.map((kf) => (
+                [kf.projectionA, kf.projectionB].map((proj) => (
+                  <TableCell
+                    key={`proj-head-${proj?.name}`}
+                    align="center"
+                    sx={{
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 5,
+                      background: "#fff",
+                      maxWidth: "200px", // Set a maximum width for wrapping
+                      whiteSpace: "normal", // Allow wrapping
+                      overflowWrap: "break-word", // Handle overflow
+                    }}
+                  >
+                    {proj?.name ?? ""}
+                  </TableCell>
+                ))
               ))}
-            </TableRow>
+            </TableRow >
           </TableHead>
           <TableBody>
             {futureProjections.map((projRow, i) => (
-              <TableRow key={`row-${i}`} sx={{ height: 70, background: "#fff", zIndex: 4 }}>
+              <TableRow key={`row-${projRow?.name}`} sx={{ height: 70, background: "#fff", zIndex: 4 }}>
                 {i % 2 === 0 && (
                   <TableCell
                     rowSpan={2}
@@ -159,7 +218,7 @@ const ConsistencyMatrix: React.FC = () => {
                       overflowWrap: "break-word", // Handle overflow
                     }}
                   >
-                    {keyFactors[Math.floor(i / 2)].name}
+                    {projRow.keyFactor.name}
                   </TableCell>
                 )}
                 <TableCell
@@ -180,13 +239,13 @@ const ConsistencyMatrix: React.FC = () => {
                 </TableCell>
                 {futureProjections.map((projCol, j) => (
                   <TableCell
-                    key={`cell-${i}-${j}`}
+                    key={`cell-${projRow?.name}-${projCol?.name}`}
                     align="center"
                     sx={{
                       background: '#fff',
                       bgcolor:
                         i >= j || j >= -i
-                          ? isSameKeyFactor(i, j)
+                          ? projRow?.keyFactor.name === projCol?.keyFactor.name
                             ? "grey.500"
                             : "gray.400"
                           : "white",
@@ -195,7 +254,7 @@ const ConsistencyMatrix: React.FC = () => {
                     }}
                   >
                     {i > j ? (
-                      isSameKeyFactor(i, j) ? (
+                      projRow?.keyFactor.name === projCol?.keyFactor.name ? (
                         <Box
                           sx={{
                             bgcolor: "white",
@@ -206,9 +265,9 @@ const ConsistencyMatrix: React.FC = () => {
                         />
                       ) : (
                         <Select
-                          value={matrix[i][j]}
+                          value={getValue(projRow, projCol)}
                           onChange={(e) =>
-                            handleChange(i, j, Number(e.target.value))
+                            handleChange(projRow, projCol, Number(e.target.value))
                           }
                           displayEmpty
                           sx={{ width: "60px", zIndex: 2, background: "#fff" }}
