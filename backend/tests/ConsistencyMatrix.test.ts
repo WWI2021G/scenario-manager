@@ -17,11 +17,13 @@ describe("ConsistencyMatrix", () => {
     const probability = Probability.MEDIUM;
     const timeFrame = new Date();
     const type = ProjectionType.TREND;
+    const keyFactor_Id = 0;
 
     projectionA = new FutureProjection(
       "ProjectionA",
       "DescriptionA",
       keyFactor,
+      keyFactor_Id,
       probability,
       timeFrame,
       type,
@@ -31,6 +33,7 @@ describe("ConsistencyMatrix", () => {
       "ProjectionB",
       "DescriptionB",
       keyFactor,
+      keyFactor_Id,
       probability,
       timeFrame,
       type,
@@ -40,6 +43,7 @@ describe("ConsistencyMatrix", () => {
       "ProjectionC",
       "DescriptionC",
       keyFactor,
+      keyFactor_Id,
       probability,
       timeFrame,
       type,
