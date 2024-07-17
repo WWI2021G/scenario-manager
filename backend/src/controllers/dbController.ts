@@ -496,8 +496,6 @@ class DBController {
         timeFrame: Date;
         projectionType: ProjectionType;
       } = req.body;
-      console.log("req.body: ", req.body);
-      console.log("KeyFactor ID: ", keyFactor_id);
       const keyfactor = await dbService.selectKeyFactor(keyFactor_id);
       const futureProjection = new FutureProjection(
         name,
