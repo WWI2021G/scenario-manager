@@ -9,6 +9,7 @@ let futureProjection = new FutureProjection(
   "Fuu",
   "Fuu projects Bar",
   keyFactor,
+  0,
   Probability.HIGH,
   new Date(new Date().getMonth() + 3),
   ProjectionType.TREND,
