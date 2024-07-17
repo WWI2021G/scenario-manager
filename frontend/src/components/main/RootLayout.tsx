@@ -19,6 +19,10 @@ const steps = [
   { label: 'Rohszenario', path: '#' } // Placeholder for the page to be implemented
 ];
 
+const subPages = {
+  '/influence-matrix': '/influence-matrix/influencing-factors-summary'
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,7 +33,15 @@ export default function RootLayout({
 
   useEffect(() => {
     const currentPath = router.pathname;
-    const currentStep = steps.findIndex(step => step.path === currentPath);
+    let currentStep = steps.findIndex(step => step.path === currentPath);
+    if (currentStep === -1) {
+      for (const [mainPath, subPath] of Object.entries(subPages)) {
+        if (currentPath === subPath) {
+          currentStep = steps.findIndex(step => step.path === mainPath);
+          break;
+        }
+      }
+    }
     setActiveStep(currentStep === -1 ? 0 : currentStep);
   }, [router.pathname]);
 
@@ -56,3 +68,4 @@ export default function RootLayout({
     </div>
   );
 }
+
