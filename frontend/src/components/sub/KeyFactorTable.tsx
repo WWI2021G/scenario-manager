@@ -55,7 +55,6 @@ const KeyFactorTable = () => {
 
   const handleEditKeyFactor = (keyFactor: KeyFactor) => {
     setSelectedKeyFactor(keyFactor);
-    console.log(keyFactor);
     setShowForm(true);
   };
 
