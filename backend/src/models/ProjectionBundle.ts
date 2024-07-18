@@ -25,6 +25,10 @@ export class ProjectionBundle {
     this.projections.push(projection);
   }
 
+  addProjections(projections: FutureProjection[]) {
+    this.projections = this.projections.concat(projections);
+  }
+
   removeProjection(projection: FutureProjection) {
     this.projections = this.projections.filter(
       (element: FutureProjection) => element !== projection,

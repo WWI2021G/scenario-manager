@@ -49,4 +49,9 @@ describe("Testing ProjectionBundle class", () => {
     projectionBundle.removeProjection(futureProjection);
     expect(projectionBundle.getProjections()).toStrictEqual([]);
   });
+
+  test("Test addProjections", () => {
+    projectionBundle.addProjections([futureProjection, futureProjection]);
+    expect(projectionBundle.getProjections()).toStrictEqual([futureProjection, futureProjection]);
+  });
 });
