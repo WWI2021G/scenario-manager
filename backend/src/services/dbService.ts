@@ -447,19 +447,31 @@ class DBService {
     try {
       // Check if the new name already exists
       const existing = await db.oneOrNone<{ name: string }>(
-        `SELECT name FROM influencingfactor WHERE name = $1 AND name != $2;`,  
+        `SELECT
+          name
+        FROM
+          influencingfactor
+        WHERE
+          name = $1
+          AND name != $2;`,
         [newName, oldName],
       );
 
       if (existing) {
         throw new Error(
-          `Influencing factor with name ${newName} already exists.`,
+          `Influencing factor WITH name $ { newName } already EXISTS.`,
         );
       }
 
       // Update the influencing factor
       await db.none(
-        `UPDATE influencingfactor SET name = $1, description = $2 WHERE name = $3;`,
+        `UPDATE
+          influencingfactor
+        SET
+          name = $1,
+          description = $2
+        WHERE
+          name = $3;`,
         [newName, description, oldName],
       );
     } catch (error) {
@@ -503,10 +515,10 @@ class DBService {
         const influencingFactor_id: number = await db.one<number>(
           `SELECT
             influencingfactor_id
-        FROM
-          influencingfactor
-        WHERE
-          name = $1;`,
+          FROM
+            influencingfactor
+          WHERE
+            name = $1;`,
         influencingFactor.getName(),
         (influencingFactor) => influencingFactor.influencingfactor_id,
       );
@@ -1131,7 +1143,7 @@ class DBService {
     try {
       const futureProjection_id: number = await db.one<number>(
         `INSERT INTO
-          futureprojection(
+          futureprojection (
             name,
             probability,
             description,
@@ -1140,7 +1152,14 @@ class DBService {
             keyfactor_id
           )
         VALUES
-          ($1, $2, $3, $4, $5, $6) RETURNING futureprojection_id;`,
+          ($1, $2, $3, $4, $5, $6) ON CONFLICT (name) DO
+        UPDATE
+        SET
+          probability = EXCLUDED.probability,
+          description = EXCLUDED.description,
+          timeframe = EXCLUDED.timeframe,
+          projectiontype = EXCLUDED.projectiontype,
+          keyfactor_id = EXCLUDED.keyfactor_id RETURNING futureprojection_id;`,
         [
           futureProjection.getName(),
           futureProjection.getProbability(),
@@ -1349,7 +1368,6 @@ class DBService {
           fp.timeFrame,
           fp.projectionType,
         );
-        console.log(futureProjection.getName());
         results.push(futureProjection);
       });
       console.log(
@@ -1404,7 +1422,6 @@ class DBService {
           query_results[i].timeFrame,
           query_results[i].projectionType,
         );
-        console.log(futureProjection.getName());
         results.push(futureProjection);
       }
       console.log(
@@ -1461,7 +1478,6 @@ class DBService {
           query_results[i].timeFrame,
           query_results[i].projectionType,
         );
-        console.log(futureProjection.getName());
         results.push(futureProjection);
       }
       console.log(
@@ -1693,7 +1709,6 @@ class DBService {
         futureProjections.forEach((fp) => {
           projectionBundle.addProjection(fp);
         });
-        console.log(projectionBundle);
         results.push(projectionBundle);
       }
       console.log(
@@ -1747,7 +1762,6 @@ class DBService {
         futureProjections.forEach((fp) => {
           projectionBundle.addProjection(fp);
         });
-        console.log(projectionBundle);
         results.push(projectionBundle);
       }
       console.log(

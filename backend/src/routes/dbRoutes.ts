@@ -62,6 +62,7 @@ router.get("/pb/pValue/:id", dbController.getPValue);
 router.get("/pb/rs/:id", dbController.getProjectionBundlesForRawScenario);
 router.get("/pb/sp/:id", dbController.getProjectionBundlesForScenarioProject);
 router.post("/pb/add", dbController.addProjectionBundle);
+router.post("/pb/calculate", dbController.calculateProjectionBundles);
 router.post("/pb/link", dbController.linkProjectionBundleAndRawScenario);
 
 router.get("/rs/:id", dbController.getRawScenario);
