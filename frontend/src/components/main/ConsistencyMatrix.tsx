@@ -121,7 +121,7 @@ const ConsistencyMatrix: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    // TODO: add '!' again to prevent wrong values <2024-07-18>
+    // TODO: fix logic to prevent unchanged fields
     if (containsZero(matrix)) {
       const jsonMatrix = mapToJson(matrix);
       await axios.post("http://localhost:3001/db/pb/calculate", { "matrix": jsonMatrix, "scenarioProject_id": scenarioProject_id })

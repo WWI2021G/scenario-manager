@@ -335,7 +335,7 @@ class DBService {
       console.log(scenarioProject);
       console.log(
         "Request for existing scenarioProject_id: " + scenarioProject_id,
-     );
+      );
       return scenarioProject;
     } catch (error) {
       console.error(
@@ -459,7 +459,7 @@ class DBService {
 
       if (existing) {
         throw new Error(
-          `Influencing factor WITH name $ { newName } already EXISTS.`,
+          "Influencing factor with name $ { newName } already exists.",
         );
       }
 
@@ -509,11 +509,11 @@ class DBService {
   }
 
   async selectInfluencingFactorID(
-      influencingFactor: InfluencingFactor,
-    ): Promise<number> {
-      try {
-        const influencingFactor_id: number = await db.one<number>(
-          `SELECT
+    influencingFactor: InfluencingFactor,
+  ): Promise<number> {
+    try {
+      const influencingFactor_id: number = await db.one<number>(
+        `SELECT
             influencingfactor_id
           FROM
             influencingfactor
@@ -1527,6 +1527,142 @@ class DBService {
       throw error;
     }
   }
+
+  createMapFromMatrix(
+    matrix: any,
+    futureProjections: FutureProjection[],
+  ): Map<FutureProjection, Map<FutureProjection, number>> {
+    const consistencyMatrix: Map<
+      FutureProjection,
+      Map<FutureProjection, number>
+    > = new Map();
+    for (const projRow in matrix) {
+      if (Object.prototype.hasOwnProperty.call(matrix, projRow)) {
+        const innerMap = new Map<FutureProjection, number>();
+        const innerObj = matrix[projRow];
+        for (const projCol in innerObj) {
+          if (Object.prototype.hasOwnProperty.call(innerObj, projCol)) {
+            const innerFutureProjection = futureProjections.find(
+              (fp) => fp.getName() === projCol,
+            );
+            if (innerFutureProjection) {
+              innerMap.set(innerFutureProjection, innerObj[projCol]);
+            }
+          }
+        }
+        const outerFutureProjection = futureProjections.find(
+          (fp) => fp.getName() === projRow,
+        );
+        if (outerFutureProjection) {
+          consistencyMatrix.set(outerFutureProjection, innerMap);
+        }
+      }
+    }
+    return consistencyMatrix;
+  }
+
+  findDoubleCombinations = (
+    projections: FutureProjection[],
+  ): [FutureProjection, FutureProjection][] => {
+    const combinations: [FutureProjection, FutureProjection][] = [];
+    for (let i = 0; i < projections.length; i++) {
+      for (let j = 0; j < projections.length; j++) {
+        if (
+          projections[i].getKeyFactor().getName() !==
+          projections[j].getKeyFactor().getName()
+        ) {
+          combinations.push([projections[i], projections[j]]);
+        }
+      }
+    }
+    return combinations;
+  };
+
+  completeInnerMaps = (
+    matrix: Map<FutureProjection, Map<FutureProjection, number>>,
+    key1: FutureProjection,
+    key2: FutureProjection,
+  ): Map<FutureProjection, Map<FutureProjection, number>> => {
+    const newMatrix = matrix;
+    matrix.forEach((value, key) => {
+      value.forEach((v, k) => {
+        if (key === key1 && k == key2 && v !== 0) {
+          const innerMap = matrix.get(key2);
+          if (innerMap) {
+            innerMap.set(key1, v);
+            newMatrix.set(key2, innerMap);
+          }
+        }
+      });
+    });
+    return newMatrix;
+  };
+
+  sortByKeyFactor = (
+    futureProjections: FutureProjection[],
+  ): Map<string, FutureProjection[]> => {
+    const keyFactorMap: Map<string, FutureProjection[]> = new Map();
+    futureProjections.forEach((futureProjection) => {
+      if (!keyFactorMap.has(futureProjection.getKeyFactor().getName())) {
+        keyFactorMap.set(futureProjection.getKeyFactor().getName(), []);
+      }
+      const array: FutureProjection[] = keyFactorMap.get(
+        futureProjection.getKeyFactor().getName(),
+      )!;
+      if (!array.includes(futureProjection)) {
+        array.push(futureProjection);
+      }
+    });
+    return keyFactorMap;
+  };
+
+  findPossibleCombinations = (
+    keyFactorMap: Map<string, FutureProjection[]>,
+  ): FutureProjection[][] => {
+    const factorArrays = Array.from(keyFactorMap.values());
+    const generateCombinations = (
+      arrays: FutureProjection[][],
+      index: number = 0,
+      current: FutureProjection[] = [],
+    ): FutureProjection[][] => {
+      if (index === arrays.length) {
+        return [current];
+      }
+      const results: FutureProjection[][] = [];
+      const currentArray = arrays[index];
+      for (const item of currentArray) {
+        const newCurrent = [...current, item];
+        results.push(...generateCombinations(arrays, index + 1, newCurrent));
+      }
+      return results;
+    };
+    return generateCombinations(factorArrays);
+  };
+
+  calculateConsistency = (
+    combination: FutureProjection[],
+    matrix: Map<FutureProjection, Map<FutureProjection, number>>,
+  ): { consistency: number; numPartInconsistencies: number } => {
+    let consistency: number = 0;
+    let numPartInconsistencies: number = 0;
+    for (let i = 0; i < combination.length; i++) {
+      const innerMatrix = matrix.get(combination[i]);
+      if (innerMatrix) {
+        for (let j = i + 1; j < combination.length; j++) {
+          const value = innerMatrix.get(combination[j]);
+          if (value) {
+            if (value === 1) {
+              return { consistency: 0, numPartInconsistencies: 0 };
+            } else if (value === 2) {
+              numPartInconsistencies++;
+            }
+            consistency += value;
+          }
+        }
+      }
+    }
+    return { consistency, numPartInconsistencies };
+  };
 
   async connectProjectionBundleAndRawScenario(
     projectionBundle_id: number,

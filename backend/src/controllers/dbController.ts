@@ -653,45 +653,49 @@ class DBController {
   }
 
   async calculateProjectionBundles(req: Request, res: Response) {
-    const { matrix, scenarioProject_id }: { matrix: any, scenarioProject_id: number } = req.body;
-    const futureProjections = await dbService.selectFutureProjectionsForScenarioProject(scenarioProject_id);
-    const consistencyMatrix: Map<FutureProjection, Map<FutureProjection, number>> = new Map();
-    for (const projRow in matrix) {
-      if (Object.prototype.hasOwnProperty.call(matrix, projRow)) {
-        const innerMap = new Map<FutureProjection, number>();
-        const innerObj = matrix[projRow];
-        for (const projCol in innerObj) {
-          if (Object.prototype.hasOwnProperty.call(innerObj, projCol)) {
-            const innerFP = futureProjections.find(fp => fp.getName() === projCol);
-            if (innerFP) {
-              innerMap.set(innerFP, innerObj[projCol]);
-            }
-          }
-        }
-        const outerFP = futureProjections.find(fp => fp.getName() === projRow);
-        if (outerFP) {
-          consistencyMatrix.set(outerFP, innerMap);
-        }
-      }
-    }
-    const doubleCombinations = findDoubleCombinations(futureProjections);
-    let newMatrix: Map<FutureProjection, Map<FutureProjection, number>> = consistencyMatrix;
+    const {
+      matrix,
+      scenarioProject_id,
+    }: { matrix: any; scenarioProject_id: number } = req.body;
+    const futureProjections =
+      await dbService.selectFutureProjectionsForScenarioProject(
+        scenarioProject_id,
+      );
+    let consistencyMatrix: Map<
+      FutureProjection,
+      Map<FutureProjection, number>
+    > = dbService.createMapFromMatrix(matrix, futureProjections);
+    //  HACK: Bin mit der Erklärung so semi zufrieden. Vielleicht finde ich noch was besseres <2024-07-19> Weiberle17
+    //  Copy values from consistencyMatrix[futureProjection1][futureProjection2] to consistencyMatrix[futureProjection2][futureProjection1]
+    //  this way values are stored twice, but the innerMap of futureProjection1 will have all the values associated with futureProjection1.
+    const doubleCombinations =
+      dbService.findDoubleCombinations(futureProjections);
     doubleCombinations.forEach((combo) => {
-      newMatrix = copyBidirectional(newMatrix, combo[0], combo[1]);
+      consistencyMatrix = dbService.completeInnerMaps(
+        consistencyMatrix,
+        combo[0],
+        combo[1],
+      );
     });
-    const keyFactorMap = sortByKeyFactor(futureProjections);
-    const possibleCombinations = findPossibleCombinations(keyFactorMap);
+    const keyFactorMap = dbService.sortByKeyFactor(futureProjections);
+    const possibleCombinations =
+      dbService.findPossibleCombinations(keyFactorMap);
     try {
       const projectionBundles: ProjectionBundle[] = [];
       possibleCombinations.forEach((combination) => {
-        const { consistency, numPartInconsistencies } = calculateConsistency(combination, newMatrix);
+        const { consistency, numPartInconsistencies } =
+          dbService.calculateConsistency(combination, consistencyMatrix);
         if (consistency !== 0) {
-          const projectionBundle: ProjectionBundle = new ProjectionBundle(consistency, numPartInconsistencies, 0);
+          const projectionBundle: ProjectionBundle = new ProjectionBundle(
+            consistency,
+            numPartInconsistencies,
+            0,
+          );
           projectionBundle.addProjections(combination);
           projectionBundles.push(projectionBundle);
         }
-        console.log(projectionBundles);
       });
+      console.log(projectionBundles);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
@@ -842,86 +846,5 @@ class DBController {
     }
   }
 }
-
-const findDoubleCombinations = (projections: FutureProjection[]): [FutureProjection, FutureProjection][] => {
-  const combinations: [FutureProjection, FutureProjection][] = [];
-  for (let i = 0; i < projections.length; i++) {
-    for (let j = 0; j < projections.length; j++) {
-      if (projections[i].getKeyFactor().getName() !== projections[j].getKeyFactor().getName()) {
-        combinations.push([projections[i], projections[j]]);
-      }
-    }
-  }
-  return combinations;
-}
-
-const copyBidirectional = (matrix: Map<FutureProjection, Map<FutureProjection, number>>, key1: FutureProjection, key2: FutureProjection): Map<FutureProjection, Map<FutureProjection, number>> => {
-  const newMatrix = matrix;
-  matrix.forEach((value, key) => {
-    value.forEach((v, k) => {
-      if (key === key1 && k == key2 && v !== 0) {
-        const innerMap = matrix.get(key2);
-        if (innerMap) {
-          innerMap.set(key1, v);
-          newMatrix.set(key2, innerMap);
-        }
-      }
-    });
-  });
-  return newMatrix;
-}
-
-const sortByKeyFactor = (futureProjections: FutureProjection[]): Map<string, FutureProjection[]> => {
-  const keyFactorMap: Map<string, FutureProjection[]> = new Map();
-  futureProjections.forEach(futureProjection => {
-    if (!keyFactorMap.has(futureProjection.getKeyFactor().getName())) {
-      keyFactorMap.set(futureProjection.getKeyFactor().getName(), []);
-    }
-    const array: FutureProjection[] = keyFactorMap.get(futureProjection.getKeyFactor().getName())!;
-    if (!array.includes(futureProjection)) {
-      array.push(futureProjection);
-    }
-  });
-  return keyFactorMap;
-};
-
-const findPossibleCombinations = (keyFactorMap: Map<string, FutureProjection[]>): FutureProjection[][] => {
-  const factorArrays = Array.from(keyFactorMap.values());
-  const generateCombinations = (arrays: FutureProjection[][], index: number = 0, current: FutureProjection[] = []): FutureProjection[][] => {
-    if (index === arrays.length) {
-      return [current];
-    }
-    const results: FutureProjection[][] = [];
-    const currentArray = arrays[index];
-    for (const item of currentArray) {
-      const newCurrent = [...current, item];
-      results.push(...generateCombinations(arrays, index + 1, newCurrent));
-    }
-    return results;
-  };
-  return generateCombinations(factorArrays);
-};
-
-const calculateConsistency = (combination: FutureProjection[], matrix: Map<FutureProjection, Map<FutureProjection, number>>): { consistency: number, numPartInconsistencies: number } => {
-  let consistency: number = 0;
-  let numPartInconsistencies: number = 0;
-  for (let i = 0; i < combination.length; i++) {
-    const innerMatrix = matrix.get(combination[i]);
-    if (innerMatrix) {
-      for (let j = i + 1; j < combination.length; j++) {
-        const value = innerMatrix.get(combination[j]);
-        if (value) {
-          if (value === 1) {
-            return { consistency: 0, numPartInconsistencies: 0 };
-          } else if (value === 2) {
-            numPartInconsistencies++;
-          }
-          consistency += value;
-        }
-      }
-    }
-  }
-  return { consistency, numPartInconsistencies };
-};
 
 export const dbController = new DBController();

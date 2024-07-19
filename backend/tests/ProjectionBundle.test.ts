@@ -52,6 +52,9 @@ describe("Testing ProjectionBundle class", () => {
 
   test("Test addProjections", () => {
     projectionBundle.addProjections([futureProjection, futureProjection]);
-    expect(projectionBundle.getProjections()).toStrictEqual([futureProjection, futureProjection]);
+    expect(projectionBundle.getProjections()).toStrictEqual([
+      futureProjection,
+      futureProjection,
+    ]);
   });
 });
