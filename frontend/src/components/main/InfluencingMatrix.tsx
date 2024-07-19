@@ -78,7 +78,7 @@ const InfluencMatrixComponent: React.FC = () => {
         .catch(error => console.error(error));
     };
     await createKeyFactors();
-    router.push("/keyfactors");
+    router.push("/influence-matrix/influencing-factors-summary");
   };
 
   const getActiveSum = (factor: InfluencingFactor): number | undefined => {
@@ -256,3 +256,4 @@ const InfluencMatrixComponent: React.FC = () => {
 };
 
 export default InfluencMatrixComponent;
+

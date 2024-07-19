@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { FutureProjection, Probability, ProjectionType, KeyFactor } from '@/types';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
 const FutureProjectionForm: React.FC = () => {
   const router = useRouter();
   const keyFactor_id: number = parseInt(router.query.keyFactor_id as string);
-  const [mainProjection, setMainProjection] = useState<FutureProjection>({
+  const defaultFutureProjection: FutureProjection = {
     keyFactor_id: keyFactor_id,
     keyFactor: {} as KeyFactor,
     probability: Probability.LOW,
@@ -17,55 +17,76 @@ const FutureProjectionForm: React.FC = () => {
     timeFrame: new Date(),
     name: '',
     description: ''
-  });
+  };
 
-  const [alternativeProjection, setAlternativeProjection] = useState<FutureProjection>({
-    keyFactor_id: keyFactor_id,
-    keyFactor: {} as KeyFactor,
-    probability: Probability.LOW,
-    projectionType: ProjectionType.TREND,
-    timeFrame: new Date(),
-    name: '',
-    description: ''
-  });
+  const [mainProjection, setMainProjection] = useState<FutureProjection>(defaultFutureProjection);
+  const [alternativeProjection, setAlternativeProjection] = useState<FutureProjection>(defaultFutureProjection);
+  const [futureProjectionsExist, setFutureProjectionsExist] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchFutureProjections();
+  }, []);
+
+  const fetchFutureProjections = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/db/fp/kf/${keyFactor_id}`);
+      if (response.data.length > 0) {
+        setFutureProjectionsExist(true);
+        setMainProjection(response.data[0]);
+        if (response.data.length > 1) {
+          setAlternativeProjection(response.data[1]);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching future projections:', error);
+    }
+  };
 
   const handleChangeMain = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setMainProjection({ ...mainProjection, [name]: value });
+    setMainProjection(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   const handleChangeAlternative = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setAlternativeProjection({ ...alternativeProjection, [name]: value });
+    setAlternativeProjection(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleSelectChangeMain = (e: SelectChangeEvent) => {
+  const handleSelectChangeMain = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-    setMainProjection({ ...mainProjection, [name as string]: value });
+    setMainProjection(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleSelectChangeAlternative = (e: SelectChangeEvent) => {
+  const handleSelectChangeAlternative = (e: SelectChangeEvent<string>) => {
     const { name, value } = e.target;
-    setAlternativeProjection({ ...alternativeProjection, [name as string]: value });
+    setAlternativeProjection(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    axios.post("http://localhost:3001/db/fp/add", mainProjection)
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => console.error(error));
-    axios.post("http://localhost:3001/db/fp/add", alternativeProjection)
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => console.error(error));
-    router.push('/keyfactors');
+    try {
+      await axios.post("http://localhost:3001/db/fp/add", mainProjection);
+      await axios.post("http://localhost:3001/db/fp/add", alternativeProjection);
+      router.push(`/keyfactors/`);
+    } catch (error) {
+      console.error('Error submitting future projections:', error);
+    }
   };
 
   const handleCancel = () => {
-    router.push('/keyfactors');
+    router.push(`/keyfactor/edit/${keyFactor_id}`);
   };
 
   return (
@@ -120,7 +141,7 @@ const FutureProjectionForm: React.FC = () => {
             <Select
               name="projectionType"
               label='Projection Type'
-              value={mainProjection.projectionType}
+              value={mainProjection.projectionType || ProjectionType.TREND}
               onChange={handleSelectChangeMain}
               required
             >
@@ -136,7 +157,7 @@ const FutureProjectionForm: React.FC = () => {
             <Select
               name="probability"
               label='Probability'
-              value={mainProjection.probability}
+              value={mainProjection.probability || Probability.LOW}
               onChange={handleSelectChangeMain}
               required
             >
@@ -151,7 +172,7 @@ const FutureProjectionForm: React.FC = () => {
             label="Time Frame"
             name="timeFrame"
             type="date"
-            value={format(mainProjection.timeFrame, 'yyyy-MM-dd')}
+            value={isValid(new Date(mainProjection.timeFrame)) ? format(new Date(mainProjection.timeFrame), 'yyyy-MM-dd') : ''}
             onChange={(e) =>
               setMainProjection({
                 ...mainProjection,
@@ -192,7 +213,7 @@ const FutureProjectionForm: React.FC = () => {
             <Select
               name="projectionType"
               label="Projection Type"
-              value={alternativeProjection.projectionType}
+              value={alternativeProjection.projectionType || ProjectionType.TREND}
               onChange={handleSelectChangeAlternative}
               required
             >
@@ -208,7 +229,7 @@ const FutureProjectionForm: React.FC = () => {
             <Select
               name="probability"
               label="Probability"
-              value={alternativeProjection.probability}
+              value={alternativeProjection.probability || Probability.LOW}
               onChange={handleSelectChangeAlternative}
               required
             >
@@ -223,7 +244,7 @@ const FutureProjectionForm: React.FC = () => {
             label="Time Frame"
             name="timeFrame"
             type="date"
-            value={format(alternativeProjection.timeFrame, 'yyyy-MM-dd')}
+            value={isValid(new Date(alternativeProjection.timeFrame)) ? format(new Date(alternativeProjection.timeFrame), 'yyyy-MM-dd') : ''}
             onChange={(e) =>
               setAlternativeProjection({
                 ...alternativeProjection,
@@ -236,7 +257,7 @@ const FutureProjectionForm: React.FC = () => {
       </Box>
       <Box sx={{ display: "flex", justifyContent: "left" }}>
         <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
-          Add Future Projection
+          {futureProjectionsExist ? 'Update Future Projections' : 'Add Future Projections'}
         </Button>
         <Button variant="outlined" color="secondary" onClick={handleCancel}>
           Cancel

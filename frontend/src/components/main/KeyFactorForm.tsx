@@ -21,12 +21,27 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
     projectionA: undefined,
     projectionB: undefined,
   });
+  const [futureProjectionsExist, setFutureProjectionsExist] = useState<boolean>(false);
 
   useEffect(() => {
     if (initialData) {
       setKeyFactor(initialData);
+      fetchFutureProjections();
     }
   }, [initialData]);
+
+  const fetchFutureProjections = async () => {
+    try {
+      if(!initialData) return;
+      const keyFactor_id = await axios.post("http://localhost:3001/db/kfid", { "name": initialData.name, "cur_state": initialData.curState })
+      const futureProjections = await axios.get(`http://localhost:3001/db/fp/kf/${keyFactor_id.data.keyFactor_id}`);
+      if (futureProjections.data.length > 0) {
+        setFutureProjectionsExist(true);
+      }
+  } catch (error) {
+    console.error('Error fetching future projections:', error);
+  };
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,7 +125,7 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
           {initialData ? 'Update KeyFactor' : 'Add KeyFactor'}
         </Button>
         <Button variant="contained" color="primary" onClick={onAddFP}>
-          Add Future Projections
+          {futureProjectionsExist ? 'Update Future Projections' : 'Add Future Projections'}
         </Button>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
           Cancel
@@ -121,3 +136,4 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
 };
 
 export default KeyFactorForm;
+

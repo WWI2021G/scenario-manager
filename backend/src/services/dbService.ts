@@ -514,11 +514,11 @@ class DBService {
     try {
       const influencingFactor_id: number = await db.one<number>(
         `SELECT
-            influencingfactor_id
-          FROM
-            influencingfactor
-          WHERE
-            name = $1;`,
+          influencingfactor_id
+        FROM
+          influencingfactor
+        WHERE
+          name = $1;`,
         influencingFactor.getName(),
         (influencingFactor) => influencingFactor.influencingfactor_id,
       );
@@ -1136,6 +1136,7 @@ class DBService {
     }
   }
 
+
   async insertFutureProjection(
     keyfactor_id: number,
     futureProjection: FutureProjection,
@@ -1143,23 +1144,23 @@ class DBService {
     try {
       const futureProjection_id: number = await db.one<number>(
         `INSERT INTO
-          futureprojection (
-            name,
-            probability,
-            description,
-            timeframe,
-            projectiontype,
-            keyfactor_id
-          )
-        VALUES
-          ($1, $2, $3, $4, $5, $6) ON CONFLICT (name) DO
-        UPDATE
-        SET
-          probability = EXCLUDED.probability,
-          description = EXCLUDED.description,
-          timeframe = EXCLUDED.timeframe,
-          projectiontype = EXCLUDED.projectiontype,
-          keyfactor_id = EXCLUDED.keyfactor_id RETURNING futureprojection_id;`,
+        futureprojection (
+          name,
+          probability,
+          description,
+          timeframe,
+          projectiontype,
+          keyfactor_id
+        )
+      VALUES
+        ($1, $2, $3, $4, $5, $6) ON CONFLICT (name) DO
+      UPDATE
+      SET
+        probability = EXCLUDED.probability,
+        description = EXCLUDED.description,
+        timeframe = EXCLUDED.timeframe,
+        projectiontype = EXCLUDED.projectiontype,
+        keyfactor_id = EXCLUDED.keyfactor_id RETURNING futureprojection_id;`,
         [
           futureProjection.getName(),
           futureProjection.getProbability(),
@@ -1171,12 +1172,12 @@ class DBService {
         (fp) => fp.futureprojection_id,
       );
       console.log(
-        "Created FutureProjection in database with ID: " + futureProjection_id,
+        "Created or updated FutureProjection in database with ID: " + futureProjection_id,
       );
       return futureProjection_id;
     } catch (error) {
       console.error(
-        "Error inserting FutureProjection: " + futureProjection.getName(),
+        "Error inserting or updating FutureProjection: " + futureProjection.getName(),
         error,
       );
       throw error;
@@ -1270,6 +1271,7 @@ class DBService {
         result.name,
         result.description,
         keyFactor,
+        result.keyfactor_id,
         result.probability,
         result.timeFrame,
         result.projectionType,
@@ -1317,6 +1319,7 @@ class DBService {
         result.name,
         result.description,
         keyFactor,
+        result.keyfactor_id,
         result.probability,
         result.timeFrame,
         result.projectionType,
@@ -1338,24 +1341,26 @@ class DBService {
     keyfactor_id: number,
   ): Promise<FutureProjection[]> {
     try {
-      var results: FutureProjection[] = [];
+      const results: FutureProjection[] = [];
       const query_results = await db.any<{
         name: string;
         probability: Probability;
         description: string;
-        timeFrame: Date;
-        projectionType: ProjectionType;
+        timeframe: Date;
+        projectiontype: ProjectionType;
+        keyfactor_id: number;
       }>(
         `SELECT
-          name,
-          probability,
-          description,
-          timeFrame,
-          projectionType
-        FROM
-          futureprojection
-        WHERE
-          keyfactor_id = $1;`,
+        name,
+        probability,
+        description,
+        timeframe,
+        projectiontype,
+        keyfactor_id
+      FROM
+        futureprojection
+      WHERE
+        keyfactor_id = $1;`,
         keyfactor_id,
       );
       const keyFactor = await this.selectKeyFactor(keyfactor_id);
@@ -1364,9 +1369,10 @@ class DBService {
           fp.name,
           fp.description,
           keyFactor,
+          fp.keyfactor_id,
           fp.probability,
-          fp.timeFrame,
-          fp.projectionType,
+          fp.timeframe,  // Ensure this matches your class constructor
+          fp.projectiontype,  // Ensure this matches your class constructor
         );
         results.push(futureProjection);
       });
@@ -1418,6 +1424,7 @@ class DBService {
           query_results[i].name,
           query_results[i].description,
           keyFactor,
+          query_results[i].keyfactor_id,
           query_results[i].probability,
           query_results[i].timeFrame,
           query_results[i].projectionType,
@@ -1474,6 +1481,7 @@ class DBService {
           query_results[i].name,
           query_results[i].description,
           keyFactor,
+          query_results[i].keyfactor_id,
           query_results[i].probability,
           query_results[i].timeFrame,
           query_results[i].projectionType,
