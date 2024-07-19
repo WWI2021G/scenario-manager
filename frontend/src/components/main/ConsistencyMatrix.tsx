@@ -10,13 +10,12 @@ import {
   Paper,
   Select,
   MenuItem,
-  Typography, Button
+  Typography, Button,
 } from "@mui/material";
 import {
   KeyFactor,
   FutureProjection,
 } from "@/types";
-import zIndex from "@mui/material/styles/zIndex";
 import axios from "axios";
 
 const ConsistencyMatrix: React.FC = () => {
@@ -50,11 +49,6 @@ const ConsistencyMatrix: React.FC = () => {
   };
 
   const getKeyFactors = async () => {
-    //await axios.get("http://localhost:3001/db/kf/sp/" + scenarioProject_id)
-    //  .then(response => {
-    //    setKeyFactors(response.data)
-    //  })
-    //  .catch(error => console.error(error))
     const keyFactorMap: Map<string, FutureProjection[]> = new Map();
     const keyFactorArray: KeyFactor[] = [];
     futureProjections.forEach(futureProjection => {
@@ -84,21 +78,28 @@ const ConsistencyMatrix: React.FC = () => {
       const innerMap = consistencyMatrix.get(futureProjection);
       futureProjections.forEach(innerFutureProjection => {
         if (!innerMap.has(innerFutureProjection)) {
-          innerMap.set(innerFutureProjection, undefined);
+          innerMap.set(innerFutureProjection, 0);
         }
       });
     });
     setMatrix(consistencyMatrix);
   };
 
-  const getValue = (projRow: FutureProjection | undefined, projCol: FutureProjection | undefined) => {
-    if (projRow && projCol) {
-      const innerMatrix = matrix.get(projRow);
-      return innerMatrix ? innerMatrix.get(projCol) : undefined;
-    }
+  const containsZero = (map: Map<FutureProjection, Map<FutureProjection, number>> | Map<FutureProjection, number>): boolean => {
+    let returnBool: boolean = false;
+    map.forEach((innerMap, _key) => {
+      if (innerMap instanceof Map) {
+        innerMap.forEach((value, _innerKey) => {
+          if (value === 0) {
+            returnBool = true;
+          }
+        });
+      }
+    });
+    return returnBool;
   };
 
-  const mapToJson = (map: Map<FutureProjection, Map<FutureProjection, number | undefined>> | Map<FutureProjection, number | undefined>) => {
+  const mapToJson = (map: Map<FutureProjection, Map<FutureProjection, number>> | Map<FutureProjection, number>) => {
     const obj: any = {};
     map.forEach((value, key) => {
       if (value instanceof Map) {
@@ -119,17 +120,21 @@ const ConsistencyMatrix: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const jsonMatrix = mapToJson(matrix);
-    await axios.post("http://localhost:3001/db/pb/calculate", { "matrix": jsonMatrix })
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => console.error(error))
+  const handleSubmit = async () => {
+    // TODO: fix logic to prevent unchanged fields
+    if (containsZero(matrix)) {
+      const jsonMatrix = mapToJson(matrix);
+      await axios.post("http://localhost:3001/db/pb/calculate", { "matrix": jsonMatrix, "scenarioProject_id": scenarioProject_id })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => console.error(error))
+    } else {
+      console.error("Not all values set");
+    }
   }
 
-  const acceptedValues = [1, 2, 6, 8, 9];
+  const acceptedValues = [0, 1, 2, 6, 8, 9];
 
   return (
     <Box sx={{ width: "100%", margin: "0 auto", mt: 4 }}>
@@ -265,7 +270,6 @@ const ConsistencyMatrix: React.FC = () => {
                         />
                       ) : (
                         <Select
-                          value={getValue(projRow, projCol)}
                           onChange={(e) =>
                             handleChange(projRow, projCol, Number(e.target.value))
                           }
@@ -273,7 +277,7 @@ const ConsistencyMatrix: React.FC = () => {
                           sx={{ width: "60px", zIndex: 2, background: "#fff" }}
                         >
                           {acceptedValues.map((value) => (
-                            <MenuItem key={value} value={value}>
+                            <MenuItem key={value} value={value} hidden={value === 0}>
                               {value}
                             </MenuItem>
                           ))}

@@ -20,6 +20,7 @@ describe("Testing FutureProjection class", () => {
     expect(futureProjection.getName()).toBe("Fuu");
     expect(futureProjection.getDescription()).toBe("Fuu projects Bar");
     expect(futureProjection.getKeyFactor()).toBe(keyFactor);
+    expect(futureProjection.getKeyFactorID()).toBe(0);
     expect(futureProjection.getProbability()).toBe(Probability.HIGH);
     expect(futureProjection.getTimeFrame()).toStrictEqual(
       new Date(new Date().getMonth() + 3),
@@ -44,6 +45,11 @@ describe("Testing FutureProjection class", () => {
     expect(futureProjection.getKeyFactor()).toStrictEqual(
       new KeyFactor("Key2", "Key2 is actually this..."),
     );
+  });
+
+  test("Test updateKeyFactorID", () => {
+    futureProjection.updateKeyFactorID(1);
+    expect(futureProjection.getKeyFactorID()).toBe(1);
   });
 
   test("Test updateProbability", () => {

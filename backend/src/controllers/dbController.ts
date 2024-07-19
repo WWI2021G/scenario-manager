@@ -654,6 +654,82 @@ class DBController {
     }
   }
 
+  async calculateProjectionBundles(req: Request, res: Response) {
+    const {
+      matrix,
+      scenarioProject_id,
+    }: { matrix: any; scenarioProject_id: number } = req.body;
+    const futureProjections =
+      await dbService.selectFutureProjectionsForScenarioProject(
+        scenarioProject_id,
+      );
+    let consistencyMatrix: Map<
+      FutureProjection,
+      Map<FutureProjection, number>
+    > = dbService.createMapFromMatrix(matrix, futureProjections);
+    //  HACK: Bin mit der Erklärung so semi zufrieden. Vielleicht finde ich noch was besseres <2024-07-19> Weiberle17
+    //  Copy values from consistencyMatrix[futureProjection1][futureProjection2] to consistencyMatrix[futureProjection2][futureProjection1]
+    //  this way values are stored twice, but the innerMap of futureProjection1 will have all the values associated with futureProjection1.
+    const doubleCombinations =
+      dbService.findDoubleCombinations(futureProjections);
+    doubleCombinations.forEach((combo) => {
+      consistencyMatrix = dbService.completeInnerMaps(
+        consistencyMatrix,
+        combo[0],
+        combo[1],
+      );
+    });
+    const keyFactorMap = dbService.sortByKeyFactor(futureProjections);
+    const possibleCombinations =
+      dbService.findPossibleCombinations(keyFactorMap);
+    try {
+      const projectionBundles: ProjectionBundle[] = [];
+      let sumOfProbabilities: number = 0;
+      possibleCombinations.forEach((combination) => {
+        const { consistency, numPartInconsistencies, probability } =
+          dbService.calculateProjectionBundleValues(
+            combination,
+            consistencyMatrix,
+          );
+        if (consistency !== 0) {
+          sumOfProbabilities += probability;
+          const projectionBundle: ProjectionBundle = new ProjectionBundle(
+            consistency,
+            numPartInconsistencies,
+            probability,
+          );
+          projectionBundle.addProjections(combination);
+          projectionBundles.push(projectionBundle);
+        }
+      });
+      //  HACK: limited to 100 ProjectionBundles for now <2024-07-19>
+      const reducedProjectionBundles = projectionBundles
+        .slice(0, 100)
+        .sort((a, b) => b.getConsistency() - a.getConsistency());
+      const projectionBundle_ids: number[] = [];
+      for (let i = 0; i < reducedProjectionBundles.length; i++) {
+        const pValue = dbService.calculatePValue(
+          sumOfProbabilities,
+          reducedProjectionBundles[i],
+        );
+        reducedProjectionBundles[i].setPValue(pValue);
+        const projectionBundle_id = await dbService.insertProjectionBundle(
+          scenarioProject_id,
+          reducedProjectionBundles[i],
+        );
+        const futureProjections = reducedProjectionBundles[i].getProjections();
+        for (let j = 0; j < futureProjections.length; j++) {
+          const futureProjection_id = await dbService.selectFutureProjectionID(futureProjections[j]);
+          await dbService.connectFutureProjectionAndProjectionBundle(futureProjection_id, projectionBundle_id);
+        }
+        projectionBundle_ids.push(projectionBundle_id);
+      }
+      res.status(200).send(projectionBundle_ids);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
   async linkProjectionBundleAndRawScenario(req: Request, res: Response) {
     const {
       projectionBundle_id,
