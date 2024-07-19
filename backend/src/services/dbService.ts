@@ -1136,7 +1136,6 @@ class DBService {
     }
   }
 
-
   async insertFutureProjection(
     keyfactor_id: number,
     futureProjection: FutureProjection,
@@ -1172,12 +1171,14 @@ class DBService {
         (fp) => fp.futureprojection_id,
       );
       console.log(
-        "Created or updated FutureProjection in database with ID: " + futureProjection_id,
+        "Created or updated FutureProjection in database with ID: " +
+        futureProjection_id,
       );
       return futureProjection_id;
     } catch (error) {
       console.error(
-        "Error inserting or updating FutureProjection: " + futureProjection.getName(),
+        "Error inserting or updating FutureProjection: " +
+        futureProjection.getName(),
         error,
       );
       throw error;
@@ -1371,8 +1372,8 @@ class DBService {
           keyFactor,
           fp.keyfactor_id,
           fp.probability,
-          fp.timeframe,  // Ensure this matches your class constructor
-          fp.projectiontype,  // Ensure this matches your class constructor
+          fp.timeframe, // Ensure this matches your class constructor
+          fp.projectiontype, // Ensure this matches your class constructor
         );
         results.push(futureProjection);
       });
@@ -1647,20 +1648,40 @@ class DBService {
     return generateCombinations(factorArrays);
   };
 
-  calculateConsistency = (
+  calculateProjectionBundleValues = (
     combination: FutureProjection[],
     matrix: Map<FutureProjection, Map<FutureProjection, number>>,
-  ): { consistency: number; numPartInconsistencies: number } => {
+  ): {
+    consistency: number;
+    numPartInconsistencies: number;
+    probability: number;
+  } => {
     let consistency: number = 0;
     let numPartInconsistencies: number = 0;
+    let probability: number = 1;
     for (let i = 0; i < combination.length; i++) {
+      const probabilityValues = new Map<Probability, number>([
+        [Probability.LOW, 0.2],
+        [Probability.MEDIUM, 0.5],
+        [Probability.HIGH, 0.8],
+      ]);
+      const probabilityValue = probabilityValues.get(
+        combination[i].getProbability(),
+      );
+      if (probabilityValue) {
+        probability = probability * probabilityValue;
+      }
       const innerMatrix = matrix.get(combination[i]);
       if (innerMatrix) {
         for (let j = i + 1; j < combination.length; j++) {
           const value = innerMatrix.get(combination[j]);
           if (value) {
             if (value === 1) {
-              return { consistency: 0, numPartInconsistencies: 0 };
+              return {
+                consistency: 0,
+                numPartInconsistencies: 0,
+                probability: 0,
+              };
             } else if (value === 2) {
               numPartInconsistencies++;
             }
@@ -1669,7 +1690,14 @@ class DBService {
         }
       }
     }
-    return { consistency, numPartInconsistencies };
+    return { consistency, numPartInconsistencies, probability };
+  };
+
+  calculatePValue = (
+    sumOfProbabilities: number,
+    projectionBundle: ProjectionBundle,
+  ): number => {
+    return projectionBundle.getProbability() / sumOfProbabilities;
   };
 
   async connectProjectionBundleAndRawScenario(

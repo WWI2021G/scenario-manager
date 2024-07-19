@@ -684,20 +684,47 @@ class DBController {
       dbService.findPossibleCombinations(keyFactorMap);
     try {
       const projectionBundles: ProjectionBundle[] = [];
+      let sumOfProbabilities: number = 0;
       possibleCombinations.forEach((combination) => {
-        const { consistency, numPartInconsistencies } =
-          dbService.calculateConsistency(combination, consistencyMatrix);
+        const { consistency, numPartInconsistencies, probability } =
+          dbService.calculateProjectionBundleValues(
+            combination,
+            consistencyMatrix,
+          );
         if (consistency !== 0) {
+          sumOfProbabilities += probability;
           const projectionBundle: ProjectionBundle = new ProjectionBundle(
             consistency,
             numPartInconsistencies,
-            0,
+            probability,
           );
           projectionBundle.addProjections(combination);
           projectionBundles.push(projectionBundle);
         }
       });
-      console.log(projectionBundles);
+      //  HACK: limited to 100 ProjectionBundles for now <2024-07-19>
+      const reducedProjectionBundles = projectionBundles
+        .slice(0, 100)
+        .sort((a, b) => b.getConsistency() - a.getConsistency());
+      const projectionBundle_ids: number[] = [];
+      for (let i = 0; i < reducedProjectionBundles.length; i++) {
+        const pValue = dbService.calculatePValue(
+          sumOfProbabilities,
+          reducedProjectionBundles[i],
+        );
+        reducedProjectionBundles[i].setPValue(pValue);
+        const projectionBundle_id = await dbService.insertProjectionBundle(
+          scenarioProject_id,
+          reducedProjectionBundles[i],
+        );
+        const futureProjections = reducedProjectionBundles[i].getProjections();
+        for (let j = 0; j < futureProjections.length; j++) {
+          const futureProjection_id = await dbService.selectFutureProjectionID(futureProjections[j]);
+          await dbService.connectFutureProjectionAndProjectionBundle(futureProjection_id, projectionBundle_id);
+        }
+        projectionBundle_ids.push(projectionBundle_id);
+      }
+      res.status(200).send(projectionBundle_ids);
     } catch (error: any) {
       res.status(500).send(error.message);
     }

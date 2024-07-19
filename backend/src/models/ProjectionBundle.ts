@@ -5,16 +5,18 @@ export class ProjectionBundle {
   private consistency: number;
   private numPartInconsistencies: number;
   private pValue: number;
+  private probability: number;
 
   constructor(
     consistency: number,
     numPartInconsistencies: number,
-    pValue: number,
+    probability: number,
   ) {
     this.projections = [];
     this.consistency = consistency;
     this.numPartInconsistencies = numPartInconsistencies;
-    this.pValue = pValue;
+    this.probability = probability;
+    this.pValue = 0;
   }
 
   getProjections(): FutureProjection[] {
@@ -49,6 +51,14 @@ export class ProjectionBundle {
 
   setNumPartInconsistencies(numPartInconsistencies: number) {
     this.numPartInconsistencies = numPartInconsistencies;
+  }
+
+  getProbability(): number {
+    return this.probability;
+  }
+
+  setProbability(probability: number) {
+    this.probability = probability;
   }
 
   getPValue(): number {

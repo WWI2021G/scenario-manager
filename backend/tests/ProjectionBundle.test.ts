@@ -5,7 +5,7 @@ import { KeyFactor } from "../src/models/KeyFactor";
 import { Probability } from "../src/models/Probability";
 import { ProjectionType } from "../src/models/ProjectionType";
 
-let projectionBundle = new ProjectionBundle(20, 4, 5);
+let projectionBundle = new ProjectionBundle(20, 4, 0.005);
 let keyFactor = new KeyFactor("Bar", "Bar is currently like this...");
 let futureProjection = new FutureProjection(
   "Fuu",
@@ -21,7 +21,7 @@ describe("Testing ProjectionBundle class", () => {
   test("Test constructor", () => {
     expect(projectionBundle.getConsistency()).toBe(20);
     expect(projectionBundle.getNumPartInconsistencies()).toBe(4);
-    expect(projectionBundle.getPValue()).toBe(5);
+    expect(projectionBundle.getProbability()).toBe(0.005);
     expect(projectionBundle.getProjections()).toStrictEqual([]);
   });
 
@@ -33,6 +33,11 @@ describe("Testing ProjectionBundle class", () => {
   test("Test setNumPartInconsistencies", () => {
     projectionBundle.setNumPartInconsistencies(6);
     expect(projectionBundle.getNumPartInconsistencies()).toBe(6);
+  });
+
+  test("Test setProbability", () => {
+    projectionBundle.setProbability(0.002);
+    expect(projectionBundle.getProbability()).toBe(0.002);
   });
 
   test("Test setPValue", () => {
