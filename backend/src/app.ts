@@ -17,16 +17,18 @@ app.use(bodyParser.json());
 app.use("/api/scenario", scenarioRoutes);
 app.use("/db", dbRoutes);
 
-if (!process.env.DBSETUP) {
-  try {
-    appendFileSync("./.env", "DBSETUP=true");
-    dbService.setupDB();
-    console.log("Database setup completed");
-  } catch (error) {
-    console.error("Error setting variable to setup database");
+(async () => {
+  if (!process.env.DBSETUP) {
+    try {
+      appendFileSync("./.env", "DBSETUP=true");
+      await dbService.setupDB();
+      console.log("Database setup completed");
+    } catch (error) {
+      console.error("Error setting variable to setup database");
+    }
   }
-}
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+})();
