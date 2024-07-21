@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { dbController } from "../controllers/dbController";
+import { scenarioController } from "../controllers/scenarioController";
 
 const router = Router();
 
@@ -70,5 +71,7 @@ router.get("/rs/sp/:id", dbController.getRawScenariosForScenarioProject);
 router.post("/rs/add", dbController.addRawScenario);
 router.post("/rsid", dbController.getRawScenarioID);
 router.post("/rsname", dbController.getRawScenarioByName);
+
+router.post("/cluster", scenarioController.executeClustering);
 
 export default router;

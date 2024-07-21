@@ -698,6 +698,7 @@ class DBController {
             numPartInconsistencies,
             probability,
           );
+          console.log(projectionBundle.getPValue());
           projectionBundle.addProjections(combination);
           projectionBundles.push(projectionBundle);
         }
@@ -860,6 +861,7 @@ class DBController {
       const rawScenarios = await dbService.selectRawScenariosForScenarioProject(
         parseFloat(req.params.id),
       );
+      console.log(rawScenarios);
       res.status(200).json(rawScenarios);
     } catch (error: any) {
       res.status(500).send(error.message);

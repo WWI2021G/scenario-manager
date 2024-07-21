@@ -1,7 +1,9 @@
+
 import { FutureProjection } from "./FutureProjection";
 
 export class ProjectionBundle {
   private projections: FutureProjection[];
+  private projectionBundle_id?: number;
   private consistency: number;
   private numPartInconsistencies: number;
   private pValue: number;
@@ -10,13 +12,23 @@ export class ProjectionBundle {
   constructor(
     consistency: number,
     numPartInconsistencies: number,
-    probability: number,
+    pvalue: number,
+    projectionBundle_id?: number,
   ) {
     this.projections = [];
     this.consistency = consistency;
     this.numPartInconsistencies = numPartInconsistencies;
-    this.probability = probability;
-    this.pValue = 0;
+    this.probability = pvalue;
+    this.pValue = pvalue;
+    this.projectionBundle_id = projectionBundle_id;
+  }
+
+  getID(): number | undefined {
+    return this.projectionBundle_id;
+  }
+
+  setID(projectionBundle_id: number) {
+    this.projectionBundle_id = projectionBundle_id;
   }
 
   getProjections(): FutureProjection[] {
@@ -69,3 +81,4 @@ export class ProjectionBundle {
     this.pValue = pValue;
   }
 }
+

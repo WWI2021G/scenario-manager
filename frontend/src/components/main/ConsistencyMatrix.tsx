@@ -17,6 +17,7 @@ import {
   FutureProjection,
 } from "@/types";
 import axios from "axios";
+import router from "next/router";
 
 const ConsistencyMatrix: React.FC = () => {
   const [scenarioProject_id, setScenarioProject_id] = useState<number>();
@@ -127,6 +128,7 @@ const ConsistencyMatrix: React.FC = () => {
       await axios.post("http://localhost:3001/db/pb/calculate", { "matrix": jsonMatrix, "scenarioProject_id": scenarioProject_id })
         .then(response => {
           console.log(response);
+          router.push("/projection-bundles");
         })
         .catch(error => console.error(error))
     } else {

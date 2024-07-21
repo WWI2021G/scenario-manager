@@ -1,28 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { ProjectionBundle, FutureProjection, Probability } from '@/types';
-import FutureProjectionSelection from './FutureProjectionSelection';
+import axios from 'axios';
+import { ProjectionBundle } from '@/types';
+import router from 'next/router';
+
+
+interface FutureProjection {
+  id: number;
+  name: string;
+}
 
 const ProjectionBundleTable: React.FC = () => {
   const [projectionBundles, setProjectionBundles] = useState<ProjectionBundle[]>([]);
-  const [showSelection, setShowSelection] = useState(false);
 
-  const handleCreateBundle = (selectedProjections: FutureProjection[]) => {
-    const newBundle: ProjectionBundle = {
-      id: Math.floor(Math.random() * 1000),
-      name: `Projection Bundle ${Math.floor(Math.random() * 1000)}`,
-      description: 'A new projection bundle',
-      projections: selectedProjections,
-      numberOfPartialInconsistencies: 9,
-      pValue: 100,
-      probability: selectedProjections.reduce((acc, proj) => {
-        const prob = proj.probability === Probability.HIGH ? 0.8 : proj.probability === Probability.MEDIUM ? 0.5 : 0.2;
-        return acc * prob;
-      }, 1),
+  useEffect(() => {
+    const fetchProjectionBundles = async () => {
+      try {
+        const scenarioProject_id = sessionStorage.getItem("scenarioProject_id")
+        const response = await axios.get(`http://localhost:3001/db/pb/sp/${scenarioProject_id}`);
+        console.log(response.data);
+        setProjectionBundles(response.data);
+      } catch (error) {
+        console.error('Error fetching projection bundles:', error);
+      }
     };
 
-    setProjectionBundles([...projectionBundles, newBundle]);
-    setShowSelection(false);
+    fetchProjectionBundles();
+  }, []);
+
+  const handleSubmit = async (projectionBundles: ProjectionBundle[]) => { 
+    console.log(projectionBundles);
+    const scenarioProject_id = sessionStorage.getItem("scenarioProject_id");
+    console.log(scenarioProject_id);
+    await axios.post("http://localhost:3001/db/cluster", { projectionBundles, scenarioProject_id }).then(response => {
+      console.log(response);
+      router.push('/rawscenarios');
+    }).catch(error => console.error(error));
+
+    
   };
 
   return (
@@ -30,49 +45,44 @@ const ProjectionBundleTable: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Projection Bundles
       </Typography>
-      {showSelection ? (
-        <FutureProjectionSelection onCreateBundle={handleCreateBundle} onCancel={() => setShowSelection(false)} />
-      ) : (
-        <>
-          <Button variant="contained" color="primary" onClick={() => setShowSelection(true)} sx={{ mb: 2 }}>
-            Create New Projection Bundle
-          </Button>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Consistency Value</TableCell>
-                  <TableCell>Number of Partial Inconsistencies</TableCell>
-                  <TableCell>p-Value</TableCell>
-                  <TableCell>Probability</TableCell>
-                  <TableCell>Zusammensetzung</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {projectionBundles.map((bundle) => (
-                  <TableRow key={bundle.id}>
-                    <TableCell>PB-{bundle.id}</TableCell>
-                    <TableCell>{bundle.name}</TableCell>
-                    <TableCell>{bundle.description}</TableCell>
-                    <TableCell>{bundle.probability}</TableCell>
-                    <TableCell>{bundle.numberOfPartialInconsistencies}</TableCell>
-                    <TableCell>{bundle.pValue}</TableCell>
-                    <TableCell>{bundle.probability}</TableCell>
-                    <TableCell>
-                      {bundle.projections.slice(0, 4).map((projection) => projection.name).join(', ')}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
+      <Button variant="contained" color="primary" onClick={() => handleSubmit(projectionBundles)} sx={{ mb: 2 }}>
+        Cluster analysis
+      </Button>
+      <Button variant="outlined" color="secondary" onClick={() => console.log(projectionBundles)} sx={{ ml: 2 }}> 
+        Log projection Bundles
+      </Button>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Consistency</TableCell>
+              <TableCell>Number of Partial Inconsistencies</TableCell>
+              <TableCell>p-Value</TableCell>
+              <TableCell>Composition</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {projectionBundles.map((bundle) => (
+              <TableRow key={bundle.projectionBundle_id}>
+                <TableCell>PB-{bundle.projectionBundle_id}</TableCell>
+                <TableCell>{bundle.consistency}</TableCell>
+                <TableCell>{bundle.numPartInconsistencies}</TableCell>
+                <TableCell>{bundle.pValue}</TableCell>
+                <TableCell>
+                  {bundle.projections.slice(0, 3).map((proj) => proj.name).join(', ')}
+                  {bundle.projections.length > 3 && (
+                    <span title={bundle.projections.slice(3).map((proj) => proj.name).join(', ')}>...</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 };
 
 export default ProjectionBundleTable;
+

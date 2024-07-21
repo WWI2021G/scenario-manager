@@ -3,59 +3,62 @@ import { FutureProjection } from "../models/FutureProjection";
 import { Probability } from "../models/Probability";
 import { ProjectionType } from "../models/ProjectionType";
 import { ProjectionBundle } from "../models/ProjectionBundle";
+import { dbService } from "../services/dbService";
 
 class ClusterAnalysis {
   private keyFactors: KeyFactor[];
   private futureProjections: FutureProjection[];
   private projectionBundles: ProjectionBundle[];
 
-  constructor() {
-    // Step 1: Create KeyFactors
-    this.keyFactors = [];
-    for (let i = 1; i <= 10; i++) {
-      this.keyFactors.push(new KeyFactor(`KeyFactor ${i}`, `Current State of KeyFactor ${i}`));
-    }
-
-    // Step 2: Create FutureProjections
-    this.futureProjections = [];
-    this.keyFactors.forEach((keyFactor, index) => {
-      for (let j = 1; j <= 2; j++) {
-        const futureProjection = new FutureProjection(
-          `Projection ${index + 1}${j}`,
-          `Description for Projection ${index + 1}${j}`,
+  constructor(projectionBundlesData: any[]) {
+    this.projectionBundles = projectionBundlesData.map(bundleData => {
+      const projections = bundleData.projections.map((projData: any) => {
+        const keyFactor = new KeyFactor(projData.keyFactor.name, projData.keyFactor.curState);
+        return new FutureProjection(
+          projData.name,
+          projData.description,
           keyFactor,
-          index + 1,
-          j === 1 ? Probability.HIGH : Probability.MEDIUM,
-          new Date(),
-          j === 1 ? ProjectionType.TREND : ProjectionType.EXTREME
+          projData.keyFactor_id,
+          projData.probability,
+          new Date(projData.timeFrame),
+          projData.type
         );
-        this.futureProjections.push(futureProjection);
-      }
+      });
+
+      const projectionBundle = new ProjectionBundle(
+        bundleData.consistency,
+        bundleData.numPartInconsistencies,
+        parseFloat(bundleData.probability),
+        bundleData.projectionBundle_id
+      );
+
+      projectionBundle.addProjections(projections);
+
+      return projectionBundle;
     });
 
-    // Step 3: Create ProjectionBundles
-    this.projectionBundles = [];
-    for (let i = 1; i <= 10; i++) {
-      const bundle = new ProjectionBundle(0.9, 2, 0.95); // example values for consistency, numPartInconsistencies, and probability
-      // Add one projection from each key factor to the bundle
-      this.keyFactors.forEach((keyFactor, index) => {
-        const projectionsForKeyFactor = this.futureProjections.filter(fp => fp.getKeyFactor() === keyFactor);
-        bundle.addProjection(projectionsForKeyFactor[i % 2]); // Alternate between the two projections for the key factor
+    this.keyFactors = [];
+    this.futureProjections = [];
+    this.projectionBundles.forEach(bundle => {
+      bundle.getProjections().forEach(proj => {
+        this.futureProjections.push(proj);
+        if (!this.keyFactors.some(kf => kf.getName() === proj.getKeyFactor().getName())) {
+          this.keyFactors.push(proj.getKeyFactor());
+        }
       });
-      this.projectionBundles.push(bundle);
-    }
+    });
   }
 
   private calculateDistance(bundle1: ProjectionBundle, bundle2: ProjectionBundle): number {
     const projections1 = new Set(bundle1.getProjections().map(p => p.getName()));
     const projections2 = new Set(bundle2.getProjections().map(p => p.getName()));
-    
+
     const intersection = new Set([...projections1].filter(x => projections2.has(x)));
     const unionDifference = new Set([...projections1, ...projections2].filter(x => !(projections1.has(x) && projections2.has(x))));
-    
+
     const A = intersection.size;
     const U = unionDifference.size;
-    
+
     return U / (2 * A + U);
   }
 
@@ -78,32 +81,30 @@ class ClusterAnalysis {
 
   private updateDistanceMatrix(matrix: number[][], index1: number, index2: number, linkageMethod: string): number[][] {
     const newMatrix: number[][] = [];
+    const newSize = matrix.length - 1;
 
-    for (let i = 0; i < matrix.length; i++) {
-      if (i !== index1 && i !== index2) {
-        const newRow: number[] = [];
-        for (let j = 0; j < matrix[i].length; j++) {
-          if (j !== index1 && j !== index2) {
-            if (i === j) {
-              newRow.push(0);
-            } else {
-              const distance = linkageMethod === 'single' 
-                ? Math.min(matrix[index1][j], matrix[index2][j])
-                : linkageMethod === 'complete'
-                  ? Math.max(matrix[index1][j], matrix[index2][j])
-                  : (matrix[index1][j] + matrix[index2][j]) / 2;
-              newRow.push(distance);
-            }
-          }
+    for (let i = 0; i < newSize; i++) {
+      newMatrix[i] = [];
+      for (let j = 0; j < newSize; j++) {
+        if (i === j) {
+          newMatrix[i][j] = 0;
+        } else {
+          const origI = i >= index1 ? i + 1 : i;
+          const origJ = j >= index2 ? j + 1 : j;
+          const distance = linkageMethod === 'single'
+            ? Math.min(matrix[index1][origJ], matrix[index2][origJ])
+            : linkageMethod === 'complete'
+              ? Math.max(matrix[index1][origJ], matrix[index2][origJ])
+              : (matrix[index1][origJ] + matrix[index2][origJ]) / 2;
+          newMatrix[i][j] = distance;
         }
-        newMatrix.push(newRow);
       }
     }
 
     return newMatrix;
   }
 
-  public agglomerativeClustering(linkageMethod: string): ProjectionBundle[][] {
+  public async agglomerativeClustering(linkageMethod: string, scenarioProject_id: number): Promise<void> {
     let clusters = this.projectionBundles.map(bundle => [bundle]);
     let matrix = this.createDistanceMatrix(this.projectionBundles);
 
@@ -129,7 +130,8 @@ class ClusterAnalysis {
       matrix = this.updateDistanceMatrix(matrix, mergeIndex1, mergeIndex2, linkageMethod);
     }
 
-    return clusters;
+    await dbService.createRawScenarios(clusters, scenarioProject_id);
+    this.displayClusters(clusters);
   }
 
   public displayClusters(clusters: ProjectionBundle[][]) {
@@ -140,6 +142,7 @@ class ClusterAnalysis {
       });
     });
   }
+
 }
 
 export default ClusterAnalysis;

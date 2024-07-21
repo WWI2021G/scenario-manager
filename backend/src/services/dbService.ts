@@ -1898,60 +1898,98 @@ class DBService {
     }
   }
 
-  async selectProjectionBundlesForScenarioProject(
-    scenarioProject_id: number,
-  ): Promise<ProjectionBundle[]> {
+  
+async selectProjectionBundlesForScenarioProject(
+  scenarioProject_id: number,
+): Promise<ProjectionBundle[]> {
+  try {
+    var results: ProjectionBundle[] = [];
+    const query_results = await db.any<{
+      projectionbundle_id: number;
+      consistency: number;
+      numpartinconsistencies: number;
+      pvalue: number;
+    }>(
+      `SELECT
+        projectionbundle_id,
+        consistency,
+        numpartinconsistencies,
+        pvalue
+      FROM
+        projectionbundle
+      WHERE
+        scenarioproject_id = $1;`,
+      scenarioProject_id,
+    );
+console.log(query_results);
+    for (let i = 0; i < query_results.length; i++) {
+      const { projectionbundle_id, consistency, numpartinconsistencies, pvalue } = query_results[i];
+      console.log(query_results[i].pvalue);
+      
+      const projectionBundle: ProjectionBundle = new ProjectionBundle(
+        consistency,
+        numpartinconsistencies,
+        pvalue,
+        projectionbundle_id,
+      );
+
+      console.log(projectionBundle.getPValue
+                 ());
+      console.log(query_results[i].projectionbundle_id);
+      const futureProjections = await this.selectFutureProjectionsForProjectionBundle(projectionbundle_id);
+      futureProjections.forEach((fp) => {
+        projectionBundle.addProjection(fp);
+      });
+      results.push(projectionBundle);
+    }
+    console.log("Request for all ProjectionBundles with scenarioProject_id: " + scenarioProject_id);
+    return results;
+  } catch (error) {
+    console.error("Error selecting all ProjectionBundles for scenarioProject_id: " + scenarioProject_id, error);
+    throw error;
+  }
+}
+
+ async createRawScenarios(clusters: ProjectionBundle[][], scenarioProject_id: number): Promise<void> {
+  for (let i = 0; i < clusters.length; i++) {
+    const cluster = clusters[i];
+    const rawScenarioName = `RawScenario_${i + 1}_${scenarioProject_id}
+    `;
+
     try {
-      var results: ProjectionBundle[] = [];
-      const query_results = await db.any<{
-        projectionbundle_id: number;
-        consistency: number;
-        numpartinconsistencies: number;
-        pvalue: number;
-      }>(
-        `SELECT
-          projectionbundle_id,
-          consistency,
-          numpartinconsistencies,
-          pvalue
-        FROM
-          projectionbundle
-        WHERE
-          scenarioProject_id = $1;`,
-        scenarioProject_id,
+      // Check if the raw scenario already exists
+      const existingScenario = await db.oneOrNone(
+        `SELECT rawscenario_id FROM rawscenario WHERE name = $1`,
+        [rawScenarioName]
       );
-      console.log(query_results);
-      for (let i = 0; i < query_results.length; i++) {
-        const projectionBundle: ProjectionBundle = new ProjectionBundle(
-          query_results[i].consistency,
-          query_results[i].numpartinconsistencies,
-          query_results[i].pvalue,
-        );
-        const futureProjections =
-          await this.selectFutureProjectionsForProjectionBundle(
-            query_results[i].projectionbundle_id,
-          );
-        futureProjections.forEach((fp) => {
-          projectionBundle.addProjection(fp);
-        });
-        results.push(projectionBundle);
+
+      if (existingScenario) {
+        console.log(`Raw scenario ${rawScenarioName} already exists.`);
+        continue;
       }
-      console.log(
-        "Request for all ProjectionBundles with scenarioProject_id: " +
-        scenarioProject_id,
+
+      // Insert new raw scenario if it does not exist
+      const rawScenario = await db.one(
+        `INSERT INTO rawscenario (name, quality) VALUES ($1, $2) RETURNING rawscenario_id`,
+        [rawScenarioName, 1]
       );
-      return results;
+
+      // Link the projection bundles to the new raw scenario
+      for (const bundle of cluster) {
+        await db.none(
+          `INSERT INTO pb_rs (projectionbundle_id, rawscenario_id) VALUES ($1, $2)`,
+          [bundle.getID(), rawScenario.rawscenario_id]
+        );
+      }
+
+      console.log(`Raw scenario ${rawScenarioName} created and linked to projection bundles.`);
     } catch (error) {
-      console.error(
-        "Error selecting all ProjectionBundles for scenarioProject_id: " +
-        scenarioProject_id,
-        error,
-      );
-      throw error;
+      console.error(`Error creating or linking raw scenario ${rawScenarioName}:`, error);
     }
   }
+}
 
-  async insertRawScenario(rawScenario: RawScenario): Promise<number> {
+async insertRawScenario(rawScenario: RawScenario): Promise<number> {
     try {
       const rawScenario_id = db.one<number>(
         `INSERT INTO
@@ -2079,9 +2117,11 @@ class DBService {
           JOIN pb_rs pbrs ON pbrs.rawscenario_id = rs.rawscenario_id
           JOIN projectionbundle pb ON pb.projectionbundle_id = pbrs.projectionbundle_id
         WHERE
-          scenarioproject_id = $1;`,
+          scenarioproject_id = $1
+          GROUP BY rs.rawscenario_id;`,
         scenarioProject_id,
       );
+      console.log('query' ,query_results);
       for (let i = 0; i < query_results.length; i++) {
         const rawScenario: RawScenario = new RawScenario(
           query_results[i].name,

@@ -6,7 +6,7 @@ import { Button, Box, Typography } from '@mui/material';
 const ClusterPage: React.FC = () => {
   const handleCluster = async () => {
     try {
-      const response = await axios.post('https://localhost:3001/scenario/distanceMatrix');
+      const response = await axios.post('http://localhost:3001/db/cluster');
       console.log(response.data);
     } catch (error) {
       console.error('Error triggering clustering:', error);

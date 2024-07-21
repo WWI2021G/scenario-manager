@@ -43,13 +43,11 @@ export interface FutureProjection {
 }
 
 export interface ProjectionBundle {
-  id: number;
-  name: string;
-  description: string;
-  projections: FutureProjection[];
-  numberOfPartialInconsistencies: number;
+  projectionBundle_id: number;
+  consistency: number;
+  numPartInconsistencies: number;
   pValue: number;
-  probability: number;
+  projections: FutureProjection[];
 }
 
 export interface ScenarioProject {
