@@ -772,14 +772,10 @@ class DBService {
       const query_results = await db.any<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
       }>(
         `SELECT
           name,
           description,
-          activesum,
-          passivesum
         FROM
           influencingfactor;`,
       );
