@@ -61,9 +61,7 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS InfluencingFactor (
                  influencingfactor_id SERIAL PRIMARY KEY,
                  name VARCHAR(50) UNIQUE NOT NULL,
-                 description VARCHAR(200),
-                 activesum INT,
-                 passivesum INT
+                 description VARCHAR(200)
                );`,
       },
       {
@@ -119,6 +117,8 @@ class DBService {
         query: `CREATE TABLE IF NOT EXISTS sp_if (
                  scenarioproject_id INT,
                  influencingfactor_id INT,
+                 activesum INT,
+                 passivesum INT,
                  FOREIGN KEY (scenarioproject_id) REFERENCES ScenarioProject(scenarioproject_id),
                  FOREIGN KEY (influencingfactor_id) REFERENCES InfluencingFactor(influencingfactor_id)
                );`,
@@ -544,14 +544,10 @@ class DBService {
       const result = await db.one<{
         name: string;
         description: string;
-        activesum: number;
-        passivesum: number;
       }>(
         `SELECT
           name,
-          description,
-          activesum,
-          passivesum
+          description
         FROM
           influencingfactor
         WHERE
@@ -562,8 +558,6 @@ class DBService {
         result.name,
         result.description,
       );
-      influencingFactor.setActiveSum(result.activesum);
-      influencingFactor.setPassiveSum(result.passivesum);
       console.log(
         "Request for existing influencingFactor_id: " + influencingFactor_id,
       );
@@ -584,14 +578,10 @@ class DBService {
       const result = await db.one<{
         name: string;
         description: string;
-        variable: string;
-        influencingarea: string;
       }>(
         `SELECT
           name,
           description,
-          activesum,
-          passivesum
         FROM
           influencingfactor
         WHERE
@@ -621,11 +611,14 @@ class DBService {
     try {
       await db.none(
         `UPDATE
-          influencingfactor
+          sp_if
         SET
           activeSum = $1
+        FROM
+          influencingfactor
         WHERE
-          name = $2;`,
+          influencingfactor.influencingfactor_id = sp_if.influencingfactor_id
+          AND name = $2;`,
         [influencingFactor.getActiveSum(), influencingFactor.getName()],
       );
       const message =
@@ -673,11 +666,14 @@ class DBService {
     try {
       await db.none(
         `UPDATE
-          influencingfactor
+          sp_if
         SET
-          passiveSum = $1
+          passivesum = $1
+        FROM
+          influencingfactor
         WHERE
-          name = $2;`,
+          influencingfactor.influencingfactor_id = sp_if.influencingfactor_id
+          AND name = $2;`,
         [influencingFactor.getPassiveSum(), influencingFactor.getName()],
       );
       const message =
@@ -731,7 +727,10 @@ class DBService {
         passivesum: number;
       }>(
         `SELECT
-          i.*
+          i.name,
+          i.description,
+          isp.activesum,
+          isp.passivesum
         FROM
           influencingfactor i
           JOIN sp_if isp ON i.influencingfactor_id = isp.influencingfactor_id
@@ -1143,23 +1142,23 @@ class DBService {
     try {
       const futureProjection_id: number = await db.one<number>(
         `INSERT INTO
-        futureprojection (
-          name,
-          probability,
-          description,
-          timeframe,
-          projectiontype,
-          keyfactor_id
-        )
-      VALUES
-        ($1, $2, $3, $4, $5, $6) ON CONFLICT (name) DO
-      UPDATE
-      SET
-        probability = EXCLUDED.probability,
-        description = EXCLUDED.description,
-        timeframe = EXCLUDED.timeframe,
-        projectiontype = EXCLUDED.projectiontype,
-        keyfactor_id = EXCLUDED.keyfactor_id RETURNING futureprojection_id;`,
+          futureprojection (
+            name,
+            probability,
+            description,
+            timeframe,
+            projectiontype,
+            keyfactor_id
+          )
+        VALUES
+          ($1, $2, $3, $4, $5, $6) ON CONFLICT (name) DO
+        UPDATE
+        SET
+          probability = EXCLUDED.probability,
+          description = EXCLUDED.description,
+          timeframe = EXCLUDED.timeframe,
+          projectiontype = EXCLUDED.projectiontype,
+          keyfactor_id = EXCLUDED.keyfactor_id RETURNING futureprojection_id;`,
         [
           futureProjection.getName(),
           futureProjection.getProbability(),
@@ -1352,16 +1351,16 @@ class DBService {
         keyfactor_id: number;
       }>(
         `SELECT
-        name,
-        probability,
-        description,
-        timeframe,
-        projectiontype,
-        keyfactor_id
-      FROM
-        futureprojection
-      WHERE
-        keyfactor_id = $1;`,
+          name,
+          probability,
+          description,
+          timeframe,
+          projectiontype,
+          keyfactor_id
+        FROM
+          futureprojection
+        WHERE
+          keyfactor_id = $1;`,
         keyfactor_id,
       );
       const keyFactor = await this.selectKeyFactor(keyfactor_id);
