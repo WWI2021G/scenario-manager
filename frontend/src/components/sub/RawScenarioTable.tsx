@@ -3,16 +3,12 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import axios from 'axios';
 import { ProjectionBundle } from '@/types';
 import ProjectionBundleTable from './RawScenarioBundleTable';
+import { RawScenario } from '@/types';
 
-  interface RawScenario {
-    rawscenario_id: number;
-    name: string;
-    quality: number;
-  }
 
   const RawScenariosTable: React.FC = () => {
     const [rawScenarios, setRawScenarios] = useState<RawScenario[]>([]);
-    const [selectedScenarioId, setSelectedScenarioId] = useState<number | null>(null);
+    const [selectedScenarioName, setSelectedScenarioName] = useState<string | null>(null);
     const [projectionBundles, setProjectionBundles] = useState<ProjectionBundle[]>([]);
 
     useEffect(() => {
@@ -30,10 +26,16 @@ import ProjectionBundleTable from './RawScenarioBundleTable';
       fetchRawScenarios();
     }, []);
 
-    const handleRawScenarioClick = async (rawscenario_id: number) => {
-    setSelectedScenarioId(rawscenario_id);
+    const handleRawScenarioClick = async (rawscenario_name: string, quality: number ) => {
+    setSelectedScenarioName(rawscenario_name);
+    console.log(rawscenario_name);
+    console.log(quality);
     try {
-      const response = await axios.get(`http://localhost:3001/db/pb/rs/${rawscenario_id}`);
+      const idRespone = await axios.post(`http://localhost:3001/db/rsid`, {"name": rawscenario_name, "quality": quality});
+      const rawScenario_id = idRespone.data.rawScenario_id;
+        console.log(rawScenario_id);
+        const response = await axios.get(`http://localhost:3001/db/pb/rs/${rawScenario_id}`);
+        console.log(response.data);
       setProjectionBundles(response.data);
     } catch (error) {
       console.error('Error fetching projection bundles:', error);
@@ -49,15 +51,13 @@ import ProjectionBundleTable from './RawScenarioBundleTable';
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Quality</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rawScenarios.map((scenario) => (
-              <TableRow key={scenario.rawscenario_id} onClick={() => handleRawScenarioClick(scenario.rawscenario_id)}>
-                <TableCell>{scenario.rawscenario_id}</TableCell>
+              <TableRow key={scenario.name} onClick={() => handleRawScenarioClick(scenario.name, scenario.quality)}>
                 <TableCell style={{ cursor: 'pointer', color: 'blue' }}>{scenario.name}</TableCell>
                 <TableCell>{scenario.quality}</TableCell>
               </TableRow>
@@ -65,7 +65,7 @@ import ProjectionBundleTable from './RawScenarioBundleTable';
           </TableBody>
         </Table>
       </TableContainer>
-      {selectedScenarioId !== null && (
+      {selectedScenarioName !== null && (
         <ProjectionBundleTable projectionBundles={projectionBundles} />
       )}
     </Box>

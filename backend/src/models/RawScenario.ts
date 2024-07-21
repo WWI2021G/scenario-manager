@@ -5,6 +5,7 @@ export class RawScenario {
   private projectionBundles: ProjectionBundle[];
   private quality: number;
 
+
   constructor(name: string, quality: number) {
     this.name = name;
     this.quality = quality;

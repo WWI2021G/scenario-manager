@@ -826,6 +826,7 @@ class DBController {
 
   async getRawScenarioID(req: Request, res: Response) {
     const { name, quality }: { name: string; quality: number } = req.body;
+    console.log(req.body)
     const rawScenario: RawScenario = new RawScenario(name, quality);
     try {
       const rawScenario_id = await dbService.selectRawScenarioID(rawScenario);
@@ -844,7 +845,7 @@ class DBController {
     } catch (error: any) {
       res.status(500).send(error.message);
     }
-  }
+  }   
 
   async getRawScenarioByName(req: Request, res: Response) {
     const { name }: { name: string } = req.body;
