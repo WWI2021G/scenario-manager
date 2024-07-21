@@ -719,8 +719,13 @@ class DBController {
         );
         const futureProjections = reducedProjectionBundles[i].getProjections();
         for (let j = 0; j < futureProjections.length; j++) {
-          const futureProjection_id = await dbService.selectFutureProjectionID(futureProjections[j]);
-          await dbService.connectFutureProjectionAndProjectionBundle(futureProjection_id, projectionBundle_id);
+          const futureProjection_id = await dbService.selectFutureProjectionID(
+            futureProjections[j],
+          );
+          await dbService.connectFutureProjectionAndProjectionBundle(
+            futureProjection_id,
+            projectionBundle_id,
+          );
         }
         projectionBundle_ids.push(projectionBundle_id);
       }
