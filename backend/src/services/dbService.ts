@@ -608,7 +608,10 @@ class DBService {
     }
   }
 
-  async updateActiveSum(influencingFactor: InfluencingFactor): Promise<string> {
+  async updateActiveSum(
+    scenarioProject_id: number,
+    influencingFactor: InfluencingFactor,
+  ): Promise<string> {
     try {
       await db.none(
         `UPDATE
@@ -619,8 +622,13 @@ class DBService {
           influencingfactor
         WHERE
           influencingfactor.influencingfactor_id = sp_if.influencingfactor_id
-          AND name = $2;`,
-        [influencingFactor.getActiveSum(), influencingFactor.getName()],
+          AND sp_if.scenarioproject_id = $2
+          AND name = $3;`,
+        [
+          influencingFactor.getActiveSum(),
+          scenarioProject_id,
+          influencingFactor.getName(),
+        ],
       );
       const message =
         "Successfully updated activeSum for InfluencingFactor: " +
@@ -663,6 +671,7 @@ class DBService {
   }
 
   async updatePassiveSum(
+    scenarioProject_id: number,
     influencingFactor: InfluencingFactor,
   ): Promise<string> {
     try {
@@ -675,8 +684,13 @@ class DBService {
           influencingfactor
         WHERE
           influencingfactor.influencingfactor_id = sp_if.influencingfactor_id
-          AND name = $2;`,
-        [influencingFactor.getPassiveSum(), influencingFactor.getName()],
+          AND sp_if.scenarioproject_id = $2
+          AND name = $3;`,
+        [
+          influencingFactor.getPassiveSum(),
+          scenarioProject_id,
+          influencingFactor.getName(),
+        ],
       );
       const message =
         "Successfully updated passiveSum for InfluencingFactor: " +
