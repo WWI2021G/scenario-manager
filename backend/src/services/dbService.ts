@@ -537,6 +537,7 @@ class DBService {
     }
   }
 
+  //  NOTE: Function not used <2024-07-21>
   async selectInfluencingFactor(
     influencingFactor_id: number,
   ): Promise<InfluencingFactor> {
@@ -635,6 +636,7 @@ class DBService {
     }
   }
 
+  //  NOTE: Function not used <2024-07-21>
   async selectActiveSum(influencingFactor_id: number): Promise<number> {
     try {
       const activesum = await db.one<number>(
@@ -690,6 +692,7 @@ class DBService {
     }
   }
 
+  //  NOTE: Function not used <2024-07-21>
   async selectPassiveSum(influencingFactor_id: number): Promise<number> {
     try {
       const passiveSum = await db.one<number>(
