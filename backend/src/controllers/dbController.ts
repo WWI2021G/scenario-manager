@@ -186,6 +186,24 @@ class DBController {
     }
   }
 
+  async unlinkInfluencingFactor(req: Request, res: Response) {
+    const {
+      influencingFactor_name,
+      scenarioProject_id,
+    }: { influencingFactor_name: string; scenarioProject_id: number } = req.body;
+    try {
+      const influencingFactor_id = await dbService.selectInfluencingFactorID(new InfluencingFactor(influencingFactor_name, "Whatever"));
+      const message =
+        await dbService.disconnectInfluencingFactorAndScenarioProject(
+          influencingFactor_id,
+          scenarioProject_id,
+        );
+      res.status(200).send(message);
+    } catch (error: any) {
+      res.status(500).send(error.message);
+    }
+  }
+
   async getInfluencingFactorID(req: Request, res: Response) {
     const {
       name,
@@ -677,9 +695,6 @@ class DBController {
       FutureProjection,
       Map<FutureProjection, number>
     > = dbService.createMapFromMatrix(matrix, futureProjections);
-    //  HACK: Bin mit der Erklärung so semi zufrieden. Vielleicht finde ich noch was besseres <2024-07-19> Weiberle17
-    //  Copy values from consistencyMatrix[futureProjection1][futureProjection2] to consistencyMatrix[futureProjection2][futureProjection1]
-    //  this way values are stored twice, but the innerMap of futureProjection1 will have all the values associated with futureProjection1.
     const doubleCombinations =
       dbService.findDoubleCombinations(futureProjections);
     doubleCombinations.forEach((combo) => {
@@ -712,7 +727,6 @@ class DBController {
           projectionBundles.push(projectionBundle);
         }
       });
-      //  HACK: limited to 100 ProjectionBundles for now <2024-07-19>
       const reducedProjectionBundles = projectionBundles
         .slice(0, 100)
         .sort((a, b) => b.getConsistency() - a.getConsistency());

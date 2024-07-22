@@ -81,10 +81,10 @@ export default function InfluencingFactorsPage() {
     handleMenuClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedFactor && currentSelectedProject) {
-      axios
-        .delete(`http://localhost:3001/db/if/${selectedFactor.name}`)
+      await axios
+        .delete(`http://localhost:3001/db/if/remove`, { data: { "influencingFactor_name": selectedFactor.name, "scenarioProject_id": currentSelectedProject } })
         .then(() => {
           getProjectInfluencingFactors(currentSelectedProject);
         })

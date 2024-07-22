@@ -23,6 +23,7 @@ router.get("/if/:id", dbController.getInfluencingFactor);
 router.get("/if/sp/:id", dbController.getInfluencingFactorsForScenarioProject);
 router.post("/if/add", dbController.addInfluencingFactor);
 router.post("/if/link", dbController.linkInfluencingFactorAndScenarioProject);
+router.delete("/if/remove", dbController.unlinkInfluencingFactor);
 router.post("/ifid", dbController.getInfluencingFactorID);
 router.post("/ifname", dbController.getInfluencingFactorByName);
 router.get("/if/as/:id", dbController.getActiveSum);
