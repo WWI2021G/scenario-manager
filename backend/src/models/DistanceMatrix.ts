@@ -3,6 +3,7 @@ import { FutureProjection } from "../models/FutureProjection";
 import { Probability } from "../models/Probability";
 import { ProjectionType } from "../models/ProjectionType";
 import { ProjectionBundle } from "../models/ProjectionBundle";
+import { KeyFactor } from "../models/KeyFactor";
 
 // Step 1: Create KeyFactors
 const keyFactors: KeyFactor[] = [];
