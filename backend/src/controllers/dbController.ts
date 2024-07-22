@@ -227,11 +227,13 @@ class DBController {
 
   async setActiveSum(req: Request, res: Response) {
     const {
+      scenarioProject_id,
       name,
       description,
       activeSum,
       passiveSum,
     }: {
+      scenarioProject_id: number;
       name: string;
       description: string;
       activeSum: number;
@@ -241,7 +243,10 @@ class DBController {
     influencingFactor.setActiveSum(activeSum);
     influencingFactor.setPassiveSum(passiveSum);
     try {
-      const message = await dbService.updateActiveSum(influencingFactor);
+      const message = await dbService.updateActiveSum(
+        scenarioProject_id,
+        influencingFactor,
+      );
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -261,11 +266,13 @@ class DBController {
 
   async setPassiveSum(req: Request, res: Response) {
     const {
+      scenarioProject_id,
       name,
       description,
       activeSum,
       passiveSum,
     }: {
+      scenarioProject_id: number;
       name: string;
       description: string;
       activeSum: number;
@@ -275,7 +282,10 @@ class DBController {
     influencingFactor.setActiveSum(activeSum);
     influencingFactor.setPassiveSum(passiveSum);
     try {
-      const message = await dbService.updatePassiveSum(influencingFactor);
+      const message = await dbService.updatePassiveSum(
+        scenarioProject_id,
+        influencingFactor,
+      );
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
