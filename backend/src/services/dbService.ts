@@ -508,6 +508,35 @@ class DBService {
     }
   }
 
+  async disconnectInfluencingFactorAndScenarioProject(
+    influencingFactor_id: number,
+    scenarioProject_id: number,
+  ): Promise<string> {
+    try {
+      await db.none(
+        `DELETE FROM
+          sp_if
+        WHERE
+          scenarioproject_id = $1
+          AND influencingfactor_id = $2;`,
+        [scenarioProject_id, influencingFactor_id],
+      );
+      const message =
+        "Successfully disconnected influencingFactor_id: " +
+        influencingFactor_id +
+        " and scenarioProject_id: " +
+        scenarioProject_id;
+      console.log(message);
+      return message;
+    } catch (error) {
+      console.error(
+        "Error connecting InfluencingFactor and ScenarioProject",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async selectInfluencingFactorID(
     influencingFactor: InfluencingFactor,
   ): Promise<number> {
