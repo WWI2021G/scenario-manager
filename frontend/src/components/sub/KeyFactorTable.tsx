@@ -77,10 +77,10 @@ const KeyFactorTable = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Property 1</TableCell>
-                  <TableCell>Property 2</TableCell>
-                  <TableCell>Current State</TableCell>
+                  <TableCell>Titel</TableCell>
+                  <TableCell>Merkmal 1</TableCell>
+                  <TableCell>Merkmal 2</TableCell>
+                  <TableCell>Ist-Zustand</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

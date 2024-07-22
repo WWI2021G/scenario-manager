@@ -98,21 +98,21 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
         InputProps={{ readOnly: true, }}
       />
       <TextField
-        label="Property 1"
+        label="Merkmal 1"
         name="prop_one"
         value={keyFactor.prop_one}
         onChange={handleChange}
         required
       />
       <TextField
-        label="Property 2"
+        label="Merkmal 2"
         name="prop_two"
         value={keyFactor.prop_two}
         onChange={handleChange}
         required
       />
       <TextField
-        label="Current State Description"
+        label="Beschreibung des Ist-Zustands"
         name="curState"
         value={keyFactor.curState}
         onChange={handleChange}
@@ -122,13 +122,13 @@ const KeyFactorForm: React.FC<KeyFactorFormProps> = ({ onSubmit, onCancel, initi
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button variant="contained" color="primary" type="submit">
-          {initialData ? 'Update KeyFactor' : 'Add KeyFactor'}
+          {initialData ? 'Schlüsselfaktor aktualisieren' : 'Schlüsselfaktor hinzufügen'}
         </Button>
         <Button variant="contained" color="primary" onClick={onAddFP}>
-          {futureProjectionsExist ? 'Update Future Projections' : 'Add Future Projections'}
+          {futureProjectionsExist ? 'Projektionen aktualisieren' : 'Projektionen hinzufügen'}
         </Button>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
-          Cancel
+          Abbrechen
         </Button>
       </Box>
     </Box>

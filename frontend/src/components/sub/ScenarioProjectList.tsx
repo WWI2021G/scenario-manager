@@ -58,7 +58,6 @@ const ProjectManager: React.FC = () => {
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}> 
       <div className="font-bold text-3xl">Vorhandene Projekte</div>
-      
       {showForm ? (
         <ScenarioProjectForm onSave={handleSaveProject} />
       ) : (

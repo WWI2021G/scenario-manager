@@ -32,10 +32,10 @@ const ProjectionBundlesForScenario: React.FC = () => {
     <RootLayout>
       <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Projection Bundles for {rawScenarioName}
+          Rohszenario-Katalog für: {rawScenarioName}
         </Typography>
         <Button variant="contained" color="primary" onClick={() => console.log('wabec')} sx={{ mb: 2 }}>
-          Verteilungsansicht
+          Projektionsverteilung
         </Button>
         <Button variant="outlined" color="secondary" onClick={() => router.push('/rawscenarios')} sx={{ ml: 2, mb: 2 }}>
           Zurück
@@ -45,10 +45,10 @@ const ProjectionBundlesForScenario: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Consistency</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Number of Partial Inconsistencies</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>p-Value</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Composition</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Konsistenzwert</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Anzahl partieller Inkonsistenzen</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>p-Wert</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Zusammensetzung</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

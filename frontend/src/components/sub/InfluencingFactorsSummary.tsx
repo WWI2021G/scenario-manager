@@ -46,8 +46,8 @@ const InfluencingFactorsSummary: React.FC = () => {
           <TableHead>
             <TableRow className="font-bold">
               <TableCell className='font-bold'>Name</TableCell>
-              <TableCell className='font-bold'>Active Sum</TableCell>
-              <TableCell className='font-bold'>Passive Sum</TableCell>
+              <TableCell className='font-bold'>Aktivsumme</TableCell>
+              <TableCell className='font-bold'>Passivsumme</TableCell>
               <TableCell className='font-bold'>Dynamik Index (DI)</TableCell>
               <TableCell className='font-bold'>Impuls Index (IPI)</TableCell>
             </TableRow>

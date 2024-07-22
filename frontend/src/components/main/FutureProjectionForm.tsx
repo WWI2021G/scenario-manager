@@ -3,7 +3,7 @@ import { TextField, Button, Box, MenuItem, Select, InputLabel, FormControl } fro
 import { SelectChangeEvent } from '@mui/material/Select';
 import { FutureProjection, Probability, ProjectionType, KeyFactor } from '@/types';
 import { format, parseISO, isValid } from 'date-fns';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import axios from 'axios';
 
 const FutureProjectionForm: React.FC = () => {
@@ -119,7 +119,7 @@ const FutureProjectionForm: React.FC = () => {
             margin: '0 auto',
           }}
         >
-          <div className="text-lg font-bold">First Projection</div>
+          <div className="text-lg font-bold">Projektion 1</div>
           <TextField
             label="Name"
             name="name"
@@ -128,7 +128,7 @@ const FutureProjectionForm: React.FC = () => {
             required
           />
           <TextField
-            label="Main Projection Description"
+            label="Kurzbeschreibung Projektion 1"
             name="description"
             value={mainProjection.description}
             onChange={handleChangeMain}
@@ -137,7 +137,7 @@ const FutureProjectionForm: React.FC = () => {
             rows={4}
           />
           <FormControl fullWidth>
-            <InputLabel>Projection Type</InputLabel>
+            <InputLabel>Projektionsart</InputLabel>
             <Select
               name="projectionType"
               label='Projection Type'
@@ -153,7 +153,7 @@ const FutureProjectionForm: React.FC = () => {
             </Select>
           </FormControl>
           <FormControl fullWidth>
-            <InputLabel>Probability</InputLabel>
+            <InputLabel>Wahrscheinlichkeit</InputLabel>
             <Select
               name="probability"
               label='Probability'
@@ -169,7 +169,7 @@ const FutureProjectionForm: React.FC = () => {
             </Select>
           </FormControl>
           <TextField
-            label="Time Frame"
+            label="Zeitrahmen"
             name="timeFrame"
             type="date"
             value={isValid(new Date(mainProjection.timeFrame)) ? format(new Date(mainProjection.timeFrame), 'yyyy-MM-dd') : ''}
@@ -191,7 +191,7 @@ const FutureProjectionForm: React.FC = () => {
             margin: "0 auto"
           }}
         >
-          <div className="text-lg font-bold">Second Projection</div>
+          <div className="text-lg font-bold">Projektion 2</div>
           <TextField
             label="Name"
             name="name"
@@ -200,7 +200,7 @@ const FutureProjectionForm: React.FC = () => {
             required
           />
           <TextField
-            label="Alternative Projection Description"
+            label="Kurzbeschreibung Projektion 2"
             name="description"
             value={alternativeProjection.description}
             onChange={handleChangeAlternative}
@@ -209,7 +209,7 @@ const FutureProjectionForm: React.FC = () => {
             rows={4}
           />
           <FormControl fullWidth>
-            <InputLabel>Projection Type</InputLabel>
+            <InputLabel>Projektionsart</InputLabel>
             <Select
               name="projectionType"
               label="Projection Type"
@@ -225,7 +225,7 @@ const FutureProjectionForm: React.FC = () => {
             </Select>
           </FormControl>
           <FormControl fullWidth>
-            <InputLabel>Probability</InputLabel>
+            <InputLabel>Wahrscheinlichkeit</InputLabel>
             <Select
               name="probability"
               label="Probability"
@@ -241,7 +241,7 @@ const FutureProjectionForm: React.FC = () => {
             </Select>
           </FormControl>
           <TextField
-            label="Time Frame"
+            label="Zeitrahmen"
             name="timeFrame"
             type="date"
             value={isValid(new Date(alternativeProjection.timeFrame)) ? format(new Date(alternativeProjection.timeFrame), 'yyyy-MM-dd') : ''}
@@ -257,10 +257,10 @@ const FutureProjectionForm: React.FC = () => {
       </Box>
       <Box sx={{ display: "flex", justifyContent: "left" }}>
         <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' type="submit">
-          {futureProjectionsExist ? 'Update Future Projections' : 'Add Future Projections'}
+          {futureProjectionsExist ? 'Projektionen aktualisieren' : 'Projektionen hinzufügen'}
         </Button>
-        <Button variant="outlined" color="secondary" onClick={handleCancel}>
-          Cancel
+        <Button variant="outlined" color="secondary" onClick={() => router.push('/keyfactors')} sx={{ ml: 2, mb: 2 }}>
+          Abbrechen
         </Button>
       </Box>
     </Box>

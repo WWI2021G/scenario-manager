@@ -10,17 +10,17 @@ const ProjectionBundleTable: React.FC<ProjectionBundleTableProps> = ({ projectio
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h5" component="h2" gutterBottom>
-        Projection Bundles
+        Projektionsbündel
       </Typography>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Consistency</TableCell>
-              <TableCell>Number of Partial Inconsistencies</TableCell>
-              <TableCell>p-Value</TableCell>
-              <TableCell>Composition</TableCell>
+              <TableCell>Konsistenzwert</TableCell>
+              <TableCell>Anzahl partieller Inkonsistenzen</TableCell>
+              <TableCell>p-Wert</TableCell>
+              <TableCell>Zusammensetzung</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

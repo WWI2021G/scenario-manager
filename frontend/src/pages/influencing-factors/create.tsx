@@ -44,7 +44,7 @@ export default function CreateInfluencingFactor() {
   return (
     <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Create New Influencing Factor
+        Neuen Einflussfaktor erstellen
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -57,7 +57,7 @@ export default function CreateInfluencingFactor() {
           variant="outlined"
         />
         <TextField
-          label="Description"
+          label="Kurzbeschreibung"
           name="description"
           value={influencingFactor.description}
           onChange={handleChange}
@@ -66,7 +66,7 @@ export default function CreateInfluencingFactor() {
           variant="outlined"
         />
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-          Save Influencing Factor
+          Einflussfaktor speichern
         </Button>
       </form>
     </Box>

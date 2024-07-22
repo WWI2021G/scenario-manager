@@ -30,7 +30,7 @@ const RawScenariosTable: React.FC = () => {
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Raw Scenarios
+        Rohszenarien
       </Typography>
       <TableContainer component={Paper}>
         <Table>

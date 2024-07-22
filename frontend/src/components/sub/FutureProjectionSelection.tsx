@@ -47,7 +47,7 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Select Future Projections
+        Zukunftsprojektionen auswählen
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 2 }}>
         <Button
@@ -56,10 +56,10 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
           onClick={handleCreateBundle}
           disabled={selectedProjections.length === 0}
         >
-          Create Projection Bundle
+          Projektionsbündel erstellen
         </Button>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
-          Cancel
+          Abbrechen
         </Button>
       </Box>
       <TableContainer component={Paper}>
@@ -69,11 +69,11 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
               <TableCell />
               <TableCell>ID</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Key Factor</TableCell>
-              <TableCell>Projection Description</TableCell>
-              <TableCell>Time Frame</TableCell>
-              <TableCell>Projection Type</TableCell>
-              <TableCell>Probability</TableCell>
+              <TableCell>Schlüsselfaktor</TableCell>
+              <TableCell>Projektionsbeschreibung</TableCell>
+              <TableCell>Zeitrahmen</TableCell>
+              <TableCell>Projektionsart</TableCell>
+              <TableCell>Wahrscheinlichkeit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

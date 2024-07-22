@@ -145,10 +145,10 @@ const ConsistencyMatrix: React.FC = () => {
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "left", my: 2 }}>
         <Button variant="contained" className='bg-primary hover:bg-primary-hover mr-4' onClick={handleSubmit}>
-          Konsitenzwerte speichern
+          Konsistenzwerte speichern
         </Button>
-        <Button variant="outlined" color="secondary" >
-          Cancel
+        <Button variant="outlined" color="secondary" onClick={() => router.push('/keyfactors')} sx={{ ml: 2, mb: 2 }}>
+          Abbrechen
         </Button>
       </Box>
       <TableContainer

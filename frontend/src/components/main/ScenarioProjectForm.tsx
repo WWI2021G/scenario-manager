@@ -50,7 +50,7 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
   return (
     <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Create New Project
+        Neues Projekt erstellen
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -63,7 +63,7 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
           variant="outlined"
         />
         <TextField
-          label="Description"
+          label="Kurzbeschreibung"
           name="description"
           value={project.description}
           onChange={handleChange}
@@ -72,7 +72,7 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
           variant="outlined"
         />
         <FormControl fullWidth margin="normal">
-          <InputLabel>Scenario Type</InputLabel>
+          <InputLabel>Szenarioart</InputLabel>
           <Select
             name="scenarioType"
             value={project.scenarioType}
@@ -87,7 +87,7 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
           </Select>
         </FormControl>
         <Button type="submit" variant="contained" className='bg-primary hover:bg-primary-hover' sx={{ mt: 2 }}>
-          Save Project
+          Projekt speichern
         </Button>
       </form>
     </Box>

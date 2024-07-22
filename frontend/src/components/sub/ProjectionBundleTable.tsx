@@ -37,10 +37,10 @@ const ProjectionBundleTable: React.FC = () => {
   return (
     <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Projection Bundles
+        Projektionsbündel-Katalog
       </Typography>
       <Button variant="contained" color="primary" onClick={() => handleSubmit(projectionBundles)} sx={{ mb: 2 }}>
-        Cluster analysis
+        Clusteranalyse
       </Button>
       <Button variant="outlined" color="secondary" onClick={() => console.log(projectionBundles)} sx={{ ml: 2 }}> 
         Log projection Bundles
@@ -50,10 +50,10 @@ const ProjectionBundleTable: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Consistency</TableCell>
-              <TableCell>Number of Partial Inconsistencies</TableCell>
-              <TableCell>p-Value</TableCell>
-              <TableCell>Composition</TableCell>
+              <TableCell>Konsistenzwert</TableCell>
+              <TableCell>Anzahl partieller Inkonsistenzen</TableCell>
+              <TableCell>p-Wert</TableCell>
+              <TableCell>Zusammensetzung</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
