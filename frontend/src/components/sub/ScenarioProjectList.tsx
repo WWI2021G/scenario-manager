@@ -1,14 +1,14 @@
 // components/ProjectManager.tsx
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import { FilterList } from "@mui/icons-material";
 import TableHover from "@/components/sub/ProjectTable";
-import ScenarioProjectForm from '@/components/main/ScenarioProjectForm';
-import { ScenarioProject } from '@/types';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+import ScenarioProjectForm from "@/components/main/ScenarioProjectForm";
+import { ScenarioProject } from "@/types";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const ProjectManager: React.FC = () => {
   const router = useRouter();
@@ -27,12 +27,13 @@ const ProjectManager: React.FC = () => {
   }, [user_id]);
 
   const getProjects = (userID: number) => {
-    axios.get('http://localhost:3001/db/sp/user/' + userID)
-      .then(response => {
+    axios
+      .get("http://localhost:3001/db/sp/user/" + userID)
+      .then((response) => {
         setProjects(response.data);
         setIsProjectListEmpty(response.data.length === 0);
       })
-      .catch(_error => setIsProjectListEmpty(true));
+      .catch((_error) => setIsProjectListEmpty(true));
   };
 
   const handleCreateProject = () => {
@@ -41,22 +42,23 @@ const ProjectManager: React.FC = () => {
 
   const handleSaveProject = (project: ScenarioProject) => {
     if (!user_id) {
-      router.push('/');
+      router.push("/");
       console.log("UserID undefined");
       return;
     }
     console.log(project);
-    axios.post('http://localhost:3001/db/sp/add', { project, user_id })
-      .then(response => {
+    axios
+      .post("http://localhost:3001/db/sp/add", { project, user_id })
+      .then((response) => {
         console.log(response);
-        getProjects(user_id);  // Refresh project list after adding a new project
+        getProjects(user_id); // Refresh project list after adding a new project
         setShowForm(false);
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   };
 
   return (
-    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}> 
+    <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
       <div className="font-bold text-3xl">Vorhandene Projekte</div>
       {showForm ? (
         <ScenarioProjectForm onSave={handleSaveProject} />
@@ -65,14 +67,22 @@ const ProjectManager: React.FC = () => {
       )}
     </Box>
   );
-}
+};
 
-const renderProjectList = (isProjectListEmpty: boolean, handleCreateProject: () => void, projects: ScenarioProject[]) => {
+const renderProjectList = (
+  isProjectListEmpty: boolean,
+  handleCreateProject: () => void,
+  projects: ScenarioProject[],
+) => {
   if (isProjectListEmpty) {
     return (
       <div className="flex flex-col items-center justify-center mt-40">
-        <h1 className="flex justify-center text-6xl font-bold text-[#5046e5]">Keine Projekte vorhanden</h1>
-        <h3 className="flex justify-center m-4 text-2xl font-bold text-stone-400">Erstellen Sie Ihr erstes Projekt</h3>
+        <h1 className="flex justify-center text-6xl font-bold text-[#5046e5]">
+          Keine Projekte vorhanden
+        </h1>
+        <h3 className="flex justify-center m-4 text-2xl font-bold text-stone-400">
+          Erstellen Sie Ihr erstes Projekt
+        </h3>
         <Button
           className="bg-[#5046e5] text-white m-8 w-40 justify-center hover:bg-[#4438ca]"
           onClick={handleCreateProject}
@@ -83,7 +93,7 @@ const renderProjectList = (isProjectListEmpty: boolean, handleCreateProject: () 
     );
   } else {
     return (
-      <Box className='flex flex-col'>
+      <Box className="flex flex-col">
         <TableHover projects={projects} />
         <Button
           className="bg-[#5046e5] text-white my-8 w-40 justify-center hover:bg-[#4438ca]"
@@ -94,6 +104,6 @@ const renderProjectList = (isProjectListEmpty: boolean, handleCreateProject: () 
       </Box>
     );
   }
-}
+};
 
 export default ProjectManager;

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import RootLayout from '@/components/main/RootLayout';
+import * as React from "react";
+import RootLayout from "@/components/main/RootLayout";
 import ConsistencyMatrix from "@/components/main/ConsistencyMatrix";
 
 const ConsistencyMatrixPage: React.FC = () => {

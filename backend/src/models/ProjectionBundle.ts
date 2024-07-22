@@ -1,4 +1,3 @@
-
 import { FutureProjection } from "./FutureProjection";
 
 export class ProjectionBundle {
@@ -81,4 +80,3 @@ export class ProjectionBundle {
     this.pValue = pValue;
   }
 }
-

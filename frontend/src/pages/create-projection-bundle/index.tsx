@@ -1,5 +1,5 @@
-import React from 'react';
-import ProjectionBundleTable from '@/components/sub/ProjectionBundleTable';
+import React from "react";
+import ProjectionBundleTable from "@/components/sub/ProjectionBundleTable";
 
 const ProjectionBundlesPage: React.FC = () => {
   return <ProjectionBundleTable />;

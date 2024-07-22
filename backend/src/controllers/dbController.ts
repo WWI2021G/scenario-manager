@@ -175,10 +175,9 @@ class DBController {
       scenarioProject_id,
     }: { influencingFactor_id: number; scenarioProject_id: number } = req.body;
     try {
-      console.log(influencingFactor_id, scenarioProject_id, "linking");
       const message =
         await dbService.connectInfluencingFactorAndScenarioProject(
-          influencingFactor_id, 
+          influencingFactor_id,
           scenarioProject_id,
         );
       res.status(200).send(message);
@@ -709,7 +708,6 @@ class DBController {
             numPartInconsistencies,
             probability,
           );
-          console.log(projectionBundle.getPValue());
           projectionBundle.addProjections(combination);
           projectionBundles.push(projectionBundle);
         }
@@ -842,7 +840,6 @@ class DBController {
 
   async getRawScenarioID(req: Request, res: Response) {
     const { name, quality }: { name: string; quality: number } = req.body;
-    console.log(req.body)
     const rawScenario: RawScenario = new RawScenario(name, quality);
     try {
       const rawScenario_id = await dbService.selectRawScenarioID(rawScenario);
@@ -861,7 +858,7 @@ class DBController {
     } catch (error: any) {
       res.status(500).send(error.message);
     }
-  }   
+  }
 
   async getRawScenarioByName(req: Request, res: Response) {
     const { name }: { name: string } = req.body;

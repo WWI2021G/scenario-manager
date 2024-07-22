@@ -1,13 +1,26 @@
 import * as React from "react";
 import { useState } from "react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { ScenarioProject, ScenarioType, User } from "@/types";
 import { SelectChangeEvent } from "@mui/material/Select";
 
-export default function ScenarioProjectForm({ onSave }: { onSave: (project: ScenarioProject) => void }) {
+export default function ScenarioProjectForm({
+  onSave,
+}: {
+  onSave: (project: ScenarioProject) => void;
+}) {
   const [project, setProject] = useState<ScenarioProject>({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     influencingFactors: [],
     keyFactors: [],
     futureProjections: [],
@@ -18,17 +31,17 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProject(prevProject => ({
+    setProject((prevProject) => ({
       ...prevProject,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSelectChange = (e: SelectChangeEvent<ScenarioType>) => {
     const { name, value } = e.target;
-    setProject(prevProject => ({
+    setProject((prevProject) => ({
       ...prevProject,
-      [name]: value as ScenarioType
+      [name]: value as ScenarioType,
     }));
   };
 
@@ -36,8 +49,8 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
     e.preventDefault();
     onSave(project);
     setProject({
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       influencingFactors: [],
       keyFactors: [],
       futureProjections: [],
@@ -48,7 +61,7 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
   };
 
   return (
-    <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "50%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Neues Projekt erstellen
       </Typography>
@@ -86,7 +99,12 @@ export default function ScenarioProjectForm({ onSave }: { onSave: (project: Scen
             ))}
           </Select>
         </FormControl>
-        <Button type="submit" variant="contained" className='bg-primary hover:bg-primary-hover' sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          className="bg-primary hover:bg-primary-hover"
+          sx={{ mt: 2 }}
+        >
           Projekt speichern
         </Button>
       </form>

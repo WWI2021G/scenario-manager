@@ -57,7 +57,22 @@ export default function InfluencingFactorCatalogue({
         throw new Error("No scenario project ID found in session storage");
       }
 
+      // Fetch existing influencing factors for the project to avoid duplicates
+      const existingFactorsResponse = await axios.get(
+        `http://localhost:3001/db/if/sp/${scenarioProjectId}`,
+      );
+      const existingFactors: InfluencingFactor[] = existingFactorsResponse.data;
+
       for (const factor of selectedFactors) {
+        // Check if the factor is already linked to the project
+        const isDuplicate = existingFactors.some(
+          (existingFactor) => existingFactor.name === factor.name,
+        );
+        if (isDuplicate) {
+          console.log(`Factor ${factor.name} is already linked to the project`);
+          continue; // Skip this factor if it's a duplicate
+        }
+
         const response = await axios.post("http://localhost:3001/db/ifid", {
           name: factor.name,
           description: factor.description,
@@ -82,7 +97,9 @@ export default function InfluencingFactorCatalogue({
 
   return (
     <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
-      <h1 className="text-3xl my-4 font-bold">Persistenter Einflussfaktorenkatalog</h1>
+      <h1 className="text-3xl my-4 font-bold">
+        Persistenter Einflussfaktorenkatalog
+      </h1>
       <Button
         variant="contained"
         color="primary"
@@ -119,4 +136,3 @@ export default function InfluencingFactorCatalogue({
     </Box>
   );
 }
-

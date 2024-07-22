@@ -9,9 +9,12 @@ class ClusterAnalysis {
   private projectionBundles: ProjectionBundle[];
 
   constructor(projectionBundlesData: any[]) {
-    this.projectionBundles = projectionBundlesData.map(bundleData => {
+    this.projectionBundles = projectionBundlesData.map((bundleData) => {
       const projections = bundleData.projections.map((projData: any) => {
-        const keyFactor = new KeyFactor(projData.keyFactor.name, projData.keyFactor.curState);
+        const keyFactor = new KeyFactor(
+          projData.keyFactor.name,
+          projData.keyFactor.curState,
+        );
         return new FutureProjection(
           projData.name,
           projData.description,
@@ -19,7 +22,7 @@ class ClusterAnalysis {
           projData.keyFactor_id,
           projData.probability,
           new Date(projData.timeFrame),
-          projData.type
+          projData.type,
         );
       });
 
@@ -27,7 +30,7 @@ class ClusterAnalysis {
         bundleData.consistency,
         bundleData.numPartInconsistencies,
         parseFloat(bundleData.probability),
-        bundleData.projectionBundle_id
+        bundleData.projectionBundle_id,
       );
 
       projectionBundle.addProjections(projections);
@@ -37,22 +40,39 @@ class ClusterAnalysis {
 
     this.keyFactors = [];
     this.futureProjections = [];
-    this.projectionBundles.forEach(bundle => {
-      bundle.getProjections().forEach(proj => {
+    this.projectionBundles.forEach((bundle) => {
+      bundle.getProjections().forEach((proj) => {
         this.futureProjections.push(proj);
-        if (!this.keyFactors.some(kf => kf.getName() === proj.getKeyFactor().getName())) {
+        if (
+          !this.keyFactors.some(
+            (kf) => kf.getName() === proj.getKeyFactor().getName(),
+          )
+        ) {
           this.keyFactors.push(proj.getKeyFactor());
         }
       });
     });
   }
 
-  private calculateDistance(bundle1: ProjectionBundle, bundle2: ProjectionBundle): number {
-    const projections1 = new Set(bundle1.getProjections().map(p => p.getName()));
-    const projections2 = new Set(bundle2.getProjections().map(p => p.getName()));
+  private calculateDistance(
+    bundle1: ProjectionBundle,
+    bundle2: ProjectionBundle,
+  ): number {
+    const projections1 = new Set(
+      bundle1.getProjections().map((p) => p.getName()),
+    );
+    const projections2 = new Set(
+      bundle2.getProjections().map((p) => p.getName()),
+    );
 
-    const intersection = new Set([...projections1].filter(x => projections2.has(x)));
-    const unionDifference = new Set([...projections1, ...projections2].filter(x => !(projections1.has(x) && projections2.has(x))));
+    const intersection = new Set(
+      [...projections1].filter((x) => projections2.has(x)),
+    );
+    const unionDifference = new Set(
+      [...projections1, ...projections2].filter(
+        (x) => !(projections1.has(x) && projections2.has(x)),
+      ),
+    );
 
     const A = intersection.size;
     const U = unionDifference.size;
@@ -77,7 +97,12 @@ class ClusterAnalysis {
     return matrix;
   }
 
-  private updateDistanceMatrix(matrix: number[][], index1: number, index2: number, linkageMethod: string): number[][] {
+  private updateDistanceMatrix(
+    matrix: number[][],
+    index1: number,
+    index2: number,
+    linkageMethod: string,
+  ): number[][] {
     const newMatrix: number[][] = [];
     const newSize = matrix.length - 1;
 
@@ -89,11 +114,12 @@ class ClusterAnalysis {
         } else {
           const origI = i >= index1 ? i + 1 : i;
           const origJ = j >= index2 ? j + 1 : j;
-          const distance = linkageMethod === 'single'
-            ? Math.min(matrix[index1][origJ], matrix[index2][origJ])
-            : linkageMethod === 'complete'
-              ? Math.max(matrix[index1][origJ], matrix[index2][origJ])
-              : (matrix[index1][origJ] + matrix[index2][origJ]) / 2;
+          const distance =
+            linkageMethod === "single"
+              ? Math.min(matrix[index1][origJ], matrix[index2][origJ])
+              : linkageMethod === "complete"
+                ? Math.max(matrix[index1][origJ], matrix[index2][origJ])
+                : (matrix[index1][origJ] + matrix[index2][origJ]) / 2;
           newMatrix[i][j] = distance;
         }
       }
@@ -102,8 +128,11 @@ class ClusterAnalysis {
     return newMatrix;
   }
 
-  public async agglomerativeClustering(linkageMethod: string, scenarioProject_id: number): Promise<void> {
-    let clusters = this.projectionBundles.map(bundle => [bundle]);
+  public async agglomerativeClustering(
+    linkageMethod: string,
+    scenarioProject_id: number,
+  ): Promise<void> {
+    let clusters = this.projectionBundles.map((bundle) => [bundle]);
     let matrix = this.createDistanceMatrix(this.projectionBundles);
 
     while (clusters.length > 2) {
@@ -122,10 +151,17 @@ class ClusterAnalysis {
       }
 
       const newCluster = [...clusters[mergeIndex1], ...clusters[mergeIndex2]];
-      clusters = clusters.filter((_, index) => index !== mergeIndex1 && index !== mergeIndex2);
+      clusters = clusters.filter(
+        (_, index) => index !== mergeIndex1 && index !== mergeIndex2,
+      );
       clusters.push(newCluster);
 
-      matrix = this.updateDistanceMatrix(matrix, mergeIndex1, mergeIndex2, linkageMethod);
+      matrix = this.updateDistanceMatrix(
+        matrix,
+        mergeIndex1,
+        mergeIndex2,
+        linkageMethod,
+      );
     }
 
     await dbService.createRawScenarios(clusters, scenarioProject_id);
@@ -135,12 +171,16 @@ class ClusterAnalysis {
   public displayClusters(clusters: ProjectionBundle[][]) {
     clusters.forEach((cluster, index) => {
       console.log(`Cluster ${index + 1}:`);
-      cluster.forEach(bundle => {
-        console.log(`  Bundle: ${bundle.getProjections().map(fp => fp.getName()).join(', ')}`);
+      cluster.forEach((bundle) => {
+        console.log(
+          `  Bundle: ${bundle
+            .getProjections()
+            .map((fp) => fp.getName())
+            .join(", ")}`,
+        );
       });
     });
   }
-
 }
 
 export default ClusterAnalysis;

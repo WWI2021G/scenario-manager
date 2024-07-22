@@ -1,14 +1,26 @@
-import React from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { ProjectionBundle } from '@/types';
+import React from "react";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { ProjectionBundle } from "@/types";
 
 interface ProjectionBundleTableProps {
   projectionBundles: ProjectionBundle[];
 }
 
-const ProjectionBundleTable: React.FC<ProjectionBundleTableProps> = ({ projectionBundles }) => {
+const ProjectionBundleTable: React.FC<ProjectionBundleTableProps> = ({
+  projectionBundles,
+}) => {
   return (
-    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h5" component="h2" gutterBottom>
         Projektionsbündel
       </Typography>
@@ -31,9 +43,19 @@ const ProjectionBundleTable: React.FC<ProjectionBundleTableProps> = ({ projectio
                 <TableCell>{bundle.numPartInconsistencies}</TableCell>
                 <TableCell>{bundle.pValue}</TableCell>
                 <TableCell>
-                  {bundle.projections.slice(0, 3).map((proj) => proj.name).join(', ')}
+                  {bundle.projections
+                    .slice(0, 3)
+                    .map((proj) => proj.name)
+                    .join(", ")}
                   {bundle.projections.length > 3 && (
-                    <span title={bundle.projections.slice(3).map((proj) => proj.name).join(', ')}>...</span>
+                    <span
+                      title={bundle.projections
+                        .slice(3)
+                        .map((proj) => proj.name)
+                        .join(", ")}
+                    >
+                      ...
+                    </span>
                   )}
                 </TableCell>
               </TableRow>

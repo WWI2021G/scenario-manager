@@ -1,12 +1,12 @@
 export enum Probability {
-  HIGH = 'HIGH',
-  MEDIUM = 'MEDIUM',
-  LOW = 'LOW',
+  HIGH = "HIGH",
+  MEDIUM = "MEDIUM",
+  LOW = "LOW",
 }
 
 export enum ProjectionType {
-  TREND = 'TREND',
-  EXTREME = 'EXTREME',
+  TREND = "TREND",
+  EXTREME = "EXTREME",
 }
 
 export enum ScenarioType {
@@ -29,7 +29,6 @@ export interface KeyFactor {
 }
 
 export type InfluencMatrix = Map<string, Map<string, number>>;
-
 
 export interface FutureProjection {
   id?: number;
@@ -60,7 +59,6 @@ export interface ScenarioProject {
   scenarioType: ScenarioType;
   user: User;
 }
-
 
 export interface InfluencingFactor {
   name: string;

@@ -1,20 +1,21 @@
-
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import axios from "axios";
 
 interface EditInfluencingFactorFormProps {
   ifName: string;
 }
 
-const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({ifName}) => {
+const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({
+  ifName,
+}) => {
   const router = useRouter();
   const { name } = router.query;
 
-  const [oldName, setOldName] = useState<string>('');
-  const [newName, setNewName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [oldName, setOldName] = useState<string>("");
+  const [newName, setNewName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -25,14 +26,16 @@ const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({if
 
   const fetchInfluencingFactor = async (name: string) => {
     try {
-      const response = await axios.post('http://localhost:3001/db/ifname', { name });
+      const response = await axios.post("http://localhost:3001/db/ifname", {
+        name,
+      });
       const factor = response.data;
       setOldName(factor.name);
       setNewName(factor.name);
       setDescription(factor.description);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching influencing factor:', error);
+      console.error("Error fetching influencing factor:", error);
       setLoading(false);
     }
   };
@@ -40,10 +43,14 @@ const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({if
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3001/db/if/update', { oldName, newName, description });
-      router.push('/influencing-factors');
+      await axios.post("http://localhost:3001/db/if/update", {
+        oldName,
+        newName,
+        description,
+      });
+      router.push("/influencing-factors");
     } catch (error) {
-      console.error('Error updating influencing factor:', error);
+      console.error("Error updating influencing factor:", error);
     }
   };
 
@@ -52,7 +59,7 @@ const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({if
   }
 
   return (
-    <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "50%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Edit Influencing Factor
       </Typography>
@@ -73,7 +80,12 @@ const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({if
           margin="normal"
           variant="outlined"
         />
-        <Button type="submit" variant="contained" className="bg-primary hover:bg-primary-hover" sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          className="bg-primary hover:bg-primary-hover"
+          sx={{ mt: 2 }}
+        >
           Save Changes
         </Button>
       </form>
@@ -82,4 +94,3 @@ const EditInfluencingFactorForm: React.FC<EditInfluencingFactorFormProps> = ({if
 };
 
 export default EditInfluencingFactorForm;
-
