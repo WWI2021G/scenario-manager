@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Box,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -11,58 +10,20 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { ProjectionBundle } from "@/types";
-import router from "next/router";
 
-const ProjectionBundleTable: React.FC = () => {
-  const [projectionBundles, setProjectionBundles] = useState<
-    ProjectionBundle[]
-  >([]);
+interface ProjectionBundleTableProps {
+  projectionBundles: ProjectionBundle[];
+}
 
-  useEffect(() => {
-    const fetchProjectionBundles = async () => {
-      try {
-        const scenarioProject_id = sessionStorage.getItem("scenarioProject_id");
-        const response = await axios.get(
-          `http://localhost:3001/db/pb/sp/${scenarioProject_id}`,
-        );
-        setProjectionBundles(response.data);
-      } catch (error) {
-        console.error("Error fetching projection bundles:", error);
-      }
-    };
-
-    fetchProjectionBundles();
-  }, []);
-
-  const handleSubmit = async (projectionBundles: ProjectionBundle[]) => {
-    const scenarioProject_id = sessionStorage.getItem("scenarioProject_id");
-    await axios
-      .post("http://localhost:3001/db/cluster", {
-        projectionBundles,
-        scenarioProject_id,
-      })
-      .then((response) => {
-        console.log(response);
-        router.push("/rawscenarios");
-      })
-      .catch((error) => console.error(error));
-  };
-
+const ProjectionBundleTable: React.FC<ProjectionBundleTableProps> = ({
+  projectionBundles,
+}) => {
   return (
     <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Projektionsbündel-Katalog
+      <Typography variant="h5" component="h2" gutterBottom>
+        Projektionsbündel
       </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleSubmit(projectionBundles)}
-        sx={{ mb: 2 }}
-      >
-        Clusteranalyse
-      </Button>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

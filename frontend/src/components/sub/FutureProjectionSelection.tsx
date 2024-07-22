@@ -1,22 +1,39 @@
-import React, { useState } from 'react';
-import { Box, Button, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { KeyFactor, FutureProjection, ProjectionType, Probability } from '@/types';
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+} from "@mui/material";
+import {
+  KeyFactor,
+  FutureProjection,
+  ProjectionType,
+  Probability,
+} from "@/types";
 
 const dummyFutureProjections: FutureProjection[] = [
   {
-    name: 'Erlebniseinkauf 1',
+    name: "Erlebniseinkauf 1",
     keyFactor_id: 0,
     keyFactor: {} as KeyFactor,
-    description: 'Projection for Erlebnis shopping',
+    description: "Projection for Erlebnis shopping",
     timeFrame: new Date(),
     projectionType: ProjectionType.TREND,
     probability: Probability.HIGH,
   },
   {
-    name: 'Der wahrhafte Verbraucher 1',
+    name: "Der wahrhafte Verbraucher 1",
     keyFactor_id: 0,
     keyFactor: {} as KeyFactor,
-    description: 'Projection for genuine consumers',
+    description: "Projection for genuine consumers",
     timeFrame: new Date(),
     projectionType: ProjectionType.TREND,
     probability: Probability.MEDIUM,
@@ -29,14 +46,19 @@ interface FutureProjectionSelectionProps {
   onCancel: () => void;
 }
 
-const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ onCreateBundle, onCancel }) => {
-  const [selectedProjections, setSelectedProjections] = useState<FutureProjection[]>([]);
+const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({
+  onCreateBundle,
+  onCancel,
+}) => {
+  const [selectedProjections, setSelectedProjections] = useState<
+    FutureProjection[]
+  >([]);
 
   const handleSelectProjection = (projection: FutureProjection) => {
     setSelectedProjections((prev) =>
       prev.includes(projection)
         ? prev.filter((p) => p.name !== projection.name)
-        : [...prev, projection]
+        : [...prev, projection],
     );
   };
 
@@ -45,21 +67,21 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
   };
 
   return (
-    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Select Future Projections
+        Zukunftsprojektionen auswählen
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", my: 2 }}>
         <Button
           variant="contained"
           color="primary"
           onClick={handleCreateBundle}
           disabled={selectedProjections.length === 0}
         >
-          Create Projection Bundle
+          Projektionsbündel erstellen
         </Button>
         <Button variant="outlined" color="secondary" onClick={onCancel}>
-          Cancel
+          Abbrechen
         </Button>
       </Box>
       <TableContainer component={Paper}>
@@ -69,11 +91,11 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
               <TableCell />
               <TableCell>ID</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Key Factor</TableCell>
-              <TableCell>Projection Description</TableCell>
-              <TableCell>Time Frame</TableCell>
-              <TableCell>Projection Type</TableCell>
-              <TableCell>Probability</TableCell>
+              <TableCell>Schlüsselfaktor</TableCell>
+              <TableCell>Projektionsbeschreibung</TableCell>
+              <TableCell>Zeitrahmen</TableCell>
+              <TableCell>Projektionsart</TableCell>
+              <TableCell>Wahrscheinlichkeit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -89,7 +111,9 @@ const FutureProjectionSelection: React.FC<FutureProjectionSelectionProps> = ({ o
                 <TableCell>{projection.name}</TableCell>
                 <TableCell>{projection.keyFactor.name}</TableCell>
                 <TableCell>{projection.description}</TableCell>
-                <TableCell>{projection.timeFrame.toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {projection.timeFrame.toLocaleDateString()}
+                </TableCell>
                 <TableCell>{projection.projectionType}</TableCell>
                 <TableCell>{projection.probability}</TableCell>
               </TableRow>

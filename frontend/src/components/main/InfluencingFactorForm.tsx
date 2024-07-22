@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import * as React from "react";
+import { useState, useEffect } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { InfluencingFactor } from '@/types';
+import { InfluencingFactor } from "@/types";
 
 interface InfluencingFactorFormProps {
   initialData?: InfluencingFactor;
@@ -9,36 +9,56 @@ interface InfluencingFactorFormProps {
   onSubmit: (influencingFactor: InfluencingFactor) => void;
 }
 
-const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialData, scenarioProjectId, onSubmit }) => {
-  const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>(initialData || {
-    name: '',
-    description: '',
-    activeSum: 0,
-    passiveSum: 0,
-  });
+const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({
+  initialData,
+  scenarioProjectId,
+  onSubmit,
+}) => {
+  const [influencingFactor, setInfluencingFactor] = useState<InfluencingFactor>(
+    initialData || {
+      name: "",
+      description: "",
+      activeSum: 0,
+      passiveSum: 0,
+    },
+  );
 
-  const [influencingFactorsList, setInfluencingFactorsList] = useState<InfluencingFactor[]>([]);
+  const [influencingFactorsList, setInfluencingFactorsList] = useState<
+    InfluencingFactor[]
+  >([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | { value: unknown }>) => {
-    const { name, value } = (e.target as HTMLInputElement | HTMLTextAreaElement | { name: string; value: unknown });
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | { value: unknown }
+    >,
+  ) => {
+    const { name, value } = e.target as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | { name: string; value: unknown };
     setInfluencingFactor({ ...influencingFactor, [name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setInfluencingFactorsList([...influencingFactorsList, { ...influencingFactor, }]);
+    setInfluencingFactorsList([
+      ...influencingFactorsList,
+      { ...influencingFactor },
+    ]);
     setInfluencingFactor({
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       activeSum: 0,
       passiveSum: 0,
     });
   };
 
   return (
-    <Box sx={{ width: '50%', margin: '0 auto', mt: 4 }}>
+    <Box sx={{ width: "50%", margin: "0 auto", mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        {initialData ? 'Edit Influencing Factor' : 'Create New Influencing Factor'}
+        {initialData
+          ? "Edit Influencing Factor"
+          : "Create New Influencing Factor"}
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -59,7 +79,12 @@ const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialDa
           margin="normal"
           variant="outlined"
         />
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+        >
           Save Influencing Factor
         </Button>
       </form>
@@ -68,4 +93,3 @@ const InfluencingFactorForm: React.FC<InfluencingFactorFormProps> = ({ initialDa
 };
 
 export default InfluencingFactorForm;
-

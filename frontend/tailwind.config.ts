@@ -15,12 +15,12 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        'primary': '#5046e5',
-        'primary-hover': '#4438ca',
-      }
+        primary: "#5046e5",
+        "primary-hover": "#4438ca",
+      },
     },
   },
   plugins: [],

@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Stepper, Step, StepLabel } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { Stepper, Step, StepLabel } from "@mui/material";
 import { Inter } from "next/font/google";
 import "../../app/globals.css";
-import SideNavbar from '@/components/sub/Sidebar';
+import SideNavbar from "@/components/sub/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const drawerWidth = 240;
 
 const steps = [
-  { label: 'Projekt auswählen', path: '/project-list' },
-  { label: 'Einflussfaktorenkatalog erstellen', path: '/influencing-factors' },
-  { label: 'Einflussanalyse', path: '/influence-matrix' },
-  { label: 'Schlüsselfaktoren aufbereiten', path: '/keyfactors' },
-  { label: 'Konsistenzanalyse', path: '/consistency-analysis' },
-  { label: 'Projektionsbündelung', path: '/projection-bundles' },
-  { label: 'Rohszenario', path: '#' } // Placeholder for the page to be implemented
+  { label: "Projekt auswählen", path: "/project-list" },
+  { label: "Einflussfaktorenkatalog erstellen", path: "/influencing-factors" },
+  { label: "Einflussanalyse", path: "/influence-matrix" },
+  { label: "Schlüsselfaktoren aufbereiten", path: "/keyfactors" },
+  { label: "Konsistenzanalyse", path: "/consistency-analysis" },
+  { label: "Projektionsbündelung", path: "/projection-bundles" },
+  { label: "Rohszenario", path: "/rawscenarios" },
 ];
 
 const subPages = {
-  '/influence-matrix': '/influence-matrix/influencing-factors-summary'
+  "/influence-matrix": "/influence-matrix/influencing-factors-summary",
 };
 
 export default function RootLayout({
@@ -33,13 +33,19 @@ export default function RootLayout({
 
   useEffect(() => {
     const currentPath = router.pathname;
-    let currentStep = steps.findIndex(step => step.path === currentPath);
+    let currentStep = steps.findIndex((step) => step.path === currentPath);
     if (currentStep === -1) {
       for (const [mainPath, subPath] of Object.entries(subPages)) {
         if (currentPath === subPath) {
-          currentStep = steps.findIndex(step => step.path === mainPath);
+          currentStep = steps.findIndex((step) => step.path === mainPath);
           break;
         }
+      }
+      if (currentPath.startsWith("/future-projection")) {
+        currentStep = steps.findIndex((step) => step.path === "/keyfactors");
+      }
+      if (currentPath.startsWith("/rawscenarios")) {
+        currentStep = steps.findIndex((step) => step.path === "/rawscenarios");
       }
     }
     setActiveStep(currentStep === -1 ? 0 : currentStep);
@@ -47,18 +53,29 @@ export default function RootLayout({
 
   const handleStepClick = (index: number) => {
     const path = steps[index].path;
-    if (path !== '#') {
+    if (path !== "#") {
       router.push(path);
     }
   };
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: "flex" }}>
       <SideNavbar />
-      <main style={{ flexGrow: 1, padding: '24px', marginLeft: `${drawerWidth}px`, width: `calc(100% - ${drawerWidth}px)` }}>
+      <main
+        style={{
+          flexGrow: 1,
+          padding: "24px",
+          marginLeft: `${drawerWidth}px`,
+          width: `calc(100% - ${drawerWidth}px)`,
+        }}
+      >
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((step, index) => (
-            <Step key={step.label} onClick={() => handleStepClick(index)} style={{ cursor: 'pointer' }}>
+            <Step
+              key={step.label}
+              onClick={() => handleStepClick(index)}
+              style={{ cursor: "pointer" }}
+            >
               <StepLabel>{step.label}</StepLabel>
             </Step>
           ))}
@@ -68,4 +85,3 @@ export default function RootLayout({
     </div>
   );
 }
-

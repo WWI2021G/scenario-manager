@@ -12,13 +12,18 @@ const KeyFactorsPage: React.FC = () => {
 
   return (
     <RootLayout>
-      <h1 className="text-3xl my-4 font-bold">Schlüsselfaktoren</h1>
-      <Box sx={{ width: "100%", margin: "0 auto", mt: 4 }}>
-        <Button variant="contained" color="primary" onClick={handleDone} sx={{mb:2}}>
+      <Box sx={{ width: "80%", margin: "0 auto", mt: 4 }}>
+        <h1 className="text-3xl my-4 font-bold">Schlüsselfaktoren</h1>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDone}
+          sx={{ mb: 2 }}
+        >
           Konsistenzmatrix
         </Button>
+        <KeyFactorTable />
       </Box>
-      <KeyFactorTable />
     </RootLayout>
   );
 };

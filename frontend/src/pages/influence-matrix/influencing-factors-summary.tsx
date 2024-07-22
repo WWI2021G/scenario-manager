@@ -1,6 +1,6 @@
-import React from 'react';
-import RootLayout from '@/components/main/RootLayout';
-import InfluencingFactorsSummary from '@/components/sub/InfluencingFactorsSummary';
+import React from "react";
+import RootLayout from "@/components/main/RootLayout";
+import InfluencingFactorsSummary from "@/components/sub/InfluencingFactorsSummary";
 
 const InfluencingFactorsSummaryPage: React.FC = () => {
   return (

@@ -1,12 +1,12 @@
 export enum Probability {
-  HIGH = 'HIGH',
-  MEDIUM = 'MEDIUM',
-  LOW = 'LOW',
+  HIGH = "HIGH",
+  MEDIUM = "MEDIUM",
+  LOW = "LOW",
 }
 
 export enum ProjectionType {
-  TREND = 'TREND',
-  EXTREME = 'EXTREME',
+  TREND = "TREND",
+  EXTREME = "EXTREME",
 }
 
 export enum ScenarioType {
@@ -30,7 +30,6 @@ export interface KeyFactor {
 
 export type InfluencMatrix = Map<string, Map<string, number>>;
 
-
 export interface FutureProjection {
   id?: number;
   name: string;
@@ -43,13 +42,11 @@ export interface FutureProjection {
 }
 
 export interface ProjectionBundle {
-  id: number;
-  name: string;
-  description: string;
-  projections: FutureProjection[];
-  numberOfPartialInconsistencies: number;
+  projectionBundle_id: number;
+  consistency: number;
+  numPartInconsistencies: number;
   pValue: number;
-  probability: number;
+  projections: FutureProjection[];
 }
 
 export interface ScenarioProject {
@@ -63,7 +60,6 @@ export interface ScenarioProject {
   user: User;
 }
 
-
 export interface InfluencingFactor {
   name: string;
   description: string;
@@ -75,7 +71,6 @@ type Quality = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export interface RawScenario {
   name: string;
-  description: string;
   projectionBundles: ProjectionBundle[];
   quality: Quality;
 }

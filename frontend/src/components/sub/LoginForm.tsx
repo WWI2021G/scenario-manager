@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import bcrypt from 'bcryptjs';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
+import bcrypt from "bcryptjs";
+import axios from "axios";
 
 const LoginForm: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
@@ -18,15 +18,16 @@ const LoginForm: React.FC = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    setUsernameError('');
-    setPasswordError('');
+    setUsernameError("");
+    setPasswordError("");
     let hashedPassword = undefined;
-    await axios.post("http://localhost:3001/db/username", { "name": username })
-      .then(response => {
+    await axios
+      .post("http://localhost:3001/db/username", { name: username })
+      .then((response) => {
         hashedPassword = response.data.userPasswordHash;
-        setUsernameError('');
+        setUsernameError("");
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response.data === "No data returned from the query.") {
           setUsernameError("Username doesn't exist");
           return;
@@ -38,13 +39,14 @@ const LoginForm: React.FC = () => {
     const match = await bcrypt.compare(password, hashedPassword);
 
     if (match) {
-      setPasswordError('');
-      await axios.post("http://localhost:3001/db/userid", { "userName": username })
-        .then(response => {
-          setPasswordError('');
+      setPasswordError("");
+      await axios
+        .post("http://localhost:3001/db/userid", { userName: username })
+        .then((response) => {
+          setPasswordError("");
           sessionStorage.setItem("user_id", response.data.scenarioUser_id);
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response.data === "No data returned from the query.") {
             setUsernameError("Username doesn't exist");
             return;
@@ -52,20 +54,23 @@ const LoginForm: React.FC = () => {
             setUsernameError("Error getting checking username");
           }
         });
-      router.push('/project-list'); // Navigate to the homepage on successful login
+      router.push("/project-list"); // Navigate to the homepage on successful login
     } else {
-      setPasswordError('Invalid password');
+      setPasswordError("Invalid password");
     }
   };
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
-    setUsernameError('');
-    setPasswordError('');
+    setUsernameError("");
+    setPasswordError("");
     try {
-      const usernameResponse = await axios.post("http://localhost:3001/db/username", { "name": username });
+      const usernameResponse = await axios.post(
+        "http://localhost:3001/db/username",
+        { name: username },
+      );
       if (usernameResponse.data) {
-        setUsernameError('Username already exists');
+        setUsernameError("Username already exists");
         return;
       }
     } catch (error: any) {
@@ -75,16 +80,20 @@ const LoginForm: React.FC = () => {
     }
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
-    await axios.post("http://localhost:3001/db/user/add", { "userName": username, "userPasswordHash": hashedPassword })
-      .then(response => {
+    await axios
+      .post("http://localhost:3001/db/user/add", {
+        userName: username,
+        userPasswordHash: hashedPassword,
+      })
+      .then((response) => {
         sessionStorage.setItem("user_id", response.data.scenarioUser_id);
       })
-      .catch(error => {
+      .catch((error) => {
         setUsernameError("Error adding user to database");
         setPasswordError("Error adding user to database");
-        console.error(error)
+        console.error(error);
       });
-    router.push('/project-list'); // Navigate to the homepage on successful login
+    router.push("/project-list"); // Navigate to the homepage on successful login
   };
 
   if (!isClient) {
@@ -95,12 +104,12 @@ const LoginForm: React.FC = () => {
     <Box
       component="form"
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         gap: 2,
-        maxWidth: '400px',
-        margin: '0 auto',
+        maxWidth: "400px",
+        margin: "0 auto",
         mt: 4,
       }}
     >
@@ -127,10 +136,20 @@ const LoginForm: React.FC = () => {
         error={Boolean(passwordError)}
         helperText={passwordError}
       />
-      <Button variant="contained" color="primary" onClick={handleLogin} fullWidth>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleLogin}
+        fullWidth
+      >
         Login
       </Button>
-      <Button variant="contained" color="primary" onClick={handleRegister} fullWidth>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleRegister}
+        fullWidth
+      >
         Registrieren
       </Button>
     </Box>
@@ -138,4 +157,3 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
-
