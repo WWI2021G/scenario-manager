@@ -66,12 +66,12 @@ const InfluencMatrixComponent: React.FC = () => {
     for (let i = 0; i < influencingFactors.length; i++) {
       const activeSum = getActiveSum(influencingFactors[i]);
       const passiveSum = getPassiveSum(influencingFactors[i]);
-      await axios.post("http://localhost:3001/db/if/as/update", { "name": influencingFactors[i].name, "description": influencingFactors[i].description, "activeSum": activeSum, "passiveSum": passiveSum })
+      await axios.post("http://localhost:3001/db/if/as/update", { "scenarioProject_id": scenarioProject_id, "name": influencingFactors[i].name, "description": influencingFactors[i].description, "activeSum": activeSum, "passiveSum": passiveSum })
         .then(response => {
           console.log(response);
         })
         .catch(error => console.error(error));
-      await axios.post("http://localhost:3001/db/if/ps/update", { "name": influencingFactors[i].name, "description": influencingFactors[i].description, "activeSum": activeSum, "passiveSum": passiveSum })
+      await axios.post("http://localhost:3001/db/if/ps/update", { "scenarioProject_id": scenarioProject_id, "name": influencingFactors[i].name, "description": influencingFactors[i].description, "activeSum": activeSum, "passiveSum": passiveSum })
         .then(response => {
           console.log(response);
         })

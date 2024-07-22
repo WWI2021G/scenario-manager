@@ -228,11 +228,13 @@ class DBController {
 
   async setActiveSum(req: Request, res: Response) {
     const {
+      scenarioProject_id,
       name,
       description,
       activeSum,
       passiveSum,
     }: {
+      scenarioProject_id: number;
       name: string;
       description: string;
       activeSum: number;
@@ -242,7 +244,10 @@ class DBController {
     influencingFactor.setActiveSum(activeSum);
     influencingFactor.setPassiveSum(passiveSum);
     try {
-      const message = await dbService.updateActiveSum(influencingFactor);
+      const message = await dbService.updateActiveSum(
+        scenarioProject_id,
+        influencingFactor,
+      );
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -262,11 +267,13 @@ class DBController {
 
   async setPassiveSum(req: Request, res: Response) {
     const {
+      scenarioProject_id,
       name,
       description,
       activeSum,
       passiveSum,
     }: {
+      scenarioProject_id: number;
       name: string;
       description: string;
       activeSum: number;
@@ -276,7 +283,10 @@ class DBController {
     influencingFactor.setActiveSum(activeSum);
     influencingFactor.setPassiveSum(passiveSum);
     try {
-      const message = await dbService.updatePassiveSum(influencingFactor);
+      const message = await dbService.updatePassiveSum(
+        scenarioProject_id,
+        influencingFactor,
+      );
       res.status(200).send(message);
     } catch (error: any) {
       res.status(500).send(error.message);
@@ -721,8 +731,13 @@ class DBController {
         );
         const futureProjections = reducedProjectionBundles[i].getProjections();
         for (let j = 0; j < futureProjections.length; j++) {
-          const futureProjection_id = await dbService.selectFutureProjectionID(futureProjections[j]);
-          await dbService.connectFutureProjectionAndProjectionBundle(futureProjection_id, projectionBundle_id);
+          const futureProjection_id = await dbService.selectFutureProjectionID(
+            futureProjections[j],
+          );
+          await dbService.connectFutureProjectionAndProjectionBundle(
+            futureProjection_id,
+            projectionBundle_id,
+          );
         }
         projectionBundle_ids.push(projectionBundle_id);
       }
