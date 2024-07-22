@@ -48,7 +48,6 @@ const RawScenariosTable: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Quality</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -59,7 +58,6 @@ const RawScenariosTable: React.FC = () => {
                 style={{ cursor: "pointer" }}
               >
                 <TableCell style={{ color: "blue" }}>{scenario.name}</TableCell>
-                <TableCell>{scenario.quality}</TableCell>
               </TableRow>
             ))}
           </TableBody>

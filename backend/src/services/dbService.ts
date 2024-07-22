@@ -1982,7 +1982,7 @@ class DBService {
   ): Promise<void> {
     for (let i = 0; i < clusters.length; i++) {
       const cluster = clusters[i];
-      const rawScenarioName = `RawScenario_${i + 1}_${scenarioProject_id}
+      const rawScenarioName = `Rohszenario_${i + 1}_${scenarioProject_id}
     `;
 
       try {

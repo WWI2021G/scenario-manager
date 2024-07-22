@@ -41,7 +41,9 @@ export default function RootLayout({
           break;
         }
       }
-      // Check if the current path is a subpage of /raw-scenarios
+      if (currentPath.startsWith("/future-projection")) {
+        currentStep = steps.findIndex((step) => step.path === "/keyfactors");
+      }
       if (currentPath.startsWith("/rawscenarios")) {
         currentStep = steps.findIndex((step) => step.path === "/rawscenarios");
       }

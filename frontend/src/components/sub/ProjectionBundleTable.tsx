@@ -27,7 +27,6 @@ const ProjectionBundleTable: React.FC = () => {
         const response = await axios.get(
           `http://localhost:3001/db/pb/sp/${scenarioProject_id}`,
         );
-        console.log(response.data);
         setProjectionBundles(response.data);
       } catch (error) {
         console.error("Error fetching projection bundles:", error);
@@ -38,9 +37,7 @@ const ProjectionBundleTable: React.FC = () => {
   }, []);
 
   const handleSubmit = async (projectionBundles: ProjectionBundle[]) => {
-    console.log(projectionBundles);
     const scenarioProject_id = sessionStorage.getItem("scenarioProject_id");
-    console.log(scenarioProject_id);
     await axios
       .post("http://localhost:3001/db/cluster", {
         projectionBundles,
