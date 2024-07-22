@@ -49,7 +49,6 @@ export default function TableHover({ projects }: ProjectTableProps) {
           <th style={{ width: "5%" }}>PID</th>
           <th>Projekttitel</th>
           <th>Datum</th>
-          <th style={{ width: "5%" }}></th>
         </tr>
       </thead>
       <tbody>
@@ -63,9 +62,6 @@ export default function TableHover({ projects }: ProjectTableProps) {
               <Link href="">{row.name}</Link>
             </td>
             <td>{row.date}</td>
-            <td>
-              <MoreHoriz />
-            </td>
           </tr>
         ))}
       </tbody>
