@@ -175,9 +175,10 @@ class DBController {
       scenarioProject_id,
     }: { influencingFactor_id: number; scenarioProject_id: number } = req.body;
     try {
+      console.log(influencingFactor_id, scenarioProject_id, "linking");
       const message =
         await dbService.connectInfluencingFactorAndScenarioProject(
-          influencingFactor_id,
+          influencingFactor_id, 
           scenarioProject_id,
         );
       res.status(200).send(message);

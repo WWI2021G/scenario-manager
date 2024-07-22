@@ -9,6 +9,7 @@ import axios from 'axios';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InfluencingFactorCatalogue from '@/components/sub/InfluencingFactorCatalouge';
 
 export default function InfluencingFactorsPage() {
   const [currentSelectedProject, setCurrentSelectedProject] = useState<number | null>(null);
@@ -16,6 +17,7 @@ export default function InfluencingFactorsPage() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedFactor, setSelectedFactor] = useState<InfluencingFactor | null>(null);
   const [projectName, setProjectName] = useState<string | null>(null);
+  const [showCatalogue, setShowCatalogue] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -81,65 +83,79 @@ export default function InfluencingFactorsPage() {
     handleMenuClose();
   };
 
+  const handleShowCatalogue = () => {
+    setShowCatalogue(true);
+  };
+
+  const handleCloseCatalogue = () => {
+    setShowCatalogue(false);
+    getProjectInfluencingFactors(currentSelectedProject!);
+  };
+
   return (
     <RootLayout>
-      <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
-        <h1 className='text-3xl my-4 font-bold'>Einflussfaktorenliste</h1>
-        <h2 className='text-lg my-2'>Aktuelles Projekt: {projectName}</h2>
-        <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleCreate} sx={{ mb: 2 }}>
-          Create New Influencing Factor
-        </Button>
-        <Button variant="outlined" color="secondary" sx={{ mb: 2, ml: 2 }}>
-          Select from Catalogue
-        </Button>
-        <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleDone} sx={{ mb: 2, ml: 2 }}>
-          All Influencing Factors added
-        </Button>
-        <Table hoverRow stickyHeader>
-          <thead>
-            <tr>
-              <th style={{ width: '5%' }}></th>
-              <th style={{ width: '5%' }}>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {influencingFactors.map((factor, index) => (
-              <tr key={index}>
-                <td>
-                  <IconButton
-                    aria-controls={`menu-${index}`}
-                    aria-haspopup="true"
-                    onClick={(e) => handleMenuOpen(e, factor)}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    id={`menu-${index}`}
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                  >
-                    <MenuItem onClick={handleEdit}>
-                      <EditIcon fontSize="small" />
-                      Edit
-                    </MenuItem>
-                    <MenuItem onClick={handleDelete}>
-                      <DeleteIcon fontSize="small" />
-                      Delete
-                    </MenuItem>
-                  </Menu>
-                </td>
-                <td>{index + 1}</td>
-                <td>{factor.name}</td>
-                <td>{factor.description}</td>
+      {showCatalogue ? (
+        <InfluencingFactorCatalogue onClose={handleCloseCatalogue} />
+      ) : (
+        <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}>
+          <h1 className='text-3xl my-4 font-bold'>Einflussfaktorenliste</h1>
+          <h2 className='text-lg my-2'>Aktuelles Projekt: {projectName}</h2>
+          <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleCreate} sx={{ mb: 2 }}>
+            Einflussfaktor hinzufügen
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleShowCatalogue} sx={{ mb: 2, ml: 2 }}>
+          Aus Katalog hinzufügen
+          </Button>
+          <Button variant="contained" className={'bg-primary hover:bg-primary-hover'} onClick={handleDone} sx={{ mb: 2, ml: 2 }}>
+            Einflussmatrix
+          </Button>
+          <Table hoverRow stickyHeader>
+            <thead>
+              <tr>
+                <th style={{ width: '5%' }}></th>
+                <th style={{ width: '5%' }}>ID</th>
+                <th>Name</th>
+                <th>Description</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Box>
+            </thead>
+            <tbody>
+              {influencingFactors.map((factor, index) => (
+                <tr key={index}>
+                  <td>
+                    <IconButton
+                      aria-controls={`menu-${index}`}
+                      aria-haspopup="true"
+                      onClick={(e) => handleMenuOpen(e, factor)}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id={`menu-${index}`}
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem onClick={handleEdit}>
+                        <EditIcon fontSize="small" />
+                        Edit
+                      </MenuItem>
+                      <MenuItem onClick={handleDelete}>
+                        <DeleteIcon fontSize="small" />
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{factor.name}</td>
+                  <td>{factor.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Box>
+      )}
     </RootLayout>
   );
 }
+

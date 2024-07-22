@@ -14,7 +14,7 @@ import { RawScenario } from "../models/RawScenario";
 dotenv.config();
 
 const pgp: IMain = pgPromise({});
-const db: IDatabase<any> = pgp({
+export const db: IDatabase<any> = pgp({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
@@ -1873,6 +1873,7 @@ class DBService {
           query_results[i].consistency,
           query_results[i].numpartinconsistencies,
           query_results[i].pvalue,
+          query_results[i].projectionbundle_id,
         );
         const futureProjections =
           await this.selectFutureProjectionsForProjectionBundle(

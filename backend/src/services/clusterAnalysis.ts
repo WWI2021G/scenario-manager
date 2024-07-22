@@ -1,7 +1,5 @@
 import { KeyFactor } from "../models/KeyFactor";
 import { FutureProjection } from "../models/FutureProjection";
-import { Probability } from "../models/Probability";
-import { ProjectionType } from "../models/ProjectionType";
 import { ProjectionBundle } from "../models/ProjectionBundle";
 import { dbService } from "../services/dbService";
 

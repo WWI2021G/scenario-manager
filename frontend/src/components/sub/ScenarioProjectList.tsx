@@ -56,19 +56,15 @@ const ProjectManager: React.FC = () => {
   };
 
   return (
-    <>
+    <Box sx={{ width: '80%', margin: '0 auto', mt: 4 }}> 
       <div className="font-bold text-3xl">Vorhandene Projekte</div>
-      <div className="flex flex-row">
-        <TextField className="my-4 w-[400px]" label="Suche Projekt" variant="outlined" />
-        <Button className="text-black my-4 mx-2 w-40 justify-center border-gray-400" variant={"outlined"}
-          startIcon={<FilterList />}>Filter</Button>
-      </div>
+      
       {showForm ? (
         <ScenarioProjectForm onSave={handleSaveProject} />
       ) : (
         renderProjectList(isProjectListEmpty, handleCreateProject, projects)
       )}
-    </>
+    </Box>
   );
 }
 

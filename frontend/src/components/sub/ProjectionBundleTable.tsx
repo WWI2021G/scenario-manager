@@ -4,12 +4,6 @@ import axios from 'axios';
 import { ProjectionBundle } from '@/types';
 import router from 'next/router';
 
-
-interface FutureProjection {
-  id: number;
-  name: string;
-}
-
 const ProjectionBundleTable: React.FC = () => {
   const [projectionBundles, setProjectionBundles] = useState<ProjectionBundle[]>([]);
 

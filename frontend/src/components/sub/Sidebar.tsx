@@ -11,7 +11,7 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import BusinessIcon from '@mui/icons-material/Business';
 import { useRouter, usePathname } from 'next/navigation';
 import Search from "@mui/icons-material/Search";
-import { SsidChart } from "@mui/icons-material";
+import { BackupTable, Checklist, CollectionsBookmark, ExitToApp, FormatListBulleted, PermMedia, SsidChart, StackedBarChart, TableChart } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -39,13 +39,12 @@ const SideNavbar = () => {
       <div className="m-4 font-bold text-xl"><SsidChart /> Szenario-App</div>
       <List>
         {[
-          { text: 'Startseite', icon: <HomeIcon />, path: '/' },
-          { text: 'Suche', icon: <Search />, path: '/about' },
-          { text: 'Einflussfaktoren', icon: <BusinessIcon />, path: '/influencing-factors' },
-          { text: 'Einflussmatrix', icon: <ContactMailIcon />, path: '/influence-matrix' },
-          { text: 'Schlüsselfaktoren', icon: <ContactMailIcon />, path: '/keyfactors' },
-          { text: 'Zukunfts-Projektionen', icon: <ContactMailIcon />, path: '/future-projection' },
-          { text: 'Konsistenzmatrix-Projektionen', icon: <ContactMailIcon />, path: '/consistency-analysis' },
+          { text: 'Startseite', icon: <HomeIcon />, path: '/project-list' },
+          { text: 'Einflussfaktoren', icon: <FormatListBulleted />, path: '/influencing-factors' },
+          { text: 'Einflussmatrix', icon: <BackupTable />, path: '/influence-matrix' },
+          { text: 'Schlüsselfaktoren', icon: <Checklist />, path: '/keyfactors' },
+          { text: 'Konsistenzmatrix', icon: <TableChart />, path: '/consistency-analysis' },
+          { text: 'Bündel', icon: <StackedBarChart />, path: '/projection-bundles' },
         ].map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
@@ -58,6 +57,16 @@ const SideNavbar = () => {
           </ListItem>
         ))}
       </List>
+      <hr className="border-t-2 border-white p-2" />
+      <ListItem disablePadding className='position-bottom'>
+        <ListItemButton
+          className={`m-2 rounded-md hover:bg-[#4438ca]`}
+          onClick={() => handleNavigation('/')}
+        >
+          <ListItemIcon className='text-white'><ExitToApp /></ListItemIcon>
+          <ListItemText primary='Logout' />
+        </ListItemButton>
+      </ListItem>
     </Box>
   );
 };

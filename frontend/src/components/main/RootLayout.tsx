@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stepper, Step, StepLabel } from '@mui/material';
@@ -16,11 +17,11 @@ const steps = [
   { label: 'Schlüsselfaktoren aufbereiten', path: '/keyfactors' },
   { label: 'Konsistenzanalyse', path: '/consistency-analysis' },
   { label: 'Projektionsbündelung', path: '/projection-bundles' },
-  { label: 'Rohszenario', path: '#' } // Placeholder for the page to be implemented
+  { label: 'Rohszenario', path: '/rawscenarios' } 
 ];
 
 const subPages = {
-  '/influence-matrix': '/influence-matrix/influencing-factors-summary'
+  '/influence-matrix': '/influence-matrix/influencing-factors-summary',
 };
 
 export default function RootLayout({
@@ -40,6 +41,10 @@ export default function RootLayout({
           currentStep = steps.findIndex(step => step.path === mainPath);
           break;
         }
+      }
+      // Check if the current path is a subpage of /raw-scenarios
+      if (currentPath.startsWith('/rawscenarios')) {
+        currentStep = steps.findIndex(step => step.path === '/rawscenarios');
       }
     }
     setActiveStep(currentStep === -1 ? 0 : currentStep);

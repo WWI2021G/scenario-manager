@@ -1,6 +1,7 @@
 
 import { Request, Response } from "express";
 import ClusterAnalysis from "../services/clusterAnalysis";
+import { scenarioService } from "../services/scenarioService";
 
 class ScenarioController {
   public async executeClustering(req: Request, res: Response): Promise<void> {
@@ -18,7 +19,18 @@ class ScenarioController {
     }
   }
 
-  // Other methods can be added here
+
+  public async calculateDistribution(req: Request, res: Response): Promise<void> {
+    const { rawScenarioId } = req.body;
+
+    try {
+      const result = await scenarioService.calculateDistribution(rawScenarioId);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error executing distribution calculation:", error);
+      res.status(500).json({ message: "Distribution calculation failed", error });
+    }
+  }
 }
 
 export const scenarioController = new ScenarioController();

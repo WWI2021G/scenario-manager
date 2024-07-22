@@ -73,5 +73,6 @@ router.post("/rsid", dbController.getRawScenarioID);
 router.post("/rsname", dbController.getRawScenarioByName);
 
 router.post("/cluster", scenarioController.executeClustering);
+router.post("/calculate-distribution", scenarioController.calculateDistribution);
 
 export default router;
