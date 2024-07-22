@@ -1,22 +1,46 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15
+    container_name: scenario-postgres
+    environment:
+      POSTGRES_DB: scenariodb
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+    container_name: scenario-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: scenariodb
+      DB_USER: dev
+      DB_PASSWORD: dev
+    depends_on:
+      - postgres
     ports:
       - "3001:3001"
-    volumes:
-      - ./backend:/usr/src/app
-    environment:
-      - NODE_ENV=development
 
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    container_name: scenario-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    depends_on:
+      - backend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/usr/src/app
-    environment:
-      - NODE_ENV=development
+
+volumes:
+  postgres_data:
+
