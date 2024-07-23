@@ -172,15 +172,11 @@ class ClusterAnalysis {
     clusters.forEach((cluster, index) => {
       console.log(`Cluster ${index + 1}:`);
       cluster.forEach((bundle) => {
-        console.log(
-          `  Bundle: ${bundle
-            .getProjections()
-            .map((fp) => fp.getName())
-            .join(", ")}`,
-        );
+        bundle.getProjections().forEach((projection) => {
+          console.log(`  Projection: ${projection.getName()}`);
+        });
       });
     });
-  }
-}
+  }}
 
 export default ClusterAnalysis;
