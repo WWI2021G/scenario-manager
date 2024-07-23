@@ -9,6 +9,7 @@ import { ProjectionType } from "../models/ProjectionType";
 interface KeyFactorDistribution {
   a: number;
   b: number;
+  toggle: boolean;
 }
 
 interface DistributionResult {
@@ -117,9 +118,7 @@ class ScenarioService {
       throw error;
     }
   }
-  async selectFutureProjectionsForProjectionBundle(
-    projectionBundle_id: number,
-  ): Promise<FutureProjection[]> {
+   async selectFutureProjectionsForProjectionBundle(projectionBundle_id: number): Promise<FutureProjection[]> {
     try {
       const query_results = await db.any<{
         futureprojection_id: number;
@@ -131,63 +130,32 @@ class ScenarioService {
         projectiontype: ProjectionType;
       }>(
         `SELECT
-        fp.futureprojection_id,
-        fp.name,
-        fp.description,
-        fp.keyfactor_id,
-        fp.probability,
-        fp.timeframe,
-        fp.projectiontype
-      FROM
-        futureprojection fp
-        JOIN fp_pb fpb ON fpb.futureprojection_id = fp.futureprojection_id
-      WHERE
-        fpb.projectionbundle_id = $1;`,
+          fp.futureprojection_id,
+          fp.name,
+          fp.description,
+          fp.keyfactor_id,
+          fp.probability,
+          fp.timeframe,
+          fp.projectiontype
+        FROM
+          futureprojection fp
+          JOIN fp_pb fpb ON fpb.futureprojection_id = fp.futureprojection_id
+        WHERE
+          fpb.projectionbundle_id = $1;`,
         projectionBundle_id,
       );
 
-      console.log("query_results:", query_results);
-      // Group future projections by key factor
-      const groupedProjections: { [key: string]: FutureProjection[] } = {};
-      query_results.forEach((result) => {
-        const futureProjection = new FutureProjection(
-          result.name,
-          result.description,
-          new KeyFactor(result.keyfactor_id.toString(), ""),
-          result.keyfactor_id,
-          result.probability,
-          result.timeframe,
-          result.projectiontype,
-        );
-        if (!groupedProjections[result.keyfactor_id]) {
-          groupedProjections[result.keyfactor_id] = [];
-        }
-        groupedProjections[result.keyfactor_id].push(futureProjection);
-        console.log("groupedProjections:", groupedProjections);
-      });
-
-      // Assign A and B designations
-      const futureProjections: FutureProjection[] = [];
-      Object.values(groupedProjections).forEach((projections) => {
-        if (projections.length > 0) {
-          console.log("projections[0]:", projections[0]);
-          projections[0].updateName(projections[0].getName() + " A"); // Designate as A
-          futureProjections.push(projections[0]);
-        }
-        if (projections.length > 1) {
-          console.log("projections[1]:", projections[1]);
-          projections[1].updateName(projections[1].getName() + " B"); // Designate as B
-          futureProjections.push(projections[1]);
-        }
-      });
-
-      return futureProjections;
+      return query_results.map(result => new FutureProjection(
+        result.name,
+        result.description,
+        new KeyFactor(result.keyfactor_id.toString(), ""),
+        result.keyfactor_id,
+        result.probability,
+        result.timeframe,
+        result.projectiontype,
+      ));
     } catch (error) {
-      console.error(
-        "Error selecting FutureProjections for projectionBundle_id:",
-        projectionBundle_id,
-        error,
-      );
+      console.error("Error selecting FutureProjections for projectionBundle_id:", projectionBundle_id, error);
       throw error;
     }
   }
@@ -242,70 +210,61 @@ class ScenarioService {
       throw error;
     }
   }
-  async calculateDistribution(
-    rawScenarioId: number,
-  ): Promise<DistributionResult[]> {
+  async calculateDistribution(rawScenarioId: number): Promise<DistributionResult[]> {
     try {
-      // Fetch all future projections for the raw scenario
-      const futureProjections =
-        await this.selectFutureProjectionsForRawScenario(rawScenarioId);
-
-      // Group future projections by key factor ID
-      const groupedProjections: { [key: string]: FutureProjection[] } = {};
-      futureProjections.forEach((projection) => {
-        const keyFactorId = projection.getKeyFactorID().toString();
-        if (!groupedProjections[keyFactorId]) {
-          groupedProjections[keyFactorId] = [];
-        }
-        groupedProjections[keyFactorId].push(projection);
-      });
-
-      // Initialize distributions
-      const keyFactorDistributions: { [key: string]: KeyFactorDistribution } =
-        {};
-      Object.keys(groupedProjections).forEach((keyFactorId) => {
-        keyFactorDistributions[keyFactorId] = { a: 0, b: 0 };
-      });
-
-      // Assign A and B designations and count
-      Object.entries(groupedProjections).forEach(
-        ([keyFactorId, projections]) => {
-          if (projections.length > 0) {
-            projections[0].updateName(projections[0].getName() + " A"); // Designate as A
-            keyFactorDistributions[keyFactorId].a += 1;
-          }
-          if (projections.length > 1) {
-            projections[1].updateName(projections[1].getName() + " B"); // Designate as B
-            keyFactorDistributions[keyFactorId].b += 1;
-          }
-        },
+      const projectionBundles = await db.any(
+        `SELECT pb.* FROM projectionbundle pb
+         JOIN pb_rs pbrs ON pb.projectionbundle_id = pbrs.projectionbundle_id
+         WHERE pbrs.rawscenario_id = $1`,
+        [rawScenarioId]
       );
+      projectionBundles.forEach((pb: ProjectionBundle) => {
+      console.log("Projektions",pb);
+      });
 
-      // Calculate results
-      const result: DistributionResult[] = [];
-      for (const [keyFactorId, distribution] of Object.entries(
-        keyFactorDistributions,
-      )) {
+      const keyFactorDistributions: { [key: string]: KeyFactorDistribution } = {};
+
+      for (const bundle of projectionBundles) {
+        const projections = await this.selectFutureProjectionsForProjectionBundle(bundle.projectionbundle_id);
+
+        projections.forEach(projection => {
+          const keyFactorId = projection.getKeyFactorID().toString();
+
+          if (!keyFactorDistributions[keyFactorId]) {
+            keyFactorDistributions[keyFactorId] = { a: 0, b: 0, toggle: true };
+          }
+
+          if (keyFactorDistributions[keyFactorId].toggle) {
+            keyFactorDistributions[keyFactorId].a += 1; // Assign to A
+          } else {
+            keyFactorDistributions[keyFactorId].b += 1; // Assign to B
+          }
+          keyFactorDistributions[keyFactorId].toggle = !keyFactorDistributions[keyFactorId].toggle;
+        });
+      }
+
+      const results: DistributionResult[] = [];
+
+      for (const [keyFactorId, distribution] of Object.entries(keyFactorDistributions)) {
         const total = distribution.a + distribution.b;
         const relativeA = total ? (distribution.a / total) * 100 : 0;
         const relativeB = total ? (distribution.b / total) * 100 : 0;
 
-        result.push({
+        results.push({
           keyFactorId,
           absoluteA: distribution.a,
           absoluteB: distribution.b,
           total,
           relativeA,
-          relativeB,
+          relativeB
         });
       }
 
-      return result;
+      return results;
     } catch (error) {
       console.error("Error calculating distribution:", error);
       throw error;
-    }
+    }}
   }
-}
 
 export const scenarioService = new ScenarioService();
