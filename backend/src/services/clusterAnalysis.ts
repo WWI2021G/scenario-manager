@@ -171,6 +171,15 @@ class ClusterAnalysis {
   public displayClusters(clusters: ProjectionBundle[][]) {
     clusters.forEach((cluster, index) => {
       console.log(`Cluster ${index + 1}:`);
+      // Log the projections in each bundle
+      for (const bundle of cluster) {
+        console.log(
+          `  Bundle: ${bundle
+            .getProjections()
+            .map((fp) => fp.getName())
+            .join(", ")}`,
+        );
+      }
       cluster.forEach((bundle) => {
         console.log(
           `  Bundle: ${bundle
