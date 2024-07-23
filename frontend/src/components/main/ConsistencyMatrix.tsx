@@ -141,7 +141,9 @@ const ConsistencyMatrix: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    // TODO: fix logic to prevent unchanged fields
+    // WARNING: for now this is always true
+    // There needs to be a logic implemented here that prevents the user from sending the
+    // ConsistencyMatrix before it is filled out properly.
     if (containsZero(matrix)) {
       const jsonMatrix = mapToJson(matrix);
       await axios
