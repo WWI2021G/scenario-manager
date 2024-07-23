@@ -190,9 +190,12 @@ class DBController {
     const {
       influencingFactor_name,
       scenarioProject_id,
-    }: { influencingFactor_name: string; scenarioProject_id: number } = req.body;
+    }: { influencingFactor_name: string; scenarioProject_id: number } =
+      req.body;
     try {
-      const influencingFactor_id = await dbService.selectInfluencingFactorID(new InfluencingFactor(influencingFactor_name, "Whatever"));
+      const influencingFactor_id = await dbService.selectInfluencingFactorID(
+        new InfluencingFactor(influencingFactor_name, "Whatever"),
+      );
       const message =
         await dbService.disconnectInfluencingFactorAndScenarioProject(
           influencingFactor_id,
@@ -217,16 +220,6 @@ class DBController {
       const influencingFactor_id =
         await dbService.selectInfluencingFactorID(influencingFactor);
       res.status(200).json({ influencingFactor_id: influencingFactor_id });
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
-  async getInfluencingFactor(req: Request, res: Response) {
-    try {
-      const influencingFactor: InfluencingFactor =
-        await dbService.selectInfluencingFactor(parseFloat(req.params.id));
-      res.status(200).json(influencingFactor);
     } catch (error: any) {
       res.status(500).send(error.message);
     }
@@ -271,17 +264,6 @@ class DBController {
     }
   }
 
-  async getActiveSum(req: Request, res: Response) {
-    try {
-      const activeSum = await dbService.selectActiveSum(
-        parseFloat(req.params.id),
-      );
-      res.status(200).json({ activeSum: activeSum });
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
   async setPassiveSum(req: Request, res: Response) {
     const {
       scenarioProject_id,
@@ -305,17 +287,6 @@ class DBController {
         influencingFactor,
       );
       res.status(200).send(message);
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
-  async getPassiveSum(req: Request, res: Response) {
-    try {
-      const passiveSum = await dbService.selectPassiveSum(
-        parseFloat(req.params.id),
-      );
-      res.status(200).json({ passiveSum: passiveSum });
     } catch (error: any) {
       res.status(500).send(error.message);
     }
