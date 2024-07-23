@@ -5,19 +5,18 @@ This is a web application designed to manage and document scenarios using the Sc
 ## Table of Contents
 
 - [Scenario Management Web Application](#scenario-management-web-application)
-    - [Table of Contents](#table-of-contents)
-    - [Features](#features)
-    - [Technologies Used](#technologies-used)
-    - [Prerequisites](#prerequisites)
-    - [Getting Started](#getting-started)
-        - [Clone the Repository](#clone-the-repository)
-        - [Backend Setup](#backend-setup)
-        - [Frontend Setup](#frontend-setup)
-    - [Running the Application](#running-the-application)
-    - [Project Structure](#project-structure)
-    - [Contributing](#contributing)
-    - [License](#license)
-    - [Contact](#contact)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Technologies Used](#technologies-used)
+  - [Prerequisites](#prerequisites)
+  - [Getting Started](#getting-started)
+    - [Clone the Repository](#clone-the-repository)
+    - [Backend Setup](#backend-setup)
+    - [Frontend Setup](#frontend-setup)
+  - [Running the Application with Docker](#running-the-application-with-docker)
+  - [TODOs](#todos)
+  - [Credits](#credits)
+  - [License](#license)
 
 ## Features
 
