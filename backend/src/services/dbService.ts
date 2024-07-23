@@ -566,41 +566,6 @@ class DBService {
     }
   }
 
-  //  NOTE: Function not used <2024-07-21>
-  async selectInfluencingFactor(
-    influencingFactor_id: number,
-  ): Promise<InfluencingFactor> {
-    try {
-      const result = await db.one<{
-        name: string;
-        description: string;
-      }>(
-        `SELECT
-          name,
-          description
-        FROM
-          influencingfactor
-        WHERE
-          influencingfactor_id = $1;`,
-        influencingFactor_id,
-      );
-      const influencingFactor: InfluencingFactor = new InfluencingFactor(
-        result.name,
-        result.description,
-      );
-      console.log(
-        "Request for existing influencingFactor_id: " + influencingFactor_id,
-      );
-      return influencingFactor;
-    } catch (error) {
-      console.error(
-        "Error selecting influencingFactor from ID: " + influencingFactor_id,
-        error,
-      );
-      throw error;
-    }
-  }
-
   async selectInfluencingFactorByName(
     influencingFactor_name: string,
   ): Promise<InfluencingFactor> {
@@ -673,32 +638,6 @@ class DBService {
     }
   }
 
-  //  NOTE: Function not used <2024-07-21>
-  async selectActiveSum(influencingFactor_id: number): Promise<number> {
-    try {
-      const activesum = await db.one<number>(
-        `SELECT
-          activesum
-        FROM
-          influencingfactor
-        WHERE
-          influencingfactor_id = $1;`,
-        influencingFactor_id,
-        (as) => as.activesum,
-      );
-      console.log(
-        "Request for activeSum of InfluencingFactor: " + influencingFactor_id,
-      );
-      return activesum;
-    } catch (error) {
-      console.error(
-        "Error selecting activeSum for InfluencingFactor: " +
-          influencingFactor_id,
-      );
-      throw error;
-    }
-  }
-
   async updatePassiveSum(
     scenarioProject_id: number,
     influencingFactor: InfluencingFactor,
@@ -730,32 +669,6 @@ class DBService {
       console.error(
         "Error updating passiveSum for InfluencingFactor: " +
           influencingFactor.getName(),
-      );
-      throw error;
-    }
-  }
-
-  //  NOTE: Function not used <2024-07-21>
-  async selectPassiveSum(influencingFactor_id: number): Promise<number> {
-    try {
-      const passiveSum = await db.one<number>(
-        `SELECT
-          passivesum
-        FROM
-          influencingfactor
-        WHERE
-          influencingfactor_id = $1;`,
-        influencingFactor_id,
-        (as) => as.passivesum,
-      );
-      console.log(
-        "Request for passiveSum of InfluencingFactor: " + influencingFactor_id,
-      );
-      return passiveSum;
-    } catch (error) {
-      console.error(
-        "Error selecting passiveSum for InfluencingFactor: " +
-          influencingFactor_id,
       );
       throw error;
     }

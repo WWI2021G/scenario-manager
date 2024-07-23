@@ -222,16 +222,6 @@ class DBController {
     }
   }
 
-  async getInfluencingFactor(req: Request, res: Response) {
-    try {
-      const influencingFactor: InfluencingFactor =
-        await dbService.selectInfluencingFactor(parseFloat(req.params.id));
-      res.status(200).json(influencingFactor);
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
   async getInfluencingFactorByName(req: Request, res: Response) {
     const name: string = req.body.name;
     try {
@@ -271,17 +261,6 @@ class DBController {
     }
   }
 
-  async getActiveSum(req: Request, res: Response) {
-    try {
-      const activeSum = await dbService.selectActiveSum(
-        parseFloat(req.params.id),
-      );
-      res.status(200).json({ activeSum: activeSum });
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
   async setPassiveSum(req: Request, res: Response) {
     const {
       scenarioProject_id,
@@ -305,17 +284,6 @@ class DBController {
         influencingFactor,
       );
       res.status(200).send(message);
-    } catch (error: any) {
-      res.status(500).send(error.message);
-    }
-  }
-
-  async getPassiveSum(req: Request, res: Response) {
-    try {
-      const passiveSum = await dbService.selectPassiveSum(
-        parseFloat(req.params.id),
-      );
-      res.status(200).json({ passiveSum: passiveSum });
     } catch (error: any) {
       res.status(500).send(error.message);
     }

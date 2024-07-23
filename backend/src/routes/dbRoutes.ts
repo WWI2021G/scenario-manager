@@ -19,15 +19,12 @@ router.post("/sp/add", dbController.addScenarioProject);
 router.post("/spid", dbController.getScenarioProjectID);
 
 router.get("/if/all", dbController.getAllInfluencingFactors);
-router.get("/if/:id", dbController.getInfluencingFactor);
 router.get("/if/sp/:id", dbController.getInfluencingFactorsForScenarioProject);
 router.post("/if/add", dbController.addInfluencingFactor);
 router.post("/if/link", dbController.linkInfluencingFactorAndScenarioProject);
 router.delete("/if/remove", dbController.unlinkInfluencingFactor);
 router.post("/ifid", dbController.getInfluencingFactorID);
 router.post("/ifname", dbController.getInfluencingFactorByName);
-router.get("/if/as/:id", dbController.getActiveSum);
-router.get("/if/ps/:id", dbController.getPassiveSum);
 router.post("/if/as/update", dbController.setActiveSum);
 router.post("/if/ps/update", dbController.setPassiveSum);
 router.post("/if/update", dbController.setInfluencingFactor);
