@@ -1444,13 +1444,13 @@ class DBService {
         results.push(futureProjection);
       }
       console.log(
-        "Request for all FutureProjections with scenarioProject_id: " +
+        "Request for all FutureProjections with projectionBundle_id: " +
           projectionBundle_id,
       );
       return results;
     } catch (error) {
       console.error(
-        "Error selecting FutureProjections for ScenarioProject: " +
+        "Error selecting FutureProjections for ProjectionBundle: " +
           projectionBundle_id,
         error,
       );
