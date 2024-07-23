@@ -190,9 +190,12 @@ class DBController {
     const {
       influencingFactor_name,
       scenarioProject_id,
-    }: { influencingFactor_name: string; scenarioProject_id: number } = req.body;
+    }: { influencingFactor_name: string; scenarioProject_id: number } =
+      req.body;
     try {
-      const influencingFactor_id = await dbService.selectInfluencingFactorID(new InfluencingFactor(influencingFactor_name, "Whatever"));
+      const influencingFactor_id = await dbService.selectInfluencingFactorID(
+        new InfluencingFactor(influencingFactor_name, "Whatever"),
+      );
       const message =
         await dbService.disconnectInfluencingFactorAndScenarioProject(
           influencingFactor_id,
